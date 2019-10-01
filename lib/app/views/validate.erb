@@ -1,0 +1,8 @@
+<div class="container">
+  <% if @validator.errors.empty? %>
+    <h1>No validation errors found</h1>
+  <% end %>
+  <% @validator.errors.each do |error| %>
+    <div><%= error %></div>
+  <% end %>
+</div>

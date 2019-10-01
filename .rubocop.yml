@@ -1,0 +1,42 @@
+AllCops:
+  TargetRubyVersion: 2.5
+  Exclude:
+    - 'config.ru'
+    - '.git/**/*'
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: 'indented'
+
+Style/WordArray:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 100
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+# Use code climate's metrics measurement rather than rubocop's
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: false
