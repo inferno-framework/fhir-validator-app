@@ -1,0 +1,10 @@
+<% if issues.blank? %>
+    <h1>No validation <%= severity %> issues found</h1>
+  <% else %>
+    <h1>Validation <%= severity.pluralize(issues.count)%>:</h1>
+    <ul>
+      <% issues.each do |issue| %>
+        <li><%= issue %></li>
+      <% end %>
+    </ul>
+  <% end %>

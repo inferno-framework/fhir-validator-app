@@ -1,23 +1,9 @@
 <div class="container">
-  <% if @validator.errors.empty? %>
-    <h1>No validation errors found</h1>
-  <% else %>
-    <h1>Validation errors:</h1>
-  <% end %>
-  <ul>
-    <% @validator.errors.each do |error| %>
-      <li><%= error %></li>
-    <% end %>
-  </ul>
+  <%= erb(:issues, {}, {issues: @validator.fatals, severity: 'fatal'}) %>
 
-  <% if @validator.warnings.empty? %>
-    <h1>No validation warnings found</h1>
-  <% else %>
-    <h1>Validation warnings:</h1>
-  <% end %>
-  <ul>
-    <% @validator.warnings.each do |warning| %>
-      <li><%= warning %></li>
-    <% end %>
-  </ul>
+  <%= erb(:issues, {}, {issues: @validator.errors, severity: 'error'}) %>
+
+  <%= erb(:issues, {}, {issues: @validator.warnings, severity: 'warning'}) %>
+
+  <%= erb(:issues, {}, {issues: @validator.informations, severity: 'information'}) %>
 </div>

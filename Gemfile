@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'activesupport'
 gem 'bloomer'
 
 gem 'fhir_dstu2_models'

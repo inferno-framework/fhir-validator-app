@@ -6,10 +6,15 @@
       <input type="file" name="resource" id="resource" class="form-control-file" />
     </div>
 
-    <div class="form-group">
+    <!--<div class="form-group">
       <label for="implementation_guide">FHIR Implementation Guide to be validated against. If not provided,
       the resource will be validated against the base FHIR specification.</label>
       <input type="file" name="implementation_guide" id="implementation_guide" class="form-control-file" />
+    </div>-->
+
+    <div class="form-group">
+      <label for="profile">Profile URL from US Core to validate against</label>
+      <input type="text" name="profile" id="profile" class="form-control" value="http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"/>
     </div>
 
     <div class="form-group">

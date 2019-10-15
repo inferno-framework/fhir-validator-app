@@ -6,7 +6,6 @@ require 'rest-client'
 require 'zip'
 require 'yaml'
 
-
 Dir[File.join(__dir__, '..', 'app', 'models', 'util', '*.rb')].each { |file| require file }
 
 namespace :terminology do |_argv|
@@ -142,9 +141,13 @@ namespace :terminology do |_argv|
     puts 'removing umls.zip...'
     File.delete('umls.zip') if File.exist?('umls.zip')
     puts 'removing unzipped umls...'
-    FileUtils.remove_dir('resources/terminology/umls') if File.directory?('resources/terminology/umls')
+    if File.directory?('resources/terminology/umls')
+      FileUtils.remove_dir('resources/terminology/umls')
+    end
     puts 'removing umls subset...'
-    FileUtils.remove_dir('resources/terminology/umls_subset') if File.directory?('resources/terminology/umls_subset')
+    if File.directory?('resources/terminology/umls_subset')
+      FileUtils.remove_dir('resources/terminology/umls_subset')
+    end
     puts 'removing umls.db'
     File.delete('umls.db') if File.exist?('umls.db')
     puts 'removing MRCONSO.pipe'
@@ -261,7 +264,9 @@ namespace :terminology do |_argv|
           line += 1
           concept = row[0]
           if concept != current_umls_concept && !current_umls_concept.nil?
-            output.write("#{translation.join('|')}\n") unless translation[1..-2].reject(&:nil?).length < 2
+            unless translation[1..-2].reject(&:nil?).length < 2
+              output.write("#{translation.join('|')}\n")
+            end
             translation = Array.new(10)
             current_umls_concept = concept
             translation[0] = current_umls_concept

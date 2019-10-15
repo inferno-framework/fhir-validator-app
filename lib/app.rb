@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'active_support/all'
 require 'sinatra'
 require 'byebug'
 Dir[File.join(__dir__, 'app', 'models', 'validators', '*.rb')].each { |file| require file }
@@ -18,14 +19,14 @@ module FHIRValidator
 
     post '/validate' do
       resource_file = params.dig(:resource, :tempfile)
-      profile_file = params.dig(:implementation_guide, :tempfile)
+      profile_url = params[:profile]
 
       resource = File.read(resource_file) if resource_file
-      profile = File.read(profile_file) if profile_file
+      # profile = File.read(profile_file) if profile_file
 
-      @validator = FHIRModelsValidator.new(params[:fhirVersion].downcase)
+      @validator = GrahameValidator.new(params[:fhirVersion].downcase)
 
-      @validator.validate(resource, profile)
+      @validator.validate(resource, profile_url)
 
       erb :validate
     end

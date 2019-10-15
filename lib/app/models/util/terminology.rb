@@ -40,7 +40,9 @@ module FHIRValidator
         root_dir = 'resources/terminology/validators/bloom'
         FileUtils.mkdir_p(root_dir) unless File.directory?(root_dir)
         @known_valuesets.each do |k, vs|
-          next if (k == 'http://fhir.org/guides/argonaut/ValueSet/argo-codesystem') || (k == 'http://fhir.org/guides/argonaut/ValueSet/languages')
+          if (k == 'http://fhir.org/guides/argonaut/ValueSet/argo-codesystem') || (k == 'http://fhir.org/guides/argonaut/ValueSet/languages')
+            next
+          end
 
           puts "Processing #{k}"
           filename = "#{root_dir}/#{(URI(vs.url).host + URI(vs.url).path).gsub(%r{[./]}, '_')}.msgpack"
@@ -61,7 +63,9 @@ module FHIRValidator
         root_dir = 'resources/terminology/validators/csv'
         FileUtils.mkdir_p(root_dir) unless File.directory?(root_dir)
         @known_valuesets.each do |k, vs|
-          next if (k == 'http://fhir.org/guides/argonaut/ValueSet/argo-codesystem') || (k == 'http://fhir.org/guides/argonaut/ValueSet/languages')
+          if (k == 'http://fhir.org/guides/argonaut/ValueSet/argo-codesystem') || (k == 'http://fhir.org/guides/argonaut/ValueSet/languages')
+            next
+          end
 
           puts "Processing #{k}"
           filename = "#{root_dir}/#{(URI(vs.url).host + URI(vs.url).path).gsub(%r{[./]}, '_')}.csv"
