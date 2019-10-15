@@ -31,16 +31,17 @@ module FHIRValidator
       end
       raise ArgumentError, 'No resource provided' unless parsed_resource
 
-      @errors = if profile
-                  begin
-                    parsed_profile = model_klass.from_contents(profile)
-                  rescue StandardError => e
-                    raise ArgumentError, e.message
-                  end
-                  parsed_profile.validate_resource(parsed_resource)
-                else
-                  parsed_resource.validate
-                end
+      if profile
+        begin
+          validator_klass = model_klass.from_contents(profile)
+        rescue StandardError => e
+          raise ArgumentError, e.message
+        end
+      else
+        validator_klass = model_klass::Definitions.resource_definition(parsed_resource.resourceType)
+      end
+      @errors = validator_klass.validate_resource(parsed_resource)
+      @warnings = validator_klass.warnings
     end
   end
 end

@@ -1,8 +1,23 @@
 <div class="container">
   <% if @validator.errors.empty? %>
     <h1>No validation errors found</h1>
+  <% else %>
+    <h1>Validation errors:</h1>
   <% end %>
-  <% @validator.errors.each do |error| %>
-    <div><%= error %></div>
+  <ul>
+    <% @validator.errors.each do |error| %>
+      <li><%= error %></li>
+    <% end %>
+  </ul>
+
+  <% if @validator.warnings.empty? %>
+    <h1>No validation warnings found</h1>
+  <% else %>
+    <h1>Validation warnings:</h1>
   <% end %>
+  <ul>
+    <% @validator.warnings.each do |warning| %>
+      <li><%= warning %></li>
+    <% end %>
+  </ul>
 </div>

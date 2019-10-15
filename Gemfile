@@ -2,11 +2,19 @@
 
 source 'https://rubygems.org'
 
+gem 'bloomer'
+
 gem 'fhir_dstu2_models'
 gem 'fhir_models'
+# gem 'fhir_models', path: '../fhir_models'
 gem 'fhir_stu3_models'
+# gem 'fhir_stu3_models', path: '../fhir_stu3_models'
+
 gem 'rake'
+gem 'rest-client'
+gem 'rubyzip'
 gem 'sinatra'
+gem 'sqlite3'
 gem 'thin'
 
 group :development, :test do
