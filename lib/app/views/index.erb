@@ -2,7 +2,7 @@
   <h1>FHIR Validator</h1>
   <form action="/validate" method="post" enctype="multipart/form-data">
     <div class="form-group">
-      <label for="resource">FHIR Resource to be validated.</label>
+      <label for="resource">FHIR Resource to be validated:</label>
       <input type="file" name="resource" id="resource" class="form-control-file" />
     </div>
 
@@ -13,31 +13,47 @@
     </div>-->
 
     <div class="form-group">
-      <label for="profile">Profile URL from US Core to validate against</label>
+      <label for="profile">Profile URL from US Core to validate against:</label>
       <input type="text" name="profile" id="profile" class="form-control" value="http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"/>
     </div>
 
     <div class="form-group">
+      <p>Validator Engine to run:</p>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="validator" id="hl7" value="hl7" checked />
+        <label class="form-check-label" for="hl7">
+          HL7 Validator
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="validator" id="inferno" value="inferno" />
+        <label class="form-check-label" for="inferno">
+          Inferno Validator
+        </label>
+      </div>
+    </div>
+
+    <%# <div class="form-group">
       <p>FHIR Version:</p>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="fhirVersion" id="fhirVersion1" value="dstu2">
+        <input class="form-check-input" type="radio" name="fhirVersion" id="fhirVersion1" value="dstu2" />
         <label class="form-check-label" for="fhirVersion1">
           DSTU2
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="fhirVersion" id="fhirVersion2" value="stu3">
+        <input class="form-check-input" type="radio" name="fhirVersion" id="fhirVersion2" value="stu3" />
         <label class="form-check-label" for="fhirVersion2">
           STU3
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="fhirVersion" id="fhirVersion3" value="r4" checked>
+        <input class="form-check-input" type="radio" name="fhirVersion" id="fhirVersion3" value="r4" checked />
         <label class="form-check-label" for="fhirVersion3">
           R4
         </label>
       </div>
-    </div>
+    </div> %>
 
     <div class="form-group">
       <input type="submit" class="btn btn-primary" />

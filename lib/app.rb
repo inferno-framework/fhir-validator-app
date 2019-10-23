@@ -22,9 +22,13 @@ module FHIRValidator
       profile_url = params[:profile]
 
       resource = File.read(resource_file) if resource_file
-      # profile = File.read(profile_file) if profile_file
 
-      @validator = GrahameValidator.new(params[:fhirVersion].downcase)
+      @validator = case params[:validator]
+      when 'hl7'
+        GrahameValidator.new
+      when 'inferno'
+        FHIRModelsValidator.new
+      end
 
       @validator.validate(resource, profile_url)
 

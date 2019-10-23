@@ -6,8 +6,7 @@ module FHIRValidator
   class BaseValidator
     attr_accessor :version, :errors, :warnings, :fatals, :informations
 
-    def initialize(version)
-      @version = version
+    def initialize
     end
 
     def validate(resource, profile); end
