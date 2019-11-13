@@ -1,24 +1,33 @@
 <div class="container">
   <h1>FHIR Validator</h1>
   <form action="/validate" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-      <label for="resource">FHIR Resource to be validated:</label>
-      <input type="file" name="resource" id="resource" class="form-control-file" />
-    </div>
-
-    <!--<div class="form-group">
-      <label for="implementation_guide">FHIR Implementation Guide to be validated against. If not provided,
-      the resource will be validated against the base FHIR specification.</label>
-      <input type="file" name="implementation_guide" id="implementation_guide" class="form-control-file" />
-    </div>-->
-
-    <div class="form-group">
-      <label for="profile">Profile URL from US Core to validate against:</label>
-      <input type="text" name="profile" id="profile" class="form-control" value="http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"/>
+    <div class="jumbotron">
+      <div class="form-group">
+        <label for="resource_field">Paste your FHIR resource here:</label>
+        <textarea name="resource_field" id="resource_field" class="form-control" rows="10"></textarea>
+        <br/>
+        <div class="custom-file">
+          <label for="resource" class="custom-file-label">Or upload a file:</label>
+          <input type="file" name="resource" id="resource" class="custom-file-input" />
+        </div>
+      </div>
     </div>
 
     <div class="form-group">
-      <p>Validator Engine to run:</p>
+      <label for="implementation_guide">Pick an Implementation Guide to validate against:</label>
+      <select name="implementation_guide" id="implementation_guide">
+        <option value="us_core" selected>US Core v3.1.0</option>
+        <option value="base">Base FHIR R4</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="profile">Enter a profile name from the selected IG to validate against:</label>
+      <input type="text" name="profile" id="profile" class="form-control" value="us-core-patient" />
+    </div>
+
+    <div class="form-group">
+      <p>Pick a validator engine to use:</p>
       <div class="form-check">
         <input class="form-check-input" type="radio" name="validator" id="hl7" value="hl7" checked />
         <label class="form-check-label" for="hl7">
