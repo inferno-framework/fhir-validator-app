@@ -24,15 +24,15 @@
     <div class="jumbotron">
       <div class="form-group">
         <label for="profile">Enter a profile name from either Base FHIR or US Core 3.1.0 to validate against:</label>
-        <input type="text" name="profile" id="profile" class="form-control disable-me" value="us-core-patient" />
+        <input type="text" name="profile" id="profile" class="form-control disable-me disable-me-textarea custom-input" value="" />
       </div>
       <div class="form-group">
         <label for="profile_field">Or if you have your own profile, you can paste it here:</label>
-        <textarea name="profile_field" id="profile_field" class="form-control disable-me" rows="8"></textarea>
+        <textarea name="profile_field" id="profile_field" class="form-control disable-me custom-text-area disable-me-input" rows="8"></textarea>
         <br/>
         <div class="custom-file">
-          <label for="profile_file" class="custom-file-label">Or upload your profile in a file:</label>
-          <input type="file" name="profile_file" id="profile_file" class="custom-file-input" />
+          <label for="profile_file" class="custom-file-label disable-me-textarea disable-me-input">Or upload your profile in a file:</label>
+          <input type="file" name="profile_file" id="profile_file" class="custom-file-input disable-me-textarea disable-me-input" />
         </div>
       </div>
     </div>
