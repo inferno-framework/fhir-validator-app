@@ -1,4 +1,6 @@
 <div class="container">
+  Validated the uploaded resource against the <code><%= @profile_url %></code> profile
+  <br/>
   <%= erb(:issues, {}, {issues: @validator.fatals, severity: 'fatal'}) %>
 
   <%= erb(:issues, {}, {issues: @validator.errors, severity: 'error'}) %>

@@ -4,26 +4,37 @@
     <div class="jumbotron">
       <div class="form-group">
         <label for="resource_field">Paste your FHIR resource here:</label>
-        <textarea name="resource_field" id="resource_field" class="form-control" rows="10"></textarea>
+        <textarea name="resource_field" id="resource_field" class="form-control disable-me" rows="8"></textarea>
         <br/>
         <div class="custom-file">
-          <label for="resource" class="custom-file-label">Or upload a file:</label>
+          <label for="resource" class="custom-file-label">Or upload a resource in a file:</label>
           <input type="file" name="resource" id="resource" class="custom-file-input" />
         </div>
       </div>
     </div>
 
-    <div class="form-group">
+    <%# <div class="form-group">
       <label for="implementation_guide">Pick an Implementation Guide to validate against:</label>
       <select name="implementation_guide" id="implementation_guide">
         <option value="us_core" selected>US Core v3.1.0</option>
         <option value="base">Base FHIR R4</option>
       </select>
-    </div>
+    </div> %>
 
-    <div class="form-group">
-      <label for="profile">Enter a profile name from the selected IG to validate against:</label>
-      <input type="text" name="profile" id="profile" class="form-control" value="us-core-patient" />
+    <div class="jumbotron">
+      <div class="form-group">
+        <label for="profile">Enter a profile name from either Base FHIR or US Core 3.1.0 to validate against:</label>
+        <input type="text" name="profile" id="profile" class="form-control disable-me" value="us-core-patient" />
+      </div>
+      <div class="form-group">
+        <label for="profile_field">Or if you have your own profile, you can paste it here:</label>
+        <textarea name="profile_field" id="profile_field" class="form-control disable-me" rows="8"></textarea>
+        <br/>
+        <div class="custom-file">
+          <label for="profile_file" class="custom-file-label">Or upload your profile in a file:</label>
+          <input type="file" name="profile_file" id="profile_file" class="custom-file-input" />
+        </div>
+      </div>
     </div>
 
     <div class="form-group">

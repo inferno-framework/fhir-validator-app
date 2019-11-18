@@ -24,17 +24,11 @@ module FHIRValidator
     end
 
     post '/validate' do
-      resource_file = params.dig(:resource, :tempfile)
-      resource_blob = params[:resource_field]
-      if params[:implementation_guide] == 'us_core'
-        profile_url = "http://hl7.org/fhir/us/core/StructureDefinition/#{params[:profile]}"
-      end
+      # if params[:implementation_guide] == 'us_core'
+      #   profile_url = "http://hl7.org/fhir/us/core/StructureDefinition/#{params[:profile]}"
+      # end
 
-      resource = if resource_file
-                   File.read(resource_file)
-                 else
-                   resource_blob
-                 end
+      resource = get_resource(params)
 
       @validator = case params[:validator]
                    when 'hl7'
@@ -43,9 +37,38 @@ module FHIRValidator
                      FHIRModelsValidator.new
                    end
 
-      @validator.validate(resource, profile_url)
+      if params[:profile]
+        @profile_url = GrahameValidator.profile_url_by_name(params[:profile])
+      else
+        profile = get_profile(params)
+        @profile_url = @validator.add_profile(profile)
+      end
+
+      @validator.validate(resource, @profile_url)
 
       erb :validate
+    end
+
+    private
+
+    def get_resource(params)
+      resource_file = params.dig(:resource, :tempfile)
+      resource_blob = params[:resource_field]
+      if resource_file
+        File.read(resource_file)
+      else
+        resource_blob
+      end
+    end
+
+    def get_profile(params)
+      profile_file = params.dig(:profile_file, :tempfile)
+      profile_blob = params[:profile_field]
+      if profile_file
+        File.read(profile_file)
+      else
+        profile_blob
+      end
     end
   end
 end

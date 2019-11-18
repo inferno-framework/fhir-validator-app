@@ -20,6 +20,11 @@ module FHIRValidator
       @informations = issues_by_severity(outcome.issue, 'information')
     end
 
+    def add_profile(profile)
+      RestClient.post "#{VALIDATOR_URL}/profile", profile
+      FHIR.from_contents(profile).url
+    end
+
     def issues_by_severity(issues, severity)
       issues.select { |i| i.severity == severity }
         .map { |iss| "#{iss&.expression&.join(', ')}: #{iss&.details&.text}" }
@@ -33,10 +38,8 @@ module FHIRValidator
       @profile_names ||= profile_urls.map { |url| url.split('/').last }
     end
 
-    def self.profiles_by_ig
-      @profiles_by_ig ||= profile_urls.group_by do |url|
-        # byebug
-      end
+    def self.profile_url_by_name(name)
+      profile_urls.detect { |url| url.include? name }
     end
   end
 end

@@ -21,10 +21,10 @@ $(function() {
     // If it doesn't, we're removing a file
     if (fileName.length > 0) {
       $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-      $("#resource_field").val('').attr('disabled', true);
+      $(this).closest(".jumbotron").find(".disable-me").val('').attr('disabled', true);
     } else {
       $(this).siblings(".custom-file-label").removeClass("selected").html('Or upload a file:');
-      $("#resource_field").attr('disabled', false);
+      $(this).closest(".jumbotron").find(".disable-me").attr('disabled', false);
     }
   });
 });
