@@ -2,6 +2,7 @@
 
 require 'rest-client'
 require 'json'
+require_relative 'base_validator'
 
 module FHIRValidator
   # A validator that calls out to Grahame's validator API
