@@ -13,7 +13,7 @@ module FHIRValidator
     @profiles_by_ig = nil
 
     def validate(resource, profile)
-      result = RestClient.post "#{external_validator_url}/validate", resource, params: { profile: profile }
+      result = RestClient.post "#{GrahameValidator.external_validator_url}/validate", resource, params: { profile: profile }
       outcome = FHIR.from_contents(result.body)
       @fatals = issues_by_severity(outcome.issue, 'fatal')
       @errors = issues_by_severity(outcome.issue, 'error')
@@ -22,7 +22,7 @@ module FHIRValidator
     end
 
     def add_profile(profile)
-      RestClient.post "#{external_validator_url}/profile", profile
+      RestClient.post "#{GrahameValidator.external_validator_url}/profile", profile
       FHIR.from_contents(profile).url
     end
 
@@ -43,7 +43,7 @@ module FHIRValidator
       profile_urls.detect { |url| url.include? name }
     end
 
-    def external_validator_url
+    def self.external_validator_url
       if ENV['external_validator_url']
         ENV['external_validator_url']
       else
