@@ -1,0 +1,13 @@
+version: '3'
+services:
+  fhir_validator_app:
+    build:
+      context: .
+    depends_on:
+      - fhir_validator_wrapper
+    environment:
+      external_validator_url: http://fhir_validator_wrapper:4567
+    ports:
+      - "4567:4567"
+  fhir_validator_wrapper:
+    image: infernocommunity/fhir-validator-wrapper:latest

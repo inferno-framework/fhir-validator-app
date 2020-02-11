@@ -3,6 +3,7 @@
 require 'fhir_models'
 require 'fhir_stu3_models'
 require 'fhir_dstu2_models'
+require_relative 'base_validator'
 
 module FHIRValidator
   # FHIRModelsValidator extends BaseValidator to use the validation in fhir_models.

@@ -2,17 +2,18 @@
 
 require 'rest-client'
 require 'json'
+require_relative 'base_validator'
 
 module FHIRValidator
   # A validator that calls out to Grahame's validator API
   class GrahameValidator < BaseValidator
-    VALIDATOR_URL = 'http://localhost:8080'
+    DEFAULT_EXTERNAL_VALIDATOR_URL = 'http://localhost:8080'
     @profile_urls = nil
     @profile_names = nil
     @profiles_by_ig = nil
 
     def validate(resource, profile)
-      result = RestClient.post "#{VALIDATOR_URL}/validate", resource, params: { profile: profile }
+      result = RestClient.post "#{GrahameValidator.external_validator_url}/validate", resource, params: { profile: profile }
       outcome = FHIR.from_contents(result.body)
       @fatals = issues_by_severity(outcome.issue, 'fatal')
       @errors = issues_by_severity(outcome.issue, 'error')
@@ -21,7 +22,7 @@ module FHIRValidator
     end
 
     def add_profile(profile)
-      RestClient.post "#{VALIDATOR_URL}/profile", profile
+      RestClient.post "#{GrahameValidator.external_validator_url}/profile", profile
       FHIR.from_contents(profile).url
     end
 
@@ -31,7 +32,7 @@ module FHIRValidator
     end
 
     def self.profile_urls
-      @profile_urls ||= JSON.parse(RestClient.get("#{VALIDATOR_URL}/profiles"))
+      @profile_urls ||= JSON.parse(RestClient.get("#{external_validator_url}/profiles"))
     end
 
     def self.profile_names
@@ -40,6 +41,14 @@ module FHIRValidator
 
     def self.profile_url_by_name(name)
       profile_urls.detect { |url| url.include? name }
+    end
+
+    def self.external_validator_url
+      if ENV['external_validator_url']
+        ENV['external_validator_url']
+      else
+        DEFAULT_EXTERNAL_VALIDATOR_URL
+      end
     end
   end
 end
