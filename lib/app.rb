@@ -30,12 +30,14 @@ module FHIRValidator
 
       resource = get_resource(params)
 
-      @validator = case params[:validator]
-                   when 'hl7'
-                     GrahameValidator.new
-                   when 'inferno'
-                     FHIRModelsValidator.new
-                   end
+      # NOTE: We've disabled the FHIRModelsValidator (and the radio button) for the time being
+      # @validator = case params[:validator]
+      #              when 'hl7'
+      #                GrahameValidator.new
+      #              when 'inferno'
+      #                FHIRModelsValidator.new
+      #              end
+      @validator = GrahameValidator.new
 
       if params[:profile]
         @profile_url = GrahameValidator.profile_url_by_name(params[:profile])
