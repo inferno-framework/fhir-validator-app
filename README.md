@@ -1,4 +1,4 @@
-This app is a stand-alone [FHIR](http://fhir.hl7.org/) Resource validator. Using this app, you can upload a FHIR resource and an optional Implementation guide, and have it validated by one of two different validation engines.
+This app is a stand-alone [FHIR](http://fhir.hl7.org/) resource validator. Using this app, you can validate a FHIR resource against an optional FHIR Profile.
 
 ## Running the FHIR Validator App in Docker
 * Build the image, using `docker build . -t fhir_validator_app`
