@@ -2,6 +2,7 @@
 
 require 'active_support/all'
 require 'sinatra'
+require 'sinatra/namespace'
 require 'byebug'
 require 'json'
 Dir[File.join(__dir__, 'app', 'models', 'validators', '*.rb')].each { |file| require file }
@@ -14,41 +15,55 @@ module FHIRValidator
     set :public_folder, (proc { File.join(settings.root, '..', 'public') })
     set :static, true
 
-    get '/' do
-      erb :index
+    # This class method gets used here in the route namespacing
+    def self.base_path
+      "#{ENV['validator_base_path']}"
     end
 
-    get '/profiles' do
-      content_type :json
-      GrahameValidator.profiles_by_ig.to_json
+    helpers do
+      # This helper is used in templates to get the base path, for building URL paths
+      def base_path
+        App.base_path
+      end
     end
 
-    post '/validate' do
-      # if params[:implementation_guide] == 'us_core'
-      #   profile_url = "http://hl7.org/fhir/us/core/StructureDefinition/#{params[:profile]}"
-      # end
-
-      resource = get_resource(params)
-
-      # NOTE: We've disabled the FHIRModelsValidator (and the radio button) for the time being
-      # @validator = case params[:validator]
-      #              when 'hl7'
-      #                GrahameValidator.new
-      #              when 'inferno'
-      #                FHIRModelsValidator.new
-      #              end
-      @validator = GrahameValidator.new
-
-      if params[:profile]
-        @profile_url = GrahameValidator.profile_url_by_name(params[:profile])
-      else
-        profile = get_profile(params)
-        @profile_url = @validator.add_profile(profile)
+    namespace "/#{base_path}" do
+      get '/?' do
+        erb :index
       end
 
-      @validator.validate(resource, @profile_url)
+      get '/profiles' do
+        content_type :json
+        GrahameValidator.profiles_by_ig.to_json
+      end
 
-      erb :validate
+      post '/validate' do
+        # if params[:implementation_guide] == 'us_core'
+        #   profile_url = "http://hl7.org/fhir/us/core/StructureDefinition/#{params[:profile]}"
+        # end
+
+        resource = get_resource(params)
+
+        # NOTE: We've disabled the FHIRModelsValidator (and the radio button) for the time being
+        # @validator = case params[:validator]
+        #              when 'hl7'
+        #                GrahameValidator.new
+        #              when 'inferno'
+        #                FHIRModelsValidator.new
+        #              end
+        @validator = GrahameValidator.new
+
+        if params[:profile]
+          @profile_url = GrahameValidator.profile_url_by_name(params[:profile])
+        else
+          profile = get_profile(params)
+          @profile_url = @validator.add_profile(profile)
+        end
+
+        @validator.validate(resource, @profile_url)
+
+        erb :validate
+      end
     end
 
     private

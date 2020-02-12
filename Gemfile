@@ -15,6 +15,7 @@ gem 'rake'
 gem 'rest-client'
 gem 'rubyzip'
 gem 'sinatra'
+gem 'sinatra-contrib'
 gem 'sqlite3'
 gem 'thin'
 
