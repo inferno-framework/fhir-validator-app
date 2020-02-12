@@ -17,7 +17,11 @@ module FHIRValidator
 
     # This class method gets used here in the route namespacing
     def self.base_path
-      "#{ENV['validator_base_path']}"
+      if ENV['validator_base_path']
+        "/#{ENV['validator_base_path']}"
+      else
+        ""
+      end
     end
 
     helpers do
@@ -27,9 +31,14 @@ module FHIRValidator
       end
     end
 
-    namespace "/#{base_path}" do
+    namespace "#{base_path}" do
       get '/?' do
         erb :index
+      end
+
+      # Returns the static files associated with web app
+      get '/static/*' do
+        call! env.merge('PATH_INFO' => '/' + params['splat'].first)
       end
 
       get '/profiles' do

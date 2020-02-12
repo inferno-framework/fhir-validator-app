@@ -1,3 +1,4 @@
 .byebug_history
 resources/terminology/*
 umls.zip
+.DS_Store
