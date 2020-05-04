@@ -1,47 +1,25 @@
 # frozen_string_literal: true
 
-require 'fhir_models'
-require 'fhir_stu3_models'
-require 'fhir_dstu2_models'
-require_relative 'base_validator'
-
 module FHIRValidator
   # FHIRModelsValidator extends BaseValidator to use the validation in fhir_models.
   # It passes the validation off to the correct model version.
-  class FHIRModelsValidator < BaseValidator
-    def validate(resource, profile_url)
-      run_validation(resource, profile_url, get_model_klass)
-    end
-
-    private
-
-    def run_validation(resource, profile_url, model_klass)
-      begin
-        parsed_resource = model_klass.from_contents(resource)
-      rescue StandardError => e
-        raise ArgumentError, e.message
-      end
-      raise ArgumentError, 'No resource provided' unless parsed_resource
-
+  class FHIRModelsValidator
+    def validate(resource, _fhir_models_klass, profile_url = nil)
       if profile_url
         validator_klass = FHIRValidator::ValidationUtil.definitions[profile_url]
+        errors = validator_klass.validate_resource(resource)
+        warnings = validator_klass.warnings
       else
-        validator_klass = model_klass::Definitions.resource_definition(parsed_resource.resourceType)
+        errors = resource.validate.collect { |k, v| "#{k}: #{v}" }
+        warnings = []
       end
-      @errors = validator_klass.validate_resource(parsed_resource)
-      @warnings = validator_klass.warnings
-    end
 
-    def get_model_klass
-      # case @version
-      #   when 'dstu2'
-      #     FHIR::DSTU2
-      #   when 'stu3'
-      #     FHIR::STU3
-      #   when 'r4'
-      #     FHIR
-      #   end
-      FHIR
+      {
+        errors: errors.reject(&:empty?),
+        warnings: warnings.reject(&:empty?),
+        # This key is included for compatibility with the HL7 Validator class
+        information: []
+      }
     end
   end
 end

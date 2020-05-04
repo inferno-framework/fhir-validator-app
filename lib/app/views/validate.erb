@@ -1,11 +1,20 @@
 <div class="container">
   Validated the uploaded resource against the <code><%= @profile_url %></code> profile
   <br/>
-  <%= erb(:issues, {}, {issues: @validator.fatals, severity: 'fatal'}) %>
+  <%= erb(:issues, {}, {issues: @results[:errors], severity: 'error'}) %>
 
-  <%= erb(:issues, {}, {issues: @validator.errors, severity: 'error'}) %>
+  <%= erb(:issues, {}, {issues: @results[:warnings], severity: 'warning'}) %>
 
-  <%= erb(:issues, {}, {issues: @validator.warnings, severity: 'warning'}) %>
+  <%= erb(:issues, {}, {issues: @results[:information], severity: 'informational'}) %>
+</div>
 
-  <%= erb(:issues, {}, {issues: @validator.informations, severity: 'information'}) %>
+<div class="container">
+  <div id="resource"
+       data-resource-type="<%= @resource_type %>"
+       data-resource-string="<%= @resource_string %>"
+       data-issues-errors="<%= Base64.encode64(@results[:errors].to_json) %>"
+       data-issues-warnings="<%= Base64.encode64(@results[:warnings].to_json) %>"
+       data-issues-information="<%= Base64.encode64(@results[:warnings].to_json) %>"
+  >
+  </div>
 </div>

@@ -4,7 +4,7 @@
     <h1>Validation <%= severity.pluralize(issues.count)%>:</h1>
     <ul>
       <% issues.each do |issue| %>
-        <li><%= issue %></li>
+        <li><%= issue.text %> on line <%= issue.line %>. <a href="#error-<%= issue.line%>">Jump to error.</a></li>
       <% end %>
     </ul>
   <% end %>
