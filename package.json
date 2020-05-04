@@ -1,0 +1,51 @@
+{
+  "name": "fhir-validator-app",
+  "version": "0.0.1",
+  "description": "A Standalone FHIR Validation App",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inferno-community/fhir-validator-app.git"
+  },
+  "keywords": [
+    "fhir",
+    "inferno",
+    "validator"
+  ],
+  "author": "Inferno",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/inferno-community/fhir-validator-app/issues"
+  },
+  "homepage": "https://github.com/inferno-community/fhir-validator-app#readme",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.5.0",
+    "@testing-library/react": "^10.0.4",
+    "@types/jest": "^25.2.1",
+    "@types/react": "^16.9.34",
+    "@types/react-dom": "^16.9.6",
+    "@types/react-syntax-highlighter": "^11.0.4",
+    "jest": "^25.5.3",
+    "source-map-loader": "^0.2.4",
+    "ts-jest": "^25.4.0",
+    "ts-loader": "^7.0.0",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-livereload-plugin": "^2.3.0"
+  },
+  "dependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-syntax-highlighter": "^12.2.1",
+    "react-syntax-highlighter-virtualized-renderer": "^1.1.0"
+  }
+}
