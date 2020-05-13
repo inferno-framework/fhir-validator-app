@@ -58,7 +58,6 @@ module FHIRValidator
         &.extension
         &.find { |e| e.url == 'http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line' }
         &.valueInteger
-        &.next
     end
 
     def self.profile_urls
