@@ -50,12 +50,14 @@ module FHIRValidator
           encoded_name = "#{encode_name(resource['url'])}.json"
           encoded_file_name = File.join(path, encoded_name)
           if File.exist?(encoded_file_name)
-            throw FileExistsException.new("#{encoded_name} already exists for #{resource['url']}") unless resource['url'] == JSON.parse(File.read(encoded_file_name))['url']
+            unless resource['url'] == JSON.parse(File.read(encoded_file_name))['url']
+              throw FileExistsException.new("#{encoded_name} already exists for #{resource['url']}")
+            end
           end
 
           File.open(encoded_file_name, 'w') { |file| file.write(resource.to_json) }
         end
-        File.delete(tar_file_name)
+        # File.delete(tar_file_name)
       end
 
       def encode_name(name)

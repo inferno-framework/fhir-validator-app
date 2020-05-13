@@ -21,9 +21,9 @@ module FHIRValidator
     set :static, true
 
     l = ::Logger.new(STDOUT, level: 'info', progname: 'Inferno')
-          l.formatter = proc do |severity, _datetime, progname, msg|
-            "#{severity} | #{progname} | #{msg}\n"
-          end
+    l.formatter = proc do |severity, _datetime, progname, msg|
+      "#{severity} | #{progname} | #{msg}\n"
+    end
     FHIRValidator.logger = l
 
     # This class method gets used here in the route namespacing
@@ -44,6 +44,7 @@ module FHIRValidator
 
     namespace base_path.to_s do
       get '/?' do
+        @profiles = FHIRValidator::ValidationUtil.fhir_profiles
         erb :index
       end
 
@@ -54,7 +55,7 @@ module FHIRValidator
 
       get '/profiles' do
         content_type :json
-        HL7Validator.profiles_by_ig.to_json
+        FHIRValidator::ValidationUtil.fhir_profiles.to_json
       end
 
       post '/validate' do

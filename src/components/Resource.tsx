@@ -1,6 +1,6 @@
-import * as React from "react";
+import React from "react";
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco as style } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { docco as style } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 import { Issue } from '../models/Issue';
 
 export interface ResourceProps {
@@ -42,14 +42,14 @@ export class Resource extends React.Component<ResourceProps, {}> {
   }
 
   highlightProps(lineNumber: number, issueLines: number[]): any {
-  let style = { 'backgroundColor': '' };
-  let className = null;
-  if (issueLines.includes(lineNumber)) {
-    style.backgroundColor = "#ff9e9e";
-    return { style: style, id: `error-${lineNumber}`}
+    let style = { 'backgroundColor': '' };
+    let className = null;
+    if (issueLines.includes(lineNumber)) {
+      style.backgroundColor = "#ff9e9e";
+      return { style: style, id: `error-${lineNumber}`}
+    }
+    return { style: style };
   }
-  return { style: style };
-}
 
   decodeResource(resourceString: string):string {
     return atob(resourceString);

@@ -241,7 +241,9 @@ module FHIRValidator
         raise(UnknownValueSetException, valueset_url) unless validation_fn
       else
         validation_fn = FHIR::StructureDefinition.vs_validators[system]
-        raise(FHIRValidator::Terminology::ValueSet::UnknownCodeSystemException, system) unless validation_fn
+        unless validation_fn
+          raise(FHIRValidator::Terminology::ValueSet::UnknownCodeSystemException, system)
+        end
       end
 
       if system

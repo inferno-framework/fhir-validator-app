@@ -2,7 +2,7 @@ const liveReload = require('webpack-livereload-plugin');
 const path = require('path');
 
 module.exports = {
-    mode: "production",
+    mode: "development",
 
     watch: true,
 
@@ -50,5 +50,9 @@ module.exports = {
     plugins: [
         new liveReload()
     ],
+
+    optimization: {
+        usedExports: true
+    }
     
 };

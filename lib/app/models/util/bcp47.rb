@@ -27,7 +27,9 @@ module FHIRValidator
           next if language['Subtag'].nil?
           next if language['Type'] == 'region'
 
-          cs_set.add(system: 'urn:ietf:bcp:47', code: language['Subtag']) if meets_filter_criteria?(language, filter)
+          if meets_filter_criteria?(language, filter)
+            cs_set.add(system: 'urn:ietf:bcp:47', code: language['Subtag'])
+          end
         end
         cs_set
       end

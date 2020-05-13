@@ -32,6 +32,7 @@
     "@types/jest": "^25.2.1",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
+    "@types/react-select": "^3.0.12",
     "@types/react-syntax-highlighter": "^11.0.4",
     "jest": "^25.5.3",
     "source-map-loader": "^0.2.4",
@@ -45,6 +46,7 @@
   "dependencies": {
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-select": "^3.1.0",
     "react-syntax-highlighter": "^12.2.1",
     "react-syntax-highlighter-virtualized-renderer": "^1.1.0"
   }

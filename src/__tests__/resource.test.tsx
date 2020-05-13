@@ -20,6 +20,7 @@ describe("<Resource />", () => {
     const { findByTestId } = renderResource();
     const resource = await findByTestId("syntax-highlight");
 
-    expect(screen.queryByText('foo')).not.toBeNull();
+    expect(resource).toHaveTextContent(/foo/);
+    expect(resource).toHaveTextContent(/bar/);
   });
 });

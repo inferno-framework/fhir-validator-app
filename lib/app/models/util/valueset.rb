@@ -86,7 +86,7 @@ module FHIRValidator
         expansion_backbone = FHIR::ValueSet::Expansion.new
         expansion_backbone.timestamp = DateTime.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
         expansion_backbone.contains = valueset.map do |code|
-          FHIR::ValueSet::Expansion::Contains.new({ system: code[:system], code: code[:code] })
+          FHIR::ValueSet::Expansion::Contains.new(system: code[:system], code: code[:code])
         end
         expansion_backbone.total = expansion_backbone.contains.length
         expansion_valueset = @valueset_model.deep_dup # Make a copy so that the original definition is left intact
@@ -291,7 +291,9 @@ module FHIRValidator
         end
 
         filtered_set = Set.new
-        raise FilterOperationException, filter&.op unless ['=', 'in', 'is-a', nil].include? filter&.op
+        unless ['=', 'in', 'is-a', nil].include? filter&.op
+          raise FilterOperationException, filter&.op
+        end
         raise UnknownCodeSystemException, system if SAB[system].nil?
 
         if filter.nil?

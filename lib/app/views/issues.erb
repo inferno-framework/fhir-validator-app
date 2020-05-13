@@ -1,7 +1,7 @@
 <% if issues.blank? %>
-    <h1>No validation <%= severity %> issues found</h1>
+    <h2>No validation <%= severity %> issues found</h2>
   <% else %>
-    <h1>Validation <%= severity.pluralize(issues.count)%>:</h1>
+    <h2>Validation <%= severity.pluralize(issues.count)%>:</h2>
     <ul>
       <% issues.each do |issue| %>
         <li><%= issue.text %> on line <%= issue.line %>. <a href="#error-<%= issue.line%>">Jump to error.</a></li>

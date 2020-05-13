@@ -73,11 +73,7 @@ module FHIRValidator
     end
 
     def self.external_validator_url
-      if ENV['external_validator_url']
-        ENV['external_validator_url']
-      else
-        DEFAULT_EXTERNAL_VALIDATOR_URL
-      end
+      ENV['external_validator_url'] || DEFAULT_EXTERNAL_VALIDATOR_URL
     end
   end
 end
