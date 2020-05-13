@@ -68,8 +68,8 @@ module FHIRValidator
 
         @validator = HL7Validator.new
 
-        if params[:profile]
-          @profile_url = HL7Validator.profile_url_by_name(params[:profile])
+        if params[:profile].present?
+          @profile_url = params[:profile]
         else
           profile = get_profile(params)
           @profile_url = @validator.add_profile(profile)

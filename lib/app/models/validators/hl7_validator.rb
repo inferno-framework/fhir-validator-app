@@ -31,6 +31,11 @@ module FHIRValidator
       }
     end
 
+    def add_profile(profile)
+      RestClient.post "#{HL7Validator.external_validator_url}/profile", profile
+      FHIR.from_contents(profile).url
+    end
+
     private
 
     def issues_by_severity(issues, severity)
@@ -54,11 +59,6 @@ module FHIRValidator
         &.find { |e| e.url == 'http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line' }
         &.valueInteger
         &.next
-    end
-
-    def add_profile(profile)
-      RestClient.post "#{GrahameValidator.external_validator_url}/profile", profile
-      FHIR.from_contents(profile).url
     end
 
     def self.profile_urls
