@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
 require 'active_support/all'
+require 'base64'
 require 'sinatra'
+require 'sinatra/base'
+require 'sinatra/custom_logger'
 require 'sinatra/namespace'
-require 'byebug'
+require 'pry'
 require 'json'
+require 'fhir_models'
+require 'nokogiri'
 Dir[File.join(__dir__, 'app', 'models', 'validators', '*.rb')].each { |file| require file }
 Dir[File.join(__dir__, 'app', 'models', 'util', '*.rb')].each { |file| require file }
 
@@ -15,12 +20,18 @@ module FHIRValidator
     set :public_folder, (proc { File.join(settings.root, '..', 'public') })
     set :static, true
 
+    l = ::Logger.new(STDOUT, level: 'info', progname: 'Inferno')
+    l.formatter = proc do |severity, _datetime, progname, msg|
+      "#{severity} | #{progname} | #{msg}\n"
+    end
+    FHIRValidator.logger = l
+
     # This class method gets used here in the route namespacing
     def self.base_path
       if ENV['validator_base_path']
         "/#{ENV['validator_base_path']}"
       else
-        ""
+        ''
       end
     end
 
@@ -31,8 +42,9 @@ module FHIRValidator
       end
     end
 
-    namespace "#{base_path}" do
+    namespace base_path.to_s do
       get '/?' do
+        @profiles = FHIRValidator::ValidationUtil.fhir_profiles
         erb :index
       end
 
@@ -43,7 +55,7 @@ module FHIRValidator
 
       get '/profiles' do
         content_type :json
-        GrahameValidator.profiles_by_ig.to_json
+        FHIRValidator::ValidationUtil.fhir_profiles.to_json
       end
 
       post '/validate' do
@@ -51,25 +63,20 @@ module FHIRValidator
         #   profile_url = "http://hl7.org/fhir/us/core/StructureDefinition/#{params[:profile]}"
         # end
 
-        resource = get_resource(params)
+        resource_blob = get_resource(params)
+        @resource_type = Nokogiri::XML(resource_blob).errors.empty? ? 'xml' : 'json'
 
-        # NOTE: We've disabled the FHIRModelsValidator (and the radio button) for the time being
-        # @validator = case params[:validator]
-        #              when 'hl7'
-        #                GrahameValidator.new
-        #              when 'inferno'
-        #                FHIRModelsValidator.new
-        #              end
-        @validator = GrahameValidator.new
+        @validator = HL7Validator.new
 
-        if params[:profile]
-          @profile_url = GrahameValidator.profile_url_by_name(params[:profile])
+        if params[:profile].present?
+          @profile_url = params[:profile]
         else
           profile = get_profile(params)
           @profile_url = @validator.add_profile(profile)
         end
 
-        @validator.validate(resource, @profile_url)
+        @results = @validator.validate(resource_blob, @resource_type, FHIR, @profile_url)
+        @resource_string = Base64.encode64(resource_blob)
 
         erb :validate
       end

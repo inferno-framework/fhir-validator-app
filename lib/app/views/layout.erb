@@ -26,7 +26,7 @@
 
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="<%= base_path %>">FHIR Validator</a>
+      <a class="navbar-brand" href="<%= base_path %>/">FHIR Validator</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -39,5 +39,16 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="<%= base_path %>/static/js/typeahead.bundle.js"></script>
     <script src="<%= base_path %>/static/js/app.js"></script>
+
+    <% if ENV['RACK_ENV'] == 'development' %>
+      <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+      <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+      <script src="http://localhost:35729/livereload.js"></script>
+    <% else %>
+      <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+      <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <% end %>
+
+    <script src="<%= base_path%>/static/js/dist/main.js"></script>
   </body>
 </html>

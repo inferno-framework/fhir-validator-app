@@ -11,6 +11,7 @@ gem 'fhir_models'
 gem 'fhir_stu3_models'
 # gem 'fhir_stu3_models', path: '../fhir_stu3_models'
 
+gem 'nokogiri'
 gem 'rake'
 gem 'rest-client'
 gem 'rubyzip'
@@ -20,7 +21,7 @@ gem 'sqlite3'
 gem 'thin'
 
 group :development, :test do
-  gem 'byebug'
+  gem 'pry'
 end
 
 group :test do

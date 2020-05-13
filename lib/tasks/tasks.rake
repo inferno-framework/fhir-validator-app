@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'bloomer'
-require 'byebug'
+require 'pry'
 require 'rest-client'
 require 'zip'
 require 'yaml'
