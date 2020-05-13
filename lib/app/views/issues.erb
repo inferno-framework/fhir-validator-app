@@ -3,7 +3,7 @@
   <% else %>
     <h2>Validation <%= severity.pluralize(issues.count)%>:</h2>
     <ul>
-      <% issues.each do |issue| %>
+      <% issues.sort.each do |issue| %>
         <li><%= issue.text %> on line <%= issue.line %>. <a href="#error-<%= issue.line%>">Jump to error.</a></li>
       <% end %>
     </ul>

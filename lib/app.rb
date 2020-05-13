@@ -64,7 +64,6 @@ module FHIRValidator
         # end
 
         resource_blob = get_resource(params)
-        resource = FHIR.from_contents(resource_blob)
         @resource_type = Nokogiri::XML(resource_blob).errors.empty? ? 'xml' : 'json'
 
         @validator = HL7Validator.new
@@ -76,7 +75,7 @@ module FHIRValidator
           @profile_url = @validator.add_profile(profile)
         end
 
-        @results = @validator.validate(resource, FHIR, @profile_url)
+        @results = @validator.validate(resource_blob, @resource_type, FHIR, @profile_url)
         @resource_string = Base64.encode64(resource_blob)
 
         erb :validate

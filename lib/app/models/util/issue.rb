@@ -11,5 +11,9 @@ module FHIRValidator
       self.line = line
       self.text = text
     end
+
+    def <=>(other)
+      self.line <=> other.line
+    end
   end
 end

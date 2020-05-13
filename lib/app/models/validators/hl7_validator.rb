@@ -11,13 +11,14 @@ module FHIRValidator
     @profile_names = nil
     @profiles_by_ig = nil
 
-    def validate(resource, fhir_models_klass, profile_url = nil)
+    def validate(resource_blob, resource_type, fhir_models_klass, profile_url = nil)
+      resource = fhir_models_klass.from_contents(resource_blob)
       profile_url ||= fhir_models_klass::Definitions.resource_definition(resource.resourceType).url
 
       FHIRValidator.logger.info("Validating #{resource.resourceType} resource with id #{resource.id}")
       FHIRValidator.logger.info("POST #{@validator_url}/validate?profile=#{profile_url}")
 
-      result = RestClient.post "#{HL7Validator.external_validator_url}/validate", resource.to_json, params: { profile: profile_url }
+      result = RestClient.post "#{HL7Validator.external_validator_url}/validate", resource_blob, params: { profile: profile_url }
       outcome = fhir_models_klass.from_contents(result.body)
       fatals = issues_by_severity(outcome.issue, 'fatal')
       errors = issues_by_severity(outcome.issue, 'error')
