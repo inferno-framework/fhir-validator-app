@@ -11,3 +11,5 @@ services:
       - "4567:4567"
   fhir_validator_wrapper:
     image: infernocommunity/fhir-validator-wrapper:latest
+    volumes:
+      - ./igs:/home/igs/package
