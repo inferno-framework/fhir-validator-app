@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { Resource } from "./components/Resource";
-import { ProfileSelect } from "./components/ProfileSelect";
 
 import { SelectOption } from './models/SelectOption';
 import { ProfileForm } from "./components/ProfileForm";
