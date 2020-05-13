@@ -1,7 +1,12 @@
 import React from "react";
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco as style } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
+import SyntaxHighlighter from 'react-syntax-highlighter/dist/cjs/light';
+import json from 'react-syntax-highlighter/dist/cjs/languages/hljs/json';
+import xml from 'react-syntax-highlighter/dist/cjs/languages/hljs/xml';
+import docco from 'react-syntax-highlighter/dist/cjs/styles/hljs/docco';
+
 import { Issue } from '../models/Issue';
+SyntaxHighlighter.registerLanguage('JSON', json);
+SyntaxHighlighter.registerLanguage('XML', xml);
 
 export interface ResourceProps {
   readonly resource: string;
@@ -26,16 +31,16 @@ export class Resource extends React.Component<ResourceProps, {}> {
     const issueLines = errors.map(e => e.line);
     return(
       <SyntaxHighlighter language={this.props.resourceType} 
-                         style={style}
-                         showLineNumbers={true}
-                         wrapLines={true}
-                         lineProps={(lineNumber: number) => {
-                           return this.highlightProps(lineNumber, issueLines);
-                         }}
-                         lineNumberProps={(lineNumber: number) => {
-                             return this.highlightProps(lineNumber, issueLines);
-                         }}
-                         data-testid="syntax-highlight">
+        style={docco}
+        showLineNumbers={true}
+        wrapLines={true}
+        lineProps={(lineNumber: number) => {
+          return this.highlightProps(lineNumber, issueLines);
+        }}
+        lineNumberProps={(lineNumber: number) => {
+            return this.highlightProps(lineNumber, issueLines);
+        }}
+        data-testid="syntax-highlight">
         { this.decodeResource(this.props.resource) }
       </SyntaxHighlighter>
     );

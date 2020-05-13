@@ -4,7 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 
 module.exports = merge(common, {
-  mode: "development",
+  mode: "production",
 
   // Enable sourcemaps for debugging webpack's output.
   devtool: "source-map",
@@ -12,4 +12,10 @@ module.exports = merge(common, {
   plugins: [
     new CleanWebpackPlugin()
   ],
+
+  optimization: {
+    removeAvailableModules: true,
+    removeEmptyChunks: true,
+    usedExports: true
+  }
 });
