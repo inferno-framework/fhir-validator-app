@@ -1,14 +1,6 @@
-const liveReload = require('webpack-livereload-plugin');
 const path = require('path');
 
 module.exports = {
-    mode: "development",
-
-    watch: true,
-
-    // Enable sourcemaps for debugging webpack's output.
-    devtool: "source-map",
-
     resolve: {
         // Add '.ts' and '.tsx' as resolvable extensions.
         extensions: [".ts", ".tsx", ".jsx", ".js"]
@@ -46,10 +38,6 @@ module.exports = {
         "react": "React",
         "react-dom": "ReactDOM"
     },
-
-    plugins: [
-        new liveReload()
-    ],
 
     optimization: {
         usedExports: true
