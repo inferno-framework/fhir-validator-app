@@ -1,5 +1,15 @@
 <div class="container">
-  Validated the uploaded resource against the <code><%= @profile_url %></code> profile
+  Validated the uploaded resource against the
+  <% if @profile_urls.count <= 1 %>
+     <code><%= @profile_urls.first %></code> StructureDefinition
+  <% else %>
+    following StructureDefinitions:
+    <ul>
+      <% @profile_urls.each do |profile_url| %>
+        <li><code><%= profile_url %></code></li>
+      <% end %>
+    </ul>
+  <% end %>
   <br/>
   <%= erb(:issues, {}, {issues: @results[:errors], severity: 'error'}) %>
 
