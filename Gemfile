@@ -29,4 +29,5 @@ group :test do
   gem 'rack-test'
   gem 'rubocop', require: false
   gem 'simplecov', require: false
+  gem 'webmock'
 end

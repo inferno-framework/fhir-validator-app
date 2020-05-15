@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module FHIRValidator
+  # BCP47 supports validating language tags, as following the IETF:BCP:47 document
   module BCP47
     # https://tools.ietf.org/html/bcp47
     # https://tools.ietf.org/html/rfc5646
@@ -27,9 +28,7 @@ module FHIRValidator
           next if language['Subtag'].nil?
           next if language['Type'] == 'region'
 
-          if meets_filter_criteria?(language, filter)
-            cs_set.add(system: 'urn:ietf:bcp:47', code: language['Subtag'])
-          end
+          cs_set.add(system: 'urn:ietf:bcp:47', code: language['Subtag']) if meets_filter_criteria?(language, filter)
         end
         cs_set
       end

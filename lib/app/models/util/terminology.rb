@@ -7,6 +7,7 @@ require_relative 'fhir_package_manager'
 require 'fileutils'
 
 module FHIRValidator
+  # Terminology allows for the loading and building of valueset validators for given IGs
   class Terminology
     SKIP_SYS = [
       'http://hl7.org/fhir/ValueSet/message-events', # has 0 codes
@@ -22,6 +23,7 @@ module FHIRValidator
     ].freeze
 
     PACKAGE_DIR = File.join('tmp', 'terminology', 'fhir')
+    LOAD_RESOURCES = ['ValueSet', 'CodeSystem'].freeze
 
     @known_valuesets = {}
     @valueset_ids = nil
@@ -33,17 +35,17 @@ module FHIRValidator
 
     def self.load_fhir_r4
       FileUtils.mkdir_p PACKAGE_DIR
-      FHIRPackageManager.get_package('hl7.fhir.r4.core#4.0.1', PACKAGE_DIR, ['ValueSet', 'CodeSystem'])
+      FHIRPackageManager.get_package('hl7.fhir.r4.core#4.0.1', PACKAGE_DIR, LOAD_RESOURCES)
     end
 
     def self.load_us_core
       FileUtils.mkdir_p PACKAGE_DIR
-      FHIRPackageManager.get_package('hl7.fhir.us.core#3.1.0', PACKAGE_DIR, ['ValueSet', 'CodeSystem'])
+      FHIRPackageManager.get_package('hl7.fhir.us.core#3.1.0', PACKAGE_DIR, LOAD_RESOURCES)
     end
 
     def self.load_fhir_expansions
       FileUtils.mkdir_p PACKAGE_DIR
-      FHIRPackageManager.get_package('hl7.fhir.r4.expansions#4.0.1', PACKAGE_DIR, ['ValueSet', 'CodeSystem'])
+      FHIRPackageManager.get_package('hl7.fhir.r4.expansions#4.0.1', PACKAGE_DIR, LOAD_RESOURCES)
     end
 
     def self.load_valuesets_from_directory(directory, include_subdirectories = false)
@@ -56,7 +58,7 @@ module FHIRValidator
       end
     end
 
-    # Creates the valueset validators, based on the passed in parameters and the @known_valuesets hash
+    # Creates the valueset validators, based on the passed in parameters and the @known_valuesets
     # @param type [Symbol] the type of validators to create, either :bloom or :csv
     # @param selected_module [Symbol]/[String], the name of the module to build validators for, or :all (default)
     # @param [String] minimum_binding_strength the lowest binding strength for which we should build validators
@@ -76,8 +78,17 @@ module FHIRValidator
         filename = "#{root_dir}/#{(URI(vs.url).host + URI(vs.url).path).gsub(%r{[./]}, '_')}"
         begin
           save_to_file(vs.valueset, filename, type)
-          validators << { url: k, file: name_by_type(File.basename(filename), type), count: vs.count, type: type.to_s, code_systems: vs.included_code_systems }
-        rescue ValueSet::UnknownCodeSystemException, ValueSet::FilterOperationException, UnknownValueSetException, URI::InvalidURIError => e
+          validators << {
+            url: k,
+            file: name_by_type(File.basename(filename), type),
+            count: vs.count,
+            type: type.to_s,
+            code_systems: vs.included_code_systems
+          }
+        rescue ValueSet::UnknownCodeSystemException,
+               ValueSet::FilterOperationException,
+               UnknownValueSetException,
+               URI::InvalidURIError => e
           FHIRValidator.logger.warn "#{e.message} for ValueSet: #{k}"
           next
         end
@@ -95,8 +106,17 @@ module FHIRValidator
           cs = vs.code_system_set(cs_name)
           filename = "#{root_dir}/#{bloom_file_name(cs_name)}"
           save_to_file(cs, filename, type)
-          validators << { url: cs_name, file: name_by_type(File.basename(filename), type), count: cs.length, type: type.to_s, code_systems: cs_name }
-        rescue ValueSet::UnknownCodeSystemException, ValueSet::FilterOperationException, UnknownValueSetException, URI::InvalidURIError => e
+          validators << {
+            url: cs_name,
+            file: name_by_type(File.basename(filename), type),
+            count: cs.length,
+            type: type.to_s,
+            code_systems: cs_name
+          }
+        rescue ValueSet::UnknownCodeSystemException,
+               ValueSet::FilterOperationException,
+               UnknownValueSetException,
+               URI::InvalidURIError => e
           FHIRValidator.logger.warn "#{e.message} for CodeSystem #{cs_name}"
           next
         end
@@ -221,7 +241,10 @@ module FHIRValidator
     def self.missing_validators
       return @missing_validators if @missing_validators
 
-      required_valuesets = FHIRValidator::Module.get('uscore_v3.1.0').value_sets.reject { |vs| vs[:strength] == 'example' }.collect { |vs| vs[:value_set_url] }
+      required_valuesets = FHIRValidator::Module.get('uscore_v3.1.0')
+        .value_sets
+        .reject { |vs| vs[:strength] == 'example' }
+        .collect { |vs| vs[:value_set_url] }
       @missing_validators = required_valuesets.compact - FHIRValidator::Terminology.loaded_validators.keys.compact
     end
 
@@ -241,9 +264,7 @@ module FHIRValidator
         raise(UnknownValueSetException, valueset_url) unless validation_fn
       else
         validation_fn = FHIR::StructureDefinition.vs_validators[system]
-        unless validation_fn
-          raise(FHIRValidator::Terminology::ValueSet::UnknownCodeSystemException, system)
-        end
+        raise(FHIRValidator::Terminology::ValueSet::UnknownCodeSystemException, system) unless validation_fn
       end
 
       if system
@@ -255,6 +276,7 @@ module FHIRValidator
       end
     end
 
+    # UnknownValueSetException is thrown when a valueset is requested that we don't know about
     class UnknownValueSetException < StandardError
       def initialize(value_set)
         super("Unknown ValueSet: #{value_set}")

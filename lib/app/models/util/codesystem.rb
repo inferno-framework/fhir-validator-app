@@ -5,6 +5,7 @@ require_relative 'bcp47'
 
 module FHIRValidator
   class Terminology
+    # Codesystem is a class to support filtering code systems based on filter criteria
     class Codesystem
       attr_accessor :codesystem_model
 

@@ -1,0 +1,340 @@
+{
+  "resourceType": "MeasureReport",
+  "id": "ExampleNJ-20200404-CDCPatientImpactAndHospitalCapacity",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/us/saner/StructureDefinition/PublicHealthMeasureReport"
+    ]
+  },
+  "type": "summary",
+  "status": "complete",
+  "language": "Pig Latin",
+  "measure": "http://hl7.org/fhir/us/saner/Measure/CDCPatientImpactAndHospitalCapacity",
+  "subject": {
+    "extension": [
+      {
+        "url": "http://hl7.org/fhir/us/saner/StructureDefinition/GeoLocation",
+        "extension": [
+          {
+            "url": "latitude",
+            "valueDecimal": 40.1907
+          },
+          {
+            "url": "longitude",
+            "valueDecimal": 74.6728
+          }
+        ]
+      }
+    ],
+    "identifier": {
+      "system": "https://www.census.gov/geographies",
+      "value": "34"
+    },
+    "type": "State",
+    "reference": "Location/states-NJ",
+    "display": "State of New Jersey"
+  },
+  "reporter": {
+    "reference": "Organization/NJ-DPH",
+    "display": "New Jersey Department of Public Health"
+  },
+  "identifier": [
+    {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:uuid:f87d8777-876e-11ea-1639-09173f13e4c5"
+    }
+  ],
+  "date": "2020-04-04",
+  "period": {
+    "start": "2020-04-04"
+  },
+  "group": [
+    {
+      "code": {
+        "coding": [
+          {
+            "code": "Beds",
+            "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasureGroupSystem"
+          }
+        ]
+      },
+      "population": [
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numTotBeds",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "initial-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "count": 20000
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numBeds",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "measure-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "count": 15000
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numBedsOcc",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "measure-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "_count": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+                "valueCode": "unsupported"
+              }
+            ]
+          }
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numICUBeds",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "measure-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "count": 2500
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numICUBedsOcc",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "measure-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "_count": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+                "valueCode": "unsupported"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "code": {
+        "coding": [
+          {
+            "code": "Ventilators",
+            "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasureGroupSystem"
+          }
+        ]
+      },
+      "population": [
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numVent",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "initial-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "count": 2250
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numVentUse",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "measure-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "_count": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+                "valueCode": "unsupported"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "code": {
+        "coding": [
+          {
+            "code": "Encounters",
+            "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasureGroupSystem"
+          }
+        ]
+      },
+      "population": [
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numC19HospPats",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "measure-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "count": 4000
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numC19MechVentPats",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "measure-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "_count": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+                "valueCode": "unsupported"
+              }
+            ]
+          }
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numC19HOPats",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "measure-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "_count": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+                "valueCode": "unsupported"
+              }
+            ]
+          }
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numC19OverflowPats",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "measure-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "_count": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+                "valueCode": "unsupported"
+              }
+            ]
+          }
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numC19OFMechVentPats",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "measure-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "_count": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+                "valueCode": "unsupported"
+              }
+            ]
+          }
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "code": "numC19Died",
+                "system": "http://hl7.org/fhir/us/saner/CodeSystem/MeasurePopulationSystem"
+              },
+              {
+                "code": "measure-population",
+                "system": "http://terminology.hl7.org/CodeSystem/measure-population"
+              }
+            ]
+          },
+          "_count": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+                "valueCode": "unsupported"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

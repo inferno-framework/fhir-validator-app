@@ -2,6 +2,7 @@
 
 module FHIRValidator
   class Terminology
+    # BCP13 supports validation of MIME types, as per IETF:BCP:13
     module BCP13
       @code_set = nil
 
