@@ -99,7 +99,7 @@ module FHIRValidator
       resource_profiles = resource&.meta&.profile
       if resource_profiles.present?
         profile_urls.concat(resource_profiles)
-        profile_urls = @profile_urls.compact.uniq
+        profile_urls = profile_urls.compact.uniq
       end
 
       # If we still don't have any profiles to validate against, just grab the base FHIR structDef for the resource
