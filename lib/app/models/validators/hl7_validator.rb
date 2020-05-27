@@ -20,11 +20,11 @@ module FHIRValidator
       FHIRValidator.logger.info("POST #{@validator_url}/validate?profile=#{profile_urls.join(',')}")
 
       content_type = case resource_type
-      when 'json'
-        'application/fhir+json'
-      when 'xml'
-        'application/fhir+xml'
-      end
+                     when 'json'
+                       'application/fhir+json'
+                     when 'xml'
+                       'application/fhir+xml'
+                     end
 
       result = RestClient.post(
         "#{HL7Validator.external_validator_url}/validate",

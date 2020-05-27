@@ -99,9 +99,8 @@ module FHIRValidator
       end
 
       # If we still don't have any profiles to validate against, just grab the base FHIR structDef for the resource
-      if profile_urls.empty?
-        profile_urls = [FHIR::Definitions.resource_definition(resource.resourceType).url]
-      end
+      profile_urls = [FHIR::Definitions.resource_definition(resource.resourceType).url] if profile_urls.empty?
+
       profile_urls
     end
 
