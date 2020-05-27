@@ -13,7 +13,7 @@ module FHIRValidator
     @profile_names = nil
     @profiles_by_ig = nil
 
-    def validate(resource_blob, resource_type, fhir_models_klass, profile_urls = [])
+    def validate(resource_blob, resource_type, fhir_models_klass, profile_urls)
       resource = fhir_models_klass.from_contents(resource_blob)
 
       FHIRValidator.logger.info("Validating #{resource.resourceType} resource with id #{resource.id}")

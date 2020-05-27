@@ -17,7 +17,7 @@ describe FHIRValidator::HL7Validator do
           body: patient.to_json
         )
         .to_return(status: 200, body: load_fixture('resources/validator_good_response.json'))
-      result = @validator.validate(patient.to_json, FHIR)
+      result = @validator.validate(patient.to_json, 'json', FHIR, ['http://hl7.org/fhir/StructureDefinition/Patient'])
 
       assert_empty result[:errors]
       assert_empty result[:warnings]
@@ -32,7 +32,7 @@ describe FHIRValidator::HL7Validator do
           body: patient.to_json
         )
         .to_return(status: 200, body: load_fixture('resources/validator_invalid_code_response.json'))
-      result = @validator.validate(patient.to_json, FHIR)
+      result = @validator.validate(patient.to_json, 'json', FHIR, ['http://hl7.org/fhir/StructureDefinition/Patient'])
 
       assert_equal 2, result[:errors].size
       assert_equal 1, result[:warnings].size
@@ -50,7 +50,7 @@ describe FHIRValidator::HL7Validator do
           body: patient.to_json
         )
         .to_return(status: 200, body: load_fixture('resources/validator_bad_response.json'))
-      result = @validator.validate(patient.to_json, FHIR)
+      result = @validator.validate(patient.to_json, 'json', FHIR, ['http://hl7.org/fhir/StructureDefinition/Patient'])
 
       assert_equal 2, result[:errors].size
       assert_equal 1, result[:warnings].size
