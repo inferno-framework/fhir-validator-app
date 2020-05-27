@@ -64,18 +64,14 @@ module FHIRValidator
         # end
 
         resource_blob = get_resource(params)
+        resource = FHIR.from_contents(resource_blob)
         @resource_type = Nokogiri::XML(resource_blob).errors.empty? ? 'xml' : 'json'
 
         @validator = HL7Validator.new
 
-        if params[:profile].present?
-          @profile_url = params[:profile]
-        else
-          profile = get_profile(params)
-          @profile_url = @validator.add_profile(profile)
-        end
+        @profile_urls = get_profile_urls(resource, params)
 
-        @results = @validator.validate(resource_blob, @resource_type, FHIR, @profile_url)
+        @results = @validator.validate(resource_blob, @resource_type, FHIR, @profile_urls)
         @resource_string = Base64.encode64(resource_blob)
 
         erb :validate
@@ -83,6 +79,35 @@ module FHIRValidator
     end
 
     private
+
+    def get_profile_urls(resource, params)
+      # If the user sent in a profile url, just use that
+      if params[:profile].present?
+        profile_urls = [params[:profile]]
+      else
+        # If the user didn't send in a profile url, see if they sent in a profile file
+        # that we'll have to send to the validator wrapper
+        profile = get_profile(params)
+        profile_urls = if profile.present?
+                         [@validator.add_profile(profile)]
+                       else
+                         []
+                       end
+      end
+
+      # Add on profiles from the `meta` field on the profile, if any
+      resource_profiles = resource&.meta&.profile
+      if resource_profiles.present?
+        profile_urls.concat(resource_profiles)
+        profile_urls = profile_urls.compact.uniq
+      end
+
+      # If we still don't have any profiles to validate against, just grab the base FHIR structDef for the resource
+      if profile_urls.empty?
+        profile_urls = [FHIR::Definitions.resource_definition(resource.resourceType).url]
+      end
+      profile_urls
+    end
 
     def get_resource(params)
       resource_file = params.dig(:resource, :tempfile)
