@@ -59,10 +59,6 @@ module FHIRValidator
       end
 
       post '/validate' do
-        # if params[:implementation_guide] == 'us_core'
-        #   profile_url = "http://hl7.org/fhir/us/core/StructureDefinition/#{params[:profile]}"
-        # end
-
         resource_blob = get_resource(params)
         resource = FHIR.from_contents(resource_blob)
         @resource_type = Nokogiri::XML(resource_blob).errors.empty? ? 'xml' : 'json'
@@ -103,9 +99,8 @@ module FHIRValidator
       end
 
       # If we still don't have any profiles to validate against, just grab the base FHIR structDef for the resource
-      if profile_urls.empty?
-        profile_urls = [FHIR::Definitions.resource_definition(resource.resourceType).url]
-      end
+      profile_urls = [FHIR::Definitions.resource_definition(resource.resourceType).url] if profile_urls.empty?
+
       profile_urls
     end
 

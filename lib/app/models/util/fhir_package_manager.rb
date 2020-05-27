@@ -6,6 +6,7 @@ require 'zlib'
 require 'json'
 
 module FHIRValidator
+  # FHIRPackageManager is an interface into the NPM FHIR Packages, for getting terminology files
   module FHIRPackageManager
     class << self
       REGISTRY_SERVER_URL = 'https://packages.fhir.org'
@@ -57,13 +58,14 @@ module FHIRValidator
 
           File.open(encoded_file_name, 'w') { |file| file.write(resource.to_json) }
         end
-        # File.delete(tar_file_name)
+        File.delete(tar_file_name)
       end
 
       def encode_name(name)
         Zlib.crc32(name)
       end
 
+      # FileExistsException gets thrown when the file being written already exists
       class FileExistsException < StandardError
         def initialize(value_set)
           super(value_set.to_s)

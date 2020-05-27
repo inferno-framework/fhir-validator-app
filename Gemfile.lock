@@ -1,11 +1,14 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (5.2.3)
+    activesupport (6.0.3.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+      zeitwerk (~> 2.2, >= 2.2.2)
+    addressable (2.7.0)
+      public_suffix (>= 2.0.2, < 5.0)
     ast (2.4.0)
     backports (3.16.0)
     bcp47 (0.3.3)
@@ -15,7 +18,9 @@ GEM
       bitarray
       msgpack
     coderay (1.1.2)
-    concurrent-ruby (1.1.5)
+    concurrent-ruby (1.1.6)
+    crack (0.4.3)
+      safe_yaml (~> 1.0.0)
     daemons (1.3.1)
     date_time_precision (0.8.1)
     docile (1.3.2)
@@ -37,10 +42,11 @@ GEM
       date_time_precision (>= 0.8)
       mime-types (>= 3.0)
       nokogiri (>= 1.10.4)
+    hashdiff (1.0.0)
     http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
-    i18n (1.7.0)
+    i18n (1.8.2)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.3)
     json (2.2.0)
@@ -49,12 +55,12 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.1009)
     mini_portile2 (2.4.0)
-    minitest (5.12.2)
+    minitest (5.14.1)
     msgpack (1.3.1)
     multi_json (1.14.1)
     mustermann (1.0.3)
     netrc (0.11.0)
-    nokogiri (1.10.4)
+    nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)
     parallel (1.18.0)
     parser (2.6.5.0)
@@ -62,7 +68,8 @@ GEM
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
-    rack (2.0.7)
+    public_suffix (4.0.3)
+    rack (2.2.2)
     rack-protection (2.0.7)
       rack
     rack-test (1.1.0)
@@ -83,6 +90,7 @@ GEM
       unicode-display_width (>= 1.4.0, < 1.7)
     ruby-progressbar (1.10.1)
     rubyzip (1.3.0)
+    safe_yaml (1.0.5)
     simplecov (0.17.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -107,12 +115,17 @@ GEM
       rack (>= 1, < 3)
     thread_safe (0.3.6)
     tilt (2.0.10)
-    tzinfo (1.2.5)
+    tzinfo (1.2.7)
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
     unicode-display_width (1.6.0)
+    webmock (3.8.2)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
+    zeitwerk (2.3.0)
 
 PLATFORMS
   ruby
@@ -136,6 +149,7 @@ DEPENDENCIES
   sinatra-contrib
   sqlite3
   thin
+  webmock
 
 BUNDLED WITH
    2.1.4

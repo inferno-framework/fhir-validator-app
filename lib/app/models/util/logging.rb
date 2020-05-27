@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# This mixin adds logging to the FHIRValidator module, so it's globally available
 module FHIRValidator
   # Returns the Inferno Logger
   #

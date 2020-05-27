@@ -13,7 +13,7 @@ module FHIRValidator
     end
 
     def <=>(other)
-      self.line <=> other.line
+      line <=> other.line
     end
   end
 end

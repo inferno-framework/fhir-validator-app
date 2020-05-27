@@ -9,6 +9,7 @@ require_relative 'fhir_package_manager'
 
 module FHIRValidator
   class Terminology
+    # Valueset handles the parsing and storage of codes out of the UMLS DB using valueset Compose
     class ValueSet
       # STU3 ValueSets located at: http://hl7.org/fhir/stu3/terminologies-valuesets.html
       # STU3 ValueSet Resource: http://hl7.org/fhir/stu3/valueset.html
@@ -44,8 +45,14 @@ module FHIRValidator
       CODE_SYS = {
         'urn:ietf:bcp:13' => -> { BCP13.code_set },
         'urn:ietf:bcp:47' => ->(filter = nil) { FHIRValidator::BCP47.code_set(filter) },
-        'http://ihe.net/fhir/ValueSet/IHE.FormatCode.codesystem' => -> { FHIRValidator::Terminology.known_valuesets['http://hl7.org/fhir/ValueSet/formatcodes'].valueset },
-        'https://www.usps.com/' => -> { FHIRValidator::Terminology.known_valuesets['http://hl7.org/fhir/us/core/ValueSet/us-core-usps-state'].valueset }
+        'http://ihe.net/fhir/ValueSet/IHE.FormatCode.codesystem' => lambda do
+          FHIRValidator::Terminology.known_valuesets['http://hl7.org/fhir/ValueSet/formatcodes']
+            .valueset
+        end,
+        'https://www.usps.com/' => lambda do
+          FHIRValidator::Terminology.known_valuesets['http://hl7.org/fhir/us/core/ValueSet/us-core-usps-state']
+            .valueset
+        end
       }.freeze
 
       # https://www.nlm.nih.gov/research/umls/knowledge_sources/metathesaurus/release/attribute_names.html
@@ -89,7 +96,7 @@ module FHIRValidator
           FHIR::ValueSet::Expansion::Contains.new(system: code[:system], code: code[:code])
         end
         expansion_backbone.total = expansion_backbone.contains.length
-        expansion_valueset = @valueset_model.deep_dup # Make a copy so that the original definition is left intact
+        expansion_valueset = @valueset_model.deep_dup # Make a copy so the original is intact
         expansion_valueset.expansion = expansion_backbone
         expansion_valueset
       end
@@ -111,10 +118,12 @@ module FHIRValidator
       # Delegates to process_expanded_valueset if there's already an expansion
       # Otherwise it delegates to process_valueset to do the expansion
       def process_with_expansions
-        valueset_toocostly = @valueset_model&.expansion&.extension&.find { |vs| vs.url == 'http://hl7.org/fhir/StructureDefinition/valueset-toocostly' }&.value
-        valueset_unclosed = @valueset_model&.expansion&.extension&.find { |vs| vs.url == 'http://hl7.org/fhir/StructureDefinition/valueset-unclosed' }&.value
+        valueset_toocostly = get_extension_boolean('http://hl7.org/fhir/StructureDefinition/valueset-toocostly')
+        valueset_unclosed = get_extension_boolean('http://hl7.org/fhir/StructureDefinition/valueset-unclosed')
+
         if @valueset_model&.expansion&.contains
-          # This is moved into a nested clause so we can tell in the debug statements which path we're taking
+          # This is moved into a nested clause
+          # so we can tell in the debug statements which path we're taking
           if valueset_toocostly || valueset_unclosed
             FHIRValidator.logger.debug("ValueSet too costly or unclosed: #{url}")
             process_valueset
@@ -177,7 +186,7 @@ module FHIRValidator
       # Saves the valueset bloomfilter to a msgpack file
       #
       # @param [String] filename the name of the file
-      def save_bloom_to_file(filename = "resources/validators/bloom/#{(URI(url).host + URI(url).path).gsub(%r{[./]}, '_')}.msgpack")
+      def save_bloom_to_file(filename = default_filename(:bloom))
         generate_bloom unless @bf
         bloom_file = File.new(filename, 'wb')
         bloom_file.write(@bf.to_msgpack) unless @bf.nil?
@@ -186,11 +195,21 @@ module FHIRValidator
 
       # Saves the valueset to a csv
       # @param [String] filename the name of the file
-      def save_csv_to_file(filename = "resources/validators/csv/#{(URI(url).host + URI(url).path).gsub(%r{[./]}, '_')}.csv")
+      def save_csv_to_file(filename = default_filename(:csv))
         CSV.open(filename, 'wb') do |csv|
           valueset.each do |code|
             csv << [code[:system], code[:code]]
           end
+        end
+      end
+
+      def self.default_filename(type)
+        cleaned_uri = (URI(url).host + URI(url).path).gsub(%r{[./]}, '_')
+        case type
+        when :bloom
+          return "resources/validators/bloom/#{cleaned_uri}.msgpack"
+        when :csv
+          return "resources/validators/csv/#{cleaned_uri}.csv"
         end
       end
 
@@ -213,7 +232,15 @@ module FHIRValidator
 
       private
 
-      # Get all the code systems from within an include/exclude and return the set representing the intersection
+      def get_extension_boolean(extension_url)
+        @valueset_model&.expansion
+                       &.extension
+                       &.find { |vs| vs.url == extension_url }
+                       &.value
+      end
+
+      # Get all the code systems from within an include/exclude
+      # and return the set representing the intersection
       #
       # See: http://hl7.org/fhir/stu3/valueset.html#compositions
       #
@@ -227,7 +254,8 @@ module FHIRValidator
           vscs.concept.each do |concept|
             intersection_set.add(system: vscs.system, code: concept.code)
           end
-          # Filter based on the filters. Note there cannot be both concepts and filters within a single include/exclude
+          # Filter based on the filters
+          # NOTE: there cannot be both concepts and filters within a single include/exclude
         elsif !vscs.filter.empty?
           intersection_set = filter_code_set(vscs.system, vscs.filter.first)
           vscs.filter.drop(1).each do |filter|
@@ -240,11 +268,11 @@ module FHIRValidator
 
         unless vscs.valueSet.empty?
           # If no concepts or filtered systems were present and already created the intersection_set
-          im_val_set = import_valueset(vscs.valueSet.first)
+          im_vs = import_valueset(vscs.valueSet.first)
           vscs.valueSet.drop(1).each do |im_val|
-            im_val_set = im_val_set.intersection(im_val)
+            im_vs = im_val_set.intersection(im_val)
           end
-          intersection_set = intersection_set.nil? ? im_val_set : intersection_set.intersection(im_val_set)
+          intersection_set = intersection_set.nil? ? im_vs : intersection_set.intersection(im_vs)
         end
         intersection_set
       end
@@ -254,7 +282,8 @@ module FHIRValidator
       # @param [FHIR::ValueSet::Compose::Include::Filter] filter the filter object
       # @return [Set] the filtered set of codes
       def filter_code_set(system, filter = nil, _version = nil)
-        fhir_codesystem = File.join(Terminology::PACKAGE_DIR, FHIRPackageManager.encode_name(system).to_s + '.json')
+        fhir_codesystem = File.join(Terminology::PACKAGE_DIR,
+                                    FHIRPackageManager.encode_name(system).to_s + '.json')
         if CODE_SYS.include? system
           FHIRValidator.logger.debug "  loading #{system} codes..."
           return filter.nil? ? CODE_SYS[system].call : CODE_SYS[system].call(filter)
@@ -269,31 +298,11 @@ module FHIRValidator
           end
         end
 
-        filter_clause = lambda do |filter|
-          where = +''
-          if filter.op == 'in'
-            col = filter.property
-            vals = filter.value.split(',')
-            where << "( #{col} = '#{vals[0]}'"
-            # Remove the first element after we've used it
-            vals.shift
-            vals.each do |val|
-              where << " OR #{col} = '#{val}' "
-            end
-            where << ')'
-          elsif filter.op == '='
-            col = filter.property
-            where << "#{col} = '#{filter.value}'"
-          else
-            FHIRValidator.logger.debug "Cannot handle filter operation: #{filter.op}"
-          end
-          where
-        end
+        filter_clause = generate_filter_clause(filter)
 
         filtered_set = Set.new
-        unless ['=', 'in', 'is-a', nil].include? filter&.op
-          raise FilterOperationException, filter&.op
-        end
+
+        raise FilterOperationException, filter&.op unless ['=', 'in', 'is-a', nil].include? filter&.op
         raise UnknownCodeSystemException, system if SAB[system].nil?
 
         if filter.nil?
@@ -301,14 +310,16 @@ module FHIRValidator
             filtered_set.add(system: system, code: row[0])
           end
         elsif ['=', 'in', nil].include? filter&.op
-          if FILTER_PROP[filter.property]
-            @db.execute("SELECT code FROM mrsat WHERE SAB = '#{SAB[system]}' AND ATN = '#{fp_self(filter.property)}' AND ATV = '#{fp_self(filter.value)}'") do |row|
-              filtered_set.add(system: system, code: row[0])
-            end
-          else
-            @db.execute("SELECT code FROM mrconso WHERE SAB = '#{SAB[system]}' AND #{filter_clause.call(filter)}") do |row|
-              filtered_set.add(system: system, code: row[0])
-            end
+          filter_str = if FILTER_PROP[filter.property]
+                         "SELECT code FROM mrsat WHERE SAB = '#{SAB[system]}'"\
+                         " AND ATN = '#{fp_self(filter.property)}'"\
+                         " AND ATV = '#{fp_self(filter.value)}'"
+                       else
+                         "SELECT code FROM mrconso WHERE SAB = '#{SAB[system]}'"\
+                         " AND #{filter_clause.call(filter)}"
+                       end
+          @db.execute(filter_str) do |row|
+            filtered_set.add(system: system, code: row[0])
           end
         elsif filter&.op == 'is-a'
           filtered_set = filter_is_a(system, filter)
@@ -333,7 +344,7 @@ module FHIRValidator
       # @return [Set] the filtered codes
       def filter_is_a(system, filter)
         children = {}
-        find_children = lambda do |_parent, system|
+        find_children = lambda do |_parent|
           @db.execute("SELECT c1.code, c2.code
           FROM mrrel r
             JOIN mrconso c1 ON c1.aui=r.aui1
@@ -361,19 +372,43 @@ module FHIRValidator
         desired_children
       end
 
+      def generate_filter_clause(filter)
+        where = +''
+        if filter.op == 'in'
+          col = filter.property
+          vals = filter.value.split(',')
+          where << "( #{col} = '#{vals[0]}'"
+          # Remove the first element after we've used it
+          vals.shift
+          vals.each do |val|
+            where << " OR #{col} = '#{val}' "
+          end
+          where << ')'
+        elsif filter.op == '='
+          col = filter.property
+          where << "#{col} = '#{filter.value}'"
+        else
+          FHIRValidator.logger.debug "Cannot handle filter operation: #{filter.op}"
+        end
+        where
+      end
+
       # fp_self is short for filter_prop_or_self
       # @param [String] prop The property name
-      # @return [String] either the value from FILTER_PROP for that key, or prop if that key isn't in FILTER_PROP
+      # @return [String] either the value from FILTER_PROP for that key,
+      # or prop if that key isn't in FILTER_PROP
       def fp_self(prop)
         FILTER_PROP[prop] || prop
       end
 
+      # FilterOperationException is thrown when we don't support a particular filter operation
       class FilterOperationException < StandardError
         def initialize(filter_op)
           super("Cannot Handle Filter Operation: #{filter_op}")
         end
       end
 
+      # UnknownCodesystemException is thrown when we find a code system we don't know about
       class UnknownCodeSystemException < StandardError
         def initialize(code_system)
           super("Unknown Code System: #{code_system}")

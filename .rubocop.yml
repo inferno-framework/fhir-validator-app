@@ -3,6 +3,7 @@ AllCops:
   Exclude:
     - 'config.ru'
     - '.git/**/*'
+    - './vendor/**/*'
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: 'indented'
@@ -14,10 +15,10 @@ Style/SymbolArray:
   Enabled: false
 
 Metrics/LineLength:
-  Max: 100
+  Max: 125
 
 Metrics/CyclomaticComplexity:
-  Max: 10
+  Max: 15
 
 # Use code climate's metrics measurement rather than rubocop's
 Metrics/AbcSize:
@@ -40,3 +41,7 @@ Metrics/PerceivedComplexity:
 
 Metrics/ParameterLists:
   Enabled: false
+
+Style/IfUnlessModifier:
+  Exclude:
+    - 'lib/app/models/util/validation.rb'

@@ -7,24 +7,31 @@ module FHIRValidator
   # A validator that calls out to the HL7 validator API
   class HL7Validator
     DEFAULT_EXTERNAL_VALIDATOR_URL = 'http://localhost:8080'
+    OO_ISSUE_LINE = 'http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line'
+
     @profile_urls = nil
     @profile_names = nil
     @profiles_by_ig = nil
 
-    def validate(resource_blob, resource_type, fhir_models_klass, profile_urls = [])
+    def validate(resource_blob, resource_type, fhir_models_klass, profile_urls)
       resource = fhir_models_klass.from_contents(resource_blob)
 
       FHIRValidator.logger.info("Validating #{resource.resourceType} resource with id #{resource.id}")
       FHIRValidator.logger.info("POST #{@validator_url}/validate?profile=#{profile_urls.join(',')}")
 
       content_type = case resource_type
-      when 'json'
-        'application/fhir+json'
-      when 'xml'
-        'application/fhir+xml'
-      end
+                     when 'json'
+                       'application/fhir+json'
+                     when 'xml'
+                       'application/fhir+xml'
+                     end
 
-      result = RestClient.post "#{HL7Validator.external_validator_url}/validate", resource_blob, params: {  profile: profile_urls.join(',') }, content_type: content_type
+      result = RestClient.post(
+        "#{HL7Validator.external_validator_url}/validate",
+        resource_blob,
+        params: { profile: profile_urls.join(',') },
+        content_type: content_type
+      )
       outcome = fhir_models_klass.from_contents(result.body)
       fatals = issues_by_severity(outcome.issue, 'fatal')
       errors = issues_by_severity(outcome.issue, 'error')
@@ -42,12 +49,13 @@ module FHIRValidator
       FHIR.from_contents(profile).url
     end
 
-    private
-
     def issues_by_severity(issues, severity)
-      issues # .reject { |i| i.code == 'code-invalid' } temporarily enable code validation
+      issues
         .select { |i| i.severity == severity }
-        .map { |iss| Issue.new(line: issue_line(iss), text: "#{issue_location(iss)}: #{iss&.details&.text}") }
+        .map do |iss|
+          issue_text = "#{issue_location(iss)}: #{iss&.details&.text}"
+          Issue.new(line: issue_line(iss), text: issue_text)
+        end
     end
 
     def issue_location(issue)
@@ -59,10 +67,9 @@ module FHIRValidator
     end
 
     def issue_line(issue)
-      # The HL7 Validator returns issue lines indexed from 0 rather than 1
       issue
         &.extension
-        &.find { |e| e.url == 'http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line' }
+        &.find { |e| e.url == OO_ISSUE_LINE }
         &.valueInteger
     end
 
