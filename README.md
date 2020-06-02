@@ -1,15 +1,14 @@
 This app is a stand-alone [FHIR](http://fhir.hl7.org/) resource validator. Using this app, you can validate a FHIR resource against an optional FHIR Profile.
 
 ## Running the FHIR Validator App in development
-### Prerequisites:
-* Install the required version of Ruby: `rvm install` in the `fhir-validator-app` folder
-* Tell RVM to use that version of Ruby: `rvm use`
-  * Note: these two commands make use of the `.ruby-version` file, which specifies the version of Ruby being used by the app. That's why there's no need to specify a Ruby version to either of these commands.
-* Install Bundler: `gem install bundler`
-* Install the Ruby dependencies: `bundle install`
-* Install Node, using your method of choice
-  * I use [Node Version Manager](https://github.com/nvm-sh/nvm), but you can also install Node via homebrew with `brew install node@12` if you're on a Mac.
-* Install the Javascript dependencies: `npm install`
+### Requirements:
+* Ruby (the version specified in `.ruby-version`) with `bundler` installed
+* Node `12` with `npm` installed
+* Docker (to run the FHIR validator wrapper)
+
+### Setup
+* `bundle install`
+* `npm install`
 
 ### Running the app:
 * Run the Typescript compilation engine: `npm start`
