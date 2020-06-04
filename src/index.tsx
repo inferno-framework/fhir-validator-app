@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 
 import { Resource } from "./components/Resource";
 
+import { ResourceForm } from './components/ResourceForm';
+
 import { SelectOption } from './models/SelectOption';
 import { ProfileForm } from "./components/ProfileForm";
 
@@ -20,6 +22,14 @@ if (element != null) {
       warnings={warnings}
       information={information} />,
     element
+  );
+}
+
+const resourceField = document.getElementById("resource_field");
+if (resourceField) {
+  ReactDOM.render(
+    <ResourceForm />,
+    resourceField,
   );
 }
 

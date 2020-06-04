@@ -3,8 +3,7 @@
   <form action="<%= base_path %>/validate" method="post" enctype="multipart/form-data">
     <div class="jumbotron">
       <div class="form-group">
-        <label for="resource_field">Paste your FHIR resource here:</label>
-        <textarea name="resource_field" id="resource_field" class="form-control disable-me" rows="8"></textarea>
+        <div id="resource_field"></div>
         <br/>
         <div class="custom-file">
           <label for="resource" class="custom-file-label">Or upload a resource in a file:</label>
