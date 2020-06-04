@@ -1,12 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
+import { ValidatorForm } from './components/ValidatorForm';
+
 import { Resource } from "./components/Resource";
 
-import { ResourceForm } from './components/ResourceForm';
-
-import { SelectOption } from './models/SelectOption';
-import { ProfileForm } from "./components/ProfileForm";
+const validatorElement = document.getElementById('validator');
+if (validatorElement) {
+  const basePath = validatorElement.getAttribute('data-base-path');
+  const profiles: Map<string, string[]> = JSON.parse(atob(validatorElement.getAttribute('data-profiles')));
+  ReactDOM.render(
+    <ValidatorForm basePath={basePath} profiles={profiles} />,
+    validatorElement,
+  );
+}
 
 const element = document.getElementById("resourceDisplay");
 if (element != null) {
@@ -22,32 +29,5 @@ if (element != null) {
       warnings={warnings}
       information={information} />,
     element
-  );
-}
-
-const resourceField = document.getElementById("resource_field");
-if (resourceField) {
-  ReactDOM.render(
-    <ResourceForm />,
-    resourceField,
-  );
-}
-
-const selectElement = document.getElementById("profile");
-if (selectElement) {
-  const profiles:Map<string,string[]> = JSON.parse(atob(selectElement.getAttribute("data-profiles")));
-  const optionsByProfile = new Map<String, SelectOption[]>();
-  Object.entries(profiles).forEach((value) => {
-    const ig = value[0];
-    const profiles = value[1];
-    const opts = profiles.map((profile:string) => {
-      return new SelectOption(profile, profile);
-    });
-    optionsByProfile.set(ig, opts);
-  });
-  ReactDOM.render(
-    <ProfileForm optionsByProfile={optionsByProfile} ig='fhir' />
-    ,
-    selectElement
   );
 }
