@@ -17,6 +17,8 @@ function parseResource(input: string): Resource | XMLDocument {
     const parsedXml = parser.parseFromString(input, 'text/xml');
     if (parsedXml.getElementsByTagName('parsererror').length > 0) {
       throw new Error('Invalid JSON/XML');
+    } else if (parsedXml.documentElement.getAttribute('xmlns') !== 'http://hl7.org/fhir') {
+      throw new Error('XML is missing namespace xmlns="http://hl7.org/fhir"');
     }
     return parsedXml;
   }
