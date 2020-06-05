@@ -30,7 +30,11 @@ function parseResource(input: string): Resource | XMLDocument {
   }
 }
 
-export function ResourceForm() {
+export interface ResourceFormProps {
+  setIsValid(valid: boolean): void;
+};
+
+export function ResourceForm({ setIsValid }: ResourceFormProps) {
   const [input, setInput] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value);
@@ -40,8 +44,10 @@ export function ResourceForm() {
     const resource = parseResource(input);
     const resourceType = isResource(resource) ? resource.resourceType : resource.documentElement.nodeName;
     banner = <div className="alert alert-success">Detected resource of type: {resourceType}</div>
+    setIsValid(true);
   } catch (error) {
     banner = <div className="alert alert-danger">{error.message}</div>
+    setIsValid(false);
   }
 
   return (

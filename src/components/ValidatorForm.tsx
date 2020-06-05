@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { ResourceForm } from './ResourceForm';
 import { SelectOption } from '../models/SelectOption';
@@ -10,6 +10,8 @@ interface ValidatorProps {
 }
 
 export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
+  const [isResourceValid, setResourceIsValid] = useState(false);
+
   const optionsByProfile = new Map<string, SelectOption[]>();
   Object.entries(profiles).forEach(([ig, profiles]) => {
     const opts = profiles.map((profile: string) => new SelectOption(profile, profile));
@@ -20,11 +22,11 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     <form action={basePath + '/validate'} method="post" encType="multipart/form-data">
       <div className="jumbotron">
         <div className="form-group">
-          <ResourceForm />
+          <ResourceForm setIsValid={setResourceIsValid} />
           <br />
           <div className="custom-file">
             <label htmlFor="resource" className="custom-file-label">Or upload a resource in a file:</label>
-            <input type="file" name="resource" id="resource" className="custom-file-input" />
+            <input type="file" name="resource" id="resource" className="custom-file-input" onChange={() => setResourceIsValid(true)} />
           </div>
         </div>
       </div>
@@ -45,7 +47,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
       </div>
 
       <div className="form-group">
-        <input type="submit" className="btn btn-primary" />
+        <input type="submit" className="btn btn-primary" disabled={!isResourceValid} />
       </div>
     </form>
   );
