@@ -24,7 +24,7 @@
        data-resource-string="<%= @resource_string %>"
        data-issues-errors="<%= Base64.encode64(@results[:errors].to_json) %>"
        data-issues-warnings="<%= Base64.encode64(@results[:warnings].to_json) %>"
-       data-issues-information="<%= Base64.encode64(@results[:warnings].to_json) %>"
+       data-issues-information="<%= Base64.encode64(@results[:information].to_json) %>"
   >
   </div>
 </div>
