@@ -8,18 +8,23 @@ function isResource(o: any): o is Resource {
   return o instanceof Object && o.hasOwnProperty('resourceType');
 }
 
-function parseResource(input: string): Resource {
+function parseResource(input: string): Resource | XMLDocument {
   let parsedJson;
   try {
     parsedJson = JSON.parse(input);
   } catch (e) {
-    throw new Error('Invalid JSON');
+    const parser = new DOMParser();
+    const parsedXml = parser.parseFromString(input, 'text/xml');
+    if (parsedXml.getElementsByTagName('parsererror').length > 0) {
+      throw new Error('Invalid JSON/XML');
+    }
+    return parsedXml;
   }
 
   if (isResource(parsedJson)) {
     return parsedJson;
   } else {
-    throw new Error('Missing "resourceType" field');
+    throw new Error('JSON is missing "resourceType" field');
   }
 }
 
@@ -31,7 +36,8 @@ export function ResourceForm() {
   let banner;
   try {
     const resource = parseResource(input);
-    banner = <div className="alert alert-success">Detected resource of type: {resource.resourceType}</div>
+    const resourceType = isResource(resource) ? resource.resourceType : resource.documentElement.nodeName;
+    banner = <div className="alert alert-success">Detected resource of type: {resourceType}</div>
   } catch (error) {
     banner = <div className="alert alert-danger">{error.message}</div>
   }
