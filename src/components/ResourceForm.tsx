@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useReducer, useEffect } from 'react';
 
 interface Resource {
   resourceType: string;
@@ -30,36 +30,51 @@ function parseResource(input: string): Resource | XMLDocument {
   }
 }
 
+type ResourceFormState = {
+  dirty: false,
+  input: string,
+} | {
+  dirty: true,
+  input: string,
+  error?: string,
+  resourceType?: string,
+};
+
+function reducer(_state: ResourceFormState, action: string): ResourceFormState {
+  try {
+    const resource = parseResource(action);
+    const resourceType = isResource(resource) ? resource.resourceType : resource.documentElement.nodeName;
+    return { dirty: true, input: action, resourceType };
+  } catch (error) {
+    return { dirty: true, input: action, error: error.message };
+  }
+}
+
 export interface ResourceFormProps {
   setIsValid(valid: boolean): void;
 };
 
 export function ResourceForm({ setIsValid }: ResourceFormProps) {
-  const [input, setInput] = useState('');
+  const [state, dispatch] = useReducer(reducer, { dirty: false, input: '' });
+  useEffect(() => setIsValid(state.dirty && !state.error), [state]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value);
-
-  let banner;
-  try {
-    const resource = parseResource(input);
-    const resourceType = isResource(resource) ? resource.resourceType : resource.documentElement.nodeName;
-    banner = <div className="alert alert-success">Detected resource of type: {resourceType}</div>
-    setIsValid(true);
-  } catch (error) {
-    banner = <div className="alert alert-danger">{error.message}</div>
-    setIsValid(false);
-  }
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => dispatch(e.target.value);
 
   return (
     <div className="form-group">
-      {banner}
+      {state.dirty &&
+        (state.error
+          ? <div className="alert alert-danger">{state.error}</div>
+          : <div className="alert alert-success">Detected resource of type: {state.resourceType}</div>
+        )
+      }
       <label htmlFor="resource_field">Paste your FHIR resource here:</label>
       <textarea
         name="resource_field"
         id="resource_field"
         className="form-control disable-me"
         rows={8}
-        value={input}
+        value={state.input}
         onChange={handleChange}
       />
     </div>
