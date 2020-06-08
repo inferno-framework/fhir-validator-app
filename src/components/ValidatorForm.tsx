@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 
-import { ResourceForm } from './ResourceForm';
 import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
+
+import { FormInputItem } from './FormInputItem';
 
 export type FormInputItemState =
   | { type: 'input', input: string, status?: [boolean, string] }
@@ -39,13 +40,18 @@ function formReducer(state: FormState, action: FormAction): FormState {
   }
 }
 
+export const FormContext = React.createContext<React.Dispatch<FormAction>>(null!);
+
 interface ValidatorProps {
   readonly basePath?: string;
   readonly profiles?: Record<string, string[]>;
 }
 
 export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
-  const [isResourceValid, setResourceIsValid] = useState(false);
+  const [formState, dispatch] = useReducer(formReducer, {
+    resource: { type: 'input', input: '' },
+    profile: { type: 'input', input: '' },
+  });
 
   const optionsByProfile = new Map<string, SelectOption[]>();
   Object.entries(profiles).forEach(([ig, profiles]) => {
@@ -54,36 +60,33 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
   });
 
   return (
-    <form action={basePath + '/validate'} method="post" encType="multipart/form-data">
-      <div className="jumbotron">
-        <div className="form-group">
-          <ResourceForm setIsValid={setResourceIsValid} />
-          <br />
-          <div className="custom-file">
-            <label htmlFor="resource" className="custom-file-label">Or upload a resource in a file:</label>
-            <input type="file" name="resource" id="resource" className="custom-file-input" onChange={() => setResourceIsValid(true)} />
-          </div>
+    <FormContext.Provider value={dispatch}>
+      <form action={basePath + '/validate'} method="post" encType="multipart/form-data">
+        <div className="jumbotron">
+          <FormInputItem
+            name="resource"
+            textLabel="Paste your FHIR resource here:"
+            fileLabel="Or upload a resource in a file:"
+            state={formState.resource}
+          />
         </div>
-      </div>
 
-      <div className="jumbotron">
-        <div className="form-group">
-          <ProfileForm optionsByProfile={optionsByProfile} ig="fhir" />
-        </div>
-        <div className="form-group">
-          <label htmlFor="profile_field">Or if you have your own profile, you can paste it here:</label>
-          <textarea name="profile_field" id="profile_field" className="form-control disable-me custom-text-area disable-me-input" rows={8} />
-          <br />
-          <div className="custom-file">
-            <label htmlFor="profile_file" className="custom-file-label disable-me-textarea disable-me-input">Or upload your profile in a file:</label>
-            <input type="file" name="profile_file" id="profile_file" className="custom-file-input disable-me-textarea disable-me-input" />
+        <div className="jumbotron">
+          <div className="form-group">
+            <ProfileForm optionsByProfile={optionsByProfile} ig="fhir" />
           </div>
+          <FormInputItem
+            name="profile"
+            textLabel="Or if you have your own profile, you can paste it here:"
+            fileLabel="Or upload your profile in a file:"
+            state={formState.profile}
+          />
         </div>
-      </div>
 
-      <div className="form-group">
-        <input type="submit" className="btn btn-primary" disabled={!isResourceValid} />
-      </div>
-    </form>
+        <div className="form-group">
+          <input type="submit" className="btn btn-primary" />
+        </div>
+      </form>
+    </FormContext.Provider>
   );
 };
