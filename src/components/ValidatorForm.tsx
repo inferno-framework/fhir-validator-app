@@ -4,6 +4,41 @@ import { ResourceForm } from './ResourceForm';
 import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
 
+export type FormInputItemState =
+  | { type: 'input', input: string, status?: [boolean, string] }
+  | { type: 'file', filename: string };
+
+export type FormState = { resource: FormInputItemState, profile: FormInputItemState };
+export type FormAction =
+  | { type: 'CHANGE_INPUT', field: keyof FormState, input: string, validator?: (input: string) => [boolean, string] }
+  | { type: 'UPLOAD_FILE', field: keyof FormState, filename: string };
+
+function formReducer(state: FormState, action: FormAction): FormState {
+  switch (action.type) {
+    case 'CHANGE_INPUT': {
+      const { field, input, validator } = action;
+      const inputItemState = state[field];
+      return {
+        ...state,
+        ...(inputItemState.type === 'input') && {
+          [field]: {
+            ...inputItemState,
+            input,
+            ...validator && { status: validator(input) },
+          },
+        },
+      };
+    }
+    case 'UPLOAD_FILE': {
+      const { field, filename } = action;
+      return {
+        ...state,
+        [field]: { type: 'file', filename },
+      };
+    }
+  }
+}
+
 interface ValidatorProps {
   readonly basePath?: string;
   readonly profiles?: Record<string, string[]>;
