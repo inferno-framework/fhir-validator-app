@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react';
 
-import { resourceValidator } from './ResourceForm';
+import { resourceValidator } from '../models/Resource';
 import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
 
