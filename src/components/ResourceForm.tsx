@@ -8,7 +8,7 @@ function isResource(o: any): o is Resource {
   return o instanceof Object && o.hasOwnProperty('resourceType');
 }
 
-function parseResource(input: string): Resource | XMLDocument {
+export function parseResource(input: string): Resource | XMLDocument {
   let parsedJson;
   try {
     parsedJson = JSON.parse(input);
@@ -47,6 +47,16 @@ function reducer(_state: ResourceFormState, action: string): ResourceFormState {
     return { dirty: true, input: action, resourceType };
   } catch (error) {
     return { dirty: true, input: action, error: error.message };
+  }
+}
+
+export function resourceValidator(input: string): [boolean, string] {
+  try {
+    const resource = parseResource(input);
+    const resourceType = isResource(resource) ? resource.resourceType : resource.documentElement.nodeName;
+    return [true, `Detected resource of type: ${resourceType}`];
+  } catch (error) {
+    return [false, error.message];
   }
 }
 

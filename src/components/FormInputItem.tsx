@@ -7,6 +7,7 @@ export interface FormInputItemProps {
   textLabel: string;
   fileLabel: string;
   state: FormInputItemState;
+  validator?: (input: string) => [boolean, string];
 };
 
 export function FormInputItem({
@@ -14,6 +15,7 @@ export function FormInputItem({
   textLabel,
   fileLabel,
   state,
+  validator,
 }: FormInputItemProps) {
   const dispatch = useContext(FormContext);
 
@@ -21,6 +23,7 @@ export function FormInputItem({
     field: name,
     type: 'CHANGE_INPUT',
     input: e.target.value,
+    validator,
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => dispatch({
@@ -34,6 +37,11 @@ export function FormInputItem({
 
   return (
     <div className="form-group">
+      {state.type === 'input' && state.status &&
+        <div className={`alert alert-${state.status[0] ? 'success' : 'danger'}`}>
+          {state.status[1]}
+        </div>
+      }
       <label htmlFor={textFieldName}>{textLabel}</label>
       <textarea
         name={textFieldName}

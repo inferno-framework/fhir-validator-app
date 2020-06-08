@@ -1,5 +1,6 @@
 import React, { useReducer } from 'react';
 
+import { resourceValidator } from './ResourceForm';
 import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
 
@@ -68,6 +69,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
             textLabel="Paste your FHIR resource here:"
             fileLabel="Or upload a resource in a file:"
             state={formState.resource}
+            validator={resourceValidator}
           />
         </div>
 
