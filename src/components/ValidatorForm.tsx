@@ -60,9 +60,16 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     optionsByProfile.set(ig, opts);
   });
 
+  const invalidResource = (formState.resource.type === 'input') && !formState.resource.status?.[0];
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (invalidResource) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <FormContext.Provider value={dispatch}>
-      <form action={basePath + '/validate'} method="post" encType="multipart/form-data">
+      <form action={basePath + '/validate'} method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
         <div className="jumbotron">
           <FormInputItem
             name="resource"
@@ -86,7 +93,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
         </div>
 
         <div className="form-group">
-          <input type="submit" className="btn btn-primary" />
+          <input type="submit" className="btn btn-primary" disabled={invalidResource} />
         </div>
       </form>
     </FormContext.Provider>
