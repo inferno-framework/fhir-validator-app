@@ -10,7 +10,9 @@ if (validatorElement) {
   const basePath = validatorElement.getAttribute('data-base-path');
   const profiles: Map<string, string[]> = JSON.parse(atob(validatorElement.getAttribute('data-profiles')));
   ReactDOM.render(
-    <ValidatorForm basePath={basePath} profiles={profiles} />,
+    <React.StrictMode>
+      <ValidatorForm basePath={basePath} profiles={profiles} />
+    </React.StrictMode>,
     validatorElement,
   );
 }
