@@ -10,6 +10,7 @@ export function ResourceForm() {
       <label htmlFor="resource_field">Paste your FHIR resource here:</label>
       <textarea
         name="resource_field"
+        id="resource_field"
         className="form-control disable-me"
         rows={8}
         value={input}
