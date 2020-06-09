@@ -1,3 +1,7 @@
 node_modules/
 umls.zip
 .DS_Store
+tmp/*
+
+# Ignore the dist/ files, because we're going to rebuild them anyways
+public/js/dist/*
