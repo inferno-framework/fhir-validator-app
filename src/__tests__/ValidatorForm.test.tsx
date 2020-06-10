@@ -52,7 +52,8 @@ describe('<ValidatorForm />', () => {
     expect(queryByText(/missing.*resourceType/i)).toBeTruthy();
 
     fireEvent.change(textField, { target: { value: `{ "resourceType": "Patient" }` } });
-    expect(queryByText(/detected.*Patient/i)).toBeTruthy();
+    expect(queryByText(/invalid.*JSON/i)).toBeFalsy();
+    expect(queryByText(/missing.*resourceType/i)).toBeFalsy();
   });
 
   it('can detect valid/invalid XML and report missing xmlns', () => {
@@ -73,6 +74,7 @@ describe('<ValidatorForm />', () => {
     expect(queryByText(/missing.*xmlns/i)).toBeTruthy();
 
     fireEvent.change(textField, { target: { value: `<MedicationRequest xmlns="http://hl7.org/fhir"></MedicationRequest>` } });
-    expect(queryByText(/detected.*MedicationRequest/i)).toBeTruthy();
+    expect(queryByText(/invalid.*XML/i)).toBeFalsy();
+    expect(queryByText(/missing.*xmlns/i)).toBeFalsy();
   });
 });

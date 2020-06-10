@@ -7,7 +7,7 @@ export interface FormInputItemProps {
   readonly textLabel: string;
   readonly fileLabel: string;
   readonly state: FormInputItemState;
-  readonly validator?: (input: string) => { valid: boolean, message: string };
+  readonly validator?: (input: string) => string;
 };
 
 export function FormInputItem({
@@ -36,9 +36,7 @@ export function FormInputItem({
   const textFieldName = `${name}_field`;
   const fileInputName = `${name}_file`;
 
-  const textFieldClass = state.type === 'input' && state.status
-    ? (state.status.valid ? 'is-valid' : 'is-invalid')
-    : (state.type === 'input' ? '' : 'disabled');
+  const textFieldClass = state.type === 'input' ? (state.error && 'is-invalid') : 'disabled';
 
   return (
     <div className="form-group">
@@ -52,11 +50,9 @@ export function FormInputItem({
         onChange={handleTextChange}
         disabled={state.type !== 'input'}
       />
-      {state.type === 'input' && state.status &&
-        <div className={`${state.status.valid ? 'valid' : 'invalid'}-feedback`}>
-          {state.status.message}
-        </div>
-      }
+      <div className="invalid-feedback">
+        {state.type === 'input' && state.error}
+      </div>
       <br />
       <div className="custom-file">
         <label htmlFor={fileInputName} className={`custom-file-label ${state.type === 'file' ? 'selected' : ''}`}>

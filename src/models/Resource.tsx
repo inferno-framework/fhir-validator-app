@@ -26,12 +26,10 @@ export function parseResource(input: string): Resource | XMLDocument {
   }
 };
 
-export function resourceValidator(input: string): { valid: boolean, message: string } {
+export function resourceValidator(input: string): string {
   try {
-    const resource = parseResource(input);
-    const resourceType = isResource(resource) ? resource.resourceType : resource.documentElement.nodeName;
-    return { valid: true, message: `Detected resource of type: ${resourceType}` };
+    return parseResource(input) && '';
   } catch (error) {
-    return { valid: false, message: error.message };
+    return error.message;
   }
 };

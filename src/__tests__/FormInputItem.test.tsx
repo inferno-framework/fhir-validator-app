@@ -3,10 +3,10 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import { FormInputItem } from '../components/FormInputItem';
 import { FormContext, formReducer } from '../components/ValidatorForm';
 
-function WrappedInput({ validator } : { validator?: (input: string) => { valid: boolean, message: string } }) {
+function WrappedInput({ validator } : { validator?: (input: string) => string }) {
   const [formState, dispatch] = useReducer(formReducer, {
-    resource: { type: 'input', input: '' },
-    profile: { type: 'input', input: '' },
+    resource: { type: 'input', input: '', error: '' },
+    profile: { type: 'input', input: '', error: '' },
   });
 
   return (
@@ -49,12 +49,9 @@ describe('<FormInputItem />', () => {
   });
 
   // validator used for test below
-  const simpleValidator: (input: string) => { valid: boolean, message: string } = (input: string) => {
+  function simpleValidator(input: string): string {
     const valid = /^yes|no$/i.test(input);
-    return {
-      valid,
-      message: `you have entered ${valid ? 'valid' : 'invalid'} input`,
-    };
+    return valid ? '' : 'you have entered invalid input';
   }
 
   it('correctly validates text input and only begins validation after user inputs text', () => {
@@ -63,7 +60,7 @@ describe('<FormInputItem />', () => {
     const textField = getByLabelText('foo');
     const fileInput = getByLabelText('bar');
 
-    expect(queryByText(/(valid|invalid) input/i)).toBeFalsy();
+    expect(queryByText(/invalid input/i)).toBeFalsy();
 
     fireEvent.change(textField, { target: { value: 'hello' } });
     expect(queryByText(/invalid input/i)).toBeTruthy();
@@ -72,13 +69,13 @@ describe('<FormInputItem />', () => {
     expect(queryByText(/invalid input/i)).toBeTruthy();
 
     fireEvent.change(textField, { target: { value: 'yEs' } });
-    expect(queryByText(/(?<!in)valid input/i)).toBeTruthy();
+    expect(queryByText(/invalid input/i)).toBeFalsy();
 
     fireEvent.change(textField, { target: { value: 'no' } });
-    expect(queryByText(/(?<!in)valid input/i)).toBeTruthy();
+    expect(queryByText(/invalid input/i)).toBeFalsy();
 
     const file = new File([''], 'anything.json', { type: 'text/json' });
     fireEvent.change(fileInput, { target: { files: [file] } });
-    expect(queryByText(/(valid|invalid) input/i)).toBeFalsy();
+    expect(queryByText(/invalid input/i)).toBeFalsy();
   });
 });
