@@ -13,7 +13,7 @@ describe('<ValidatorForm />', () => {
     render(<ValidatorForm />);
   });
 
-  it.skip('displays the name of the file that was uploaded', async () => {
+  it.skip('displays the name of the file that was uploaded', () => {
     const { getByLabelText, queryByLabelText } = render(<ValidatorForm />);
 
     const fileInput = getByLabelText(/upload.*resource/i);
@@ -23,7 +23,7 @@ describe('<ValidatorForm />', () => {
     expect(queryByLabelText(/foobar\.json/)).toBeTruthy();
   });
 
-  it.skip('disables textarea iff file is uploaded', async () => {
+  it.skip('disables textarea iff file is uploaded', () => {
     const { getByLabelText } = render(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
