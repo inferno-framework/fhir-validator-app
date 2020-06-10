@@ -59,7 +59,7 @@ interface ValidatorProps {
 }
 
 export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
-  const [formState, dispatch] = useReducer(formReducer, {
+  const [{ resource: resourceState, profile: profileState }, dispatch] = useReducer(formReducer, {
     resource: defaultFormInputState,
     profile: defaultFormInputState,
   });
@@ -70,7 +70,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     optionsByProfile.set(ig, opts);
   });
 
-  const invalidResource = (formState.resource.type === 'input') && !!formState.resource.error;
+  const invalidResource = (resourceState.type === 'input') && (!resourceState.input || !!resourceState.error);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (invalidResource) {
       e.preventDefault();
@@ -85,7 +85,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
             name="resource"
             textLabel="Paste your FHIR resource here:"
             fileLabel="Or upload a resource in a file:"
-            state={formState.resource}
+            state={resourceState}
             validator={resourceValidator}
           />
         </div>
@@ -98,7 +98,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
             name="profile"
             textLabel="Or if you have your own profile, you can paste it here:"
             fileLabel="Or upload your profile in a file:"
-            state={formState.profile}
+            state={profileState}
           />
         </div>
 

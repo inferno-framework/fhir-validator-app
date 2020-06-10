@@ -4,7 +4,7 @@ import { FormInputItem } from '../components/FormInputItem';
 import { FormContext, formReducer } from '../components/ValidatorForm';
 
 function WrappedInput({ validator } : { validator?: (input: string) => string }) {
-  const [formState, dispatch] = useReducer(formReducer, {
+  const [{ resource: resourceState }, dispatch] = useReducer(formReducer, {
     resource: { type: 'input', input: '', error: '' },
     profile: { type: 'input', input: '', error: '' },
   });
@@ -15,7 +15,7 @@ function WrappedInput({ validator } : { validator?: (input: string) => string })
         name="resource"
         textLabel="foo"
         fileLabel="bar"
-        state={formState.resource}
+        state={resourceState}
         validator={validator}
       />
     </FormContext.Provider>
