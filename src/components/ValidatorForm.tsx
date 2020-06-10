@@ -18,7 +18,7 @@ export type FormAction =
   | { type: 'UPLOAD_FILE', field: keyof FormState, filename: string }
   | { type: 'REMOVE_FILE', field: keyof FormState };
 
-function formReducer(state: FormState, action: FormAction): FormState {
+export function formReducer(state: FormState, action: FormAction): FormState {
   switch (action.type) {
     case 'CHANGE_INPUT': {
       const { field, input, validator } = action;
@@ -49,7 +49,7 @@ function formReducer(state: FormState, action: FormAction): FormState {
       };
     }
   }
-}
+};
 
 export const FormContext = React.createContext<React.Dispatch<FormAction>>(null!);
 
