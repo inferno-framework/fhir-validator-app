@@ -36,4 +36,43 @@ describe('<ValidatorForm />', () => {
 
     expect(textField).toBeDisabled();
   });
+
+  it('can detect valid/invalid JSON and report missing "resourceType"', () => {
+    const { getByLabelText, queryByText } = render(<ValidatorForm basePath="" profiles={new Map()} />);
+
+    const textField = getByLabelText(/paste.*resource/i);
+
+    fireEvent.change(textField, { target: { value: `{ "trailingComma": true, }` } });
+    expect(queryByText(/invalid.*JSON/i)).toBeTruthy();
+
+    fireEvent.change(textField, { target: { value: `{ 'singleQuotes': true }` } });
+    expect(queryByText(/invalid.*JSON/i)).toBeTruthy();
+
+    fireEvent.change(textField, { target: { value: `{ "validJson": true, "resourceTypePresent": false }` } });
+    expect(queryByText(/missing.*resourceType/i)).toBeTruthy();
+
+    fireEvent.change(textField, { target: { value: `{ "resourceType": "Patient" }` } });
+    expect(queryByText(/detected.*Patient/i)).toBeTruthy();
+  });
+
+  it('can detect valid/invalid XML and report missing xmlns', () => {
+    const { getByLabelText, queryByText } = render(<ValidatorForm basePath="" profiles={new Map()} />);
+
+    const textField = getByLabelText(/paste.*resource/i);
+
+    fireEvent.change(textField, { target: { value: `<NoEndTag>` } });
+    expect(queryByText(/invalid.*XML/i)).toBeTruthy();
+
+    fireEvent.change(textField, { target: { value: `<MisplacedAttribute></MisplacedAttribute here="not good">` } });
+    expect(queryByText(/invalid.*XML/i)).toBeTruthy();
+
+    fireEvent.change(textField, { target: { value: `<ValidXML></ValidXML>` } });
+    expect(queryByText(/missing.*xmlns/i)).toBeTruthy();
+
+    fireEvent.change(textField, { target: { value: `<IncorrectNS xmlns="wrong"></IncorrectNS>` } });
+    expect(queryByText(/missing.*xmlns/i)).toBeTruthy();
+
+    fireEvent.change(textField, { target: { value: `<MedicationRequest xmlns="http://hl7.org/fhir"></MedicationRequest>` } });
+    expect(queryByText(/detected.*MedicationRequest/i)).toBeTruthy();
+  });
 });
