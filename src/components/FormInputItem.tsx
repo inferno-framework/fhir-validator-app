@@ -36,23 +36,27 @@ export function FormInputItem({
   const textFieldName = `${name}_field`;
   const fileInputName = `${name}_file`;
 
+  const textFieldClass = state.type === 'input' && state.status
+    ? (state.status[0] ? 'is-valid' : 'is-invalid')
+    : (state.type === 'input' ? '' : 'disabled');
+
   return (
     <div className="form-group">
-      {state.type === 'input' && state.status &&
-        <div className={`alert alert-${state.status[0] ? 'success' : 'danger'}`}>
-          {state.status[1]}
-        </div>
-      }
       <label htmlFor={textFieldName}>{textLabel}</label>
       <textarea
         name={textFieldName}
-        className={`form-control custom-text-area ${state.type === 'input' ? '' : 'disabled'}`}
         id={textFieldName}
+        className={`form-control custom-text-area ${textFieldClass}`}
         rows={8}
         value={state.type === 'input' ? state.input : ''}
         onChange={handleTextChange}
         disabled={state.type !== 'input'}
       />
+      {state.type === 'input' && state.status &&
+        <div className={`${state.status[0] ? 'valid' : 'invalid'}-feedback`}>
+          {state.status[1]}
+        </div>
+      }
       <br />
       <div className="custom-file">
         <label htmlFor={fileInputName} className={`custom-file-label ${state.type === 'file' ? 'selected' : ''}`}>
