@@ -7,14 +7,14 @@ import { ProfileForm } from './ProfileForm';
 import { FormInputItem } from './FormInputItem';
 
 export type FormInputItemState =
-  | { type: 'input', input: string, status?: [boolean, string] }
+  | { type: 'input', input: string, status?: { valid: boolean, message: string } }
   | { type: 'file', filename: string };
 
 const defaultFormInputState: FormInputItemState = { type: 'input', input: '' };
 
 export type FormState = { resource: FormInputItemState, profile: FormInputItemState };
 export type FormAction =
-  | { type: 'CHANGE_INPUT', field: keyof FormState, input: string, validator?: (input: string) => [boolean, string] }
+  | { type: 'CHANGE_INPUT', field: keyof FormState, input: string, validator?: (input: string) => { valid: boolean, message: string } }
   | { type: 'UPLOAD_FILE', field: keyof FormState, filename: string }
   | { type: 'REMOVE_FILE', field: keyof FormState };
 
@@ -70,7 +70,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     optionsByProfile.set(ig, opts);
   });
 
-  const invalidResource = (formState.resource.type === 'input') && !formState.resource.status?.[0];
+  const invalidResource = (formState.resource.type === 'input') && !formState.resource.status?.valid;
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (invalidResource) {
       e.preventDefault();

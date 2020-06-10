@@ -7,7 +7,7 @@ export interface FormInputItemProps {
   readonly textLabel: string;
   readonly fileLabel: string;
   readonly state: FormInputItemState;
-  readonly validator?: (input: string) => [boolean, string];
+  readonly validator?: (input: string) => { valid: boolean, message: string };
 };
 
 export function FormInputItem({
@@ -37,7 +37,7 @@ export function FormInputItem({
   const fileInputName = `${name}_file`;
 
   const textFieldClass = state.type === 'input' && state.status
-    ? (state.status[0] ? 'is-valid' : 'is-invalid')
+    ? (state.status.valid ? 'is-valid' : 'is-invalid')
     : (state.type === 'input' ? '' : 'disabled');
 
   return (
@@ -53,8 +53,8 @@ export function FormInputItem({
         disabled={state.type !== 'input'}
       />
       {state.type === 'input' && state.status &&
-        <div className={`${state.status[0] ? 'valid' : 'invalid'}-feedback`}>
-          {state.status[1]}
+        <div className={`${state.status.valid ? 'valid' : 'invalid'}-feedback`}>
+          {state.status.message}
         </div>
       }
       <br />
