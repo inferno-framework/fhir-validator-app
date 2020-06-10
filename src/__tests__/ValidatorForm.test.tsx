@@ -42,6 +42,9 @@ describe('<ValidatorForm />', () => {
 
     const textField = getByLabelText(/paste.*resource/i);
 
+    expect(queryByText(/invalid.*JSON/i)).toBeFalsy();
+    expect(queryByText(/missing.*resourceType/i)).toBeFalsy();
+
     fireEvent.change(textField, { target: { value: `{ "trailingComma": true, }` } });
     expect(queryByText(/invalid.*JSON/i)).toBeTruthy();
 
@@ -61,6 +64,9 @@ describe('<ValidatorForm />', () => {
 
     const textField = getByLabelText(/paste.*resource/i);
 
+    expect(queryByText(/invalid.*XML/i)).toBeFalsy();
+    expect(queryByText(/missing.*xmlns/i)).toBeFalsy();
+
     fireEvent.change(textField, { target: { value: `<NoEndTag>` } });
     expect(queryByText(/invalid.*XML/i)).toBeTruthy();
 
@@ -76,5 +82,37 @@ describe('<ValidatorForm />', () => {
     fireEvent.change(textField, { target: { value: `<MedicationRequest xmlns="http://hl7.org/fhir"></MedicationRequest>` } });
     expect(queryByText(/invalid.*XML/i)).toBeFalsy();
     expect(queryByText(/missing.*xmlns/i)).toBeFalsy();
+  });
+
+  it('enables the submit button iff a resource is uploaded or the input is valid JSON/XML', () => {
+    const { getByLabelText, getByDisplayValue } = render(<ValidatorForm basePath="" profiles={new Map()} />);
+
+    const textField = getByLabelText(/paste.*resource/i);
+    const fileInput = getByLabelText(/upload.*resource/i);
+    const submitButton = getByDisplayValue(/validate/i);
+
+    expect(submitButton).toBeDisabled();
+
+    fireEvent.change(textField, { target: { value: `{ "resourceType": "Patient" }` } });
+    expect(submitButton).toBeEnabled();
+
+    fireEvent.change(textField, { target: { value: '' } });
+    expect(submitButton).toBeDisabled();
+
+    fireEvent.change(textField, { target: { value: `<MedicationRequest xmlns="http://hl7.org/fhir"></MedicationRequest>` } });
+    expect(submitButton).toBeEnabled();
+
+    fireEvent.change(textField, { target: { value: `{ 'singleQuotes': true }` } });
+    expect(submitButton).toBeDisabled();
+
+    fireEvent.change(textField, { target: { value: `<ValidXML></ValidXML>` } });
+    expect(submitButton).toBeDisabled();
+
+    const file = new File(['{ "foo": "bar" }'], 'foobar.json', { type: 'text/json' });
+    fireEvent.change(fileInput, { target: { files: [file] } });
+    expect(submitButton).toBeEnabled();
+
+    fireEvent.change(fileInput, { target: { files: [] } });
+    expect(submitButton).toBeDisabled();
   });
 });

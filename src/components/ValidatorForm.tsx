@@ -103,7 +103,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
         </div>
 
         <div className="form-group">
-          <input type="submit" className="btn btn-primary" disabled={invalidResource} />
+          <input type="submit" value="Validate" className="btn btn-primary" disabled={invalidResource} />
         </div>
       </form>
     </FormContext.Provider>
