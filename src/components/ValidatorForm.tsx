@@ -10,10 +10,13 @@ export type FormInputItemState =
   | { type: 'input', input: string, status?: [boolean, string] }
   | { type: 'file', filename: string };
 
+const defaultFormInputState: FormInputItemState = { type: 'input', input: '' };
+
 export type FormState = { resource: FormInputItemState, profile: FormInputItemState };
 export type FormAction =
   | { type: 'CHANGE_INPUT', field: keyof FormState, input: string, validator?: (input: string) => [boolean, string] }
-  | { type: 'UPLOAD_FILE', field: keyof FormState, filename: string };
+  | { type: 'UPLOAD_FILE', field: keyof FormState, filename: string }
+  | { type: 'REMOVE_FILE', field: keyof FormState };
 
 function formReducer(state: FormState, action: FormAction): FormState {
   switch (action.type) {
@@ -38,6 +41,13 @@ function formReducer(state: FormState, action: FormAction): FormState {
         [field]: { type: 'file', filename },
       };
     }
+    case 'REMOVE_FILE': {
+      const { field } = action;
+      return {
+        ...state,
+        [field]: defaultFormInputState,
+      };
+    }
   }
 }
 
@@ -50,8 +60,8 @@ interface ValidatorProps {
 
 export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
   const [formState, dispatch] = useReducer(formReducer, {
-    resource: { type: 'input', input: '' },
-    profile: { type: 'input', input: '' },
+    resource: defaultFormInputState,
+    profile: defaultFormInputState,
   });
 
   const optionsByProfile = new Map<string, SelectOption[]>();

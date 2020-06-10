@@ -28,8 +28,9 @@ export function FormInputItem({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => dispatch({
     field: name,
-    type: 'UPLOAD_FILE',
-    filename: e.target.files[0].name,
+    ...e.target.files[0]
+      ? { type: 'UPLOAD_FILE', filename: e.target.files[0].name }
+      : { type: 'REMOVE_FILE' },
   });
 
   const textFieldName = `${name}_field`;
