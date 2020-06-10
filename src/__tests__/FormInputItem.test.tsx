@@ -59,6 +59,7 @@ describe('<FormInputItem />', () => {
 
     const textField = getByLabelText('foo');
     const fileInput = getByLabelText('bar');
+    const file = new File([], 'filename.json', { type: 'text/json' });
 
     expect(queryByText(/invalid input/i)).toBeFalsy();
 
@@ -74,8 +75,26 @@ describe('<FormInputItem />', () => {
     fireEvent.change(textField, { target: { value: 'no' } });
     expect(queryByText(/invalid input/i)).toBeFalsy();
 
-    const file = new File([''], 'anything.json', { type: 'text/json' });
     fireEvent.change(fileInput, { target: { files: [file] } });
     expect(queryByText(/invalid input/i)).toBeFalsy();
+  });
+
+  it('allows a file upload to be cancelled, re-enabling the text field', () => {
+    const { getByLabelText, queryByLabelText } = render(<WrappedInput validator={simpleValidator} />);
+
+    const textField = getByLabelText('foo');
+    const fileInput = getByLabelText('bar');
+    const file = new File([], 'filename.json', { type: 'text/json' });
+
+    fireEvent.change(textField, { target: { value: 'hello' } });
+    expect(textField).toHaveValue('hello');
+
+    fireEvent.change(fileInput, { target: { files: [file] } });
+    expect(queryByLabelText(/filename\.json/i)).toBeTruthy();
+    expect(textField).toBeDisabled();
+
+    fireEvent.change(fileInput, { target: { files: [] } });
+    expect(queryByLabelText(/filename\.json/i)).toBeFalsy();
+    expect(textField).toBeEnabled();
   });
 });
