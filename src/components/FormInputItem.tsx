@@ -46,6 +46,7 @@ export function FormInputItem({
       <textarea
         name={textFieldName}
         className={`form-control custom-text-area ${state.type === 'input' ? '' : 'disabled'}`}
+        id={textFieldName}
         rows={8}
         value={state.type === 'input' ? state.input : ''}
         onChange={handleTextChange}
@@ -56,7 +57,13 @@ export function FormInputItem({
         <label htmlFor={fileInputName} className={`custom-file-label ${state.type === 'file' ? 'selected' : ''}`}>
           {state.type === 'file' ? state.filename : fileLabel}
         </label>
-        <input type="file" name={fileInputName} className="custom-file-input" onChange={handleFileChange} />
+        <input
+          type="file"
+          name={fileInputName}
+          id={fileInputName}
+          className="custom-file-input"
+          onChange={handleFileChange}
+        />
       </div>
     </div>
   );
