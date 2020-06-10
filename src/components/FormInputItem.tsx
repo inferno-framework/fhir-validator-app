@@ -3,11 +3,11 @@ import React, { useContext } from 'react';
 import { FormInputItemState, FormState, FormContext } from './ValidatorForm';
 
 export interface FormInputItemProps {
-  name: keyof FormState;
-  textLabel: string;
-  fileLabel: string;
-  state: FormInputItemState;
-  validator?: (input: string) => [boolean, string];
+  readonly name: keyof FormState;
+  readonly textLabel: string;
+  readonly fileLabel: string;
+  readonly state: FormInputItemState;
+  readonly validator?: (input: string) => [boolean, string];
 };
 
 export function FormInputItem({
