@@ -56,29 +56,57 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
 
   return (
     <form action={basePath + '/validate'} method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
-      <div className="jumbotron">
-        <FormInputItem<FormState, 'resource'>
-          name="resource"
-          textLabel="Paste your FHIR resource here:"
-          fileLabel="Or upload a resource in a file:"
-          state={resourceState}
-          dispatch={dispatch}
-          validator={resourceValidator}
-        />
+      <div className="card">
+        <div className="card-header">
+          Resource
+        </div>
+
+        <div className="card-body">
+          <FormInputItem<FormState, 'resource'>
+            name="resource"
+            textLabel="Paste your FHIR resource here:"
+            fileLabel="Or upload a resource in a file:"
+            state={resourceState}
+            dispatch={dispatch}
+            validator={resourceValidator}
+          />
+        </div>
       </div>
 
-      <div className="jumbotron">
-        <div className="form-group">
-          <ProfileForm optionsByProfile={optionsByProfile} ig="fhir" />
+      <br />
+
+      <div className="accordion" id="advanced-options">
+        <div className="card">
+          <button
+            className="card-header btn btn-link text-left"
+            id="advanced-header"
+            type="button"
+            data-toggle="collapse"
+            data-target="#advanced-body"
+            aria-expanded="false"
+            aria-controls="advanced-body"
+          >
+            Advanced Options
+          </button>
+
+          <div id="advanced-body" className="collapse" aria-labelledby="advanced-header" data-parent="#advanced-options">
+            <div className="card-body">
+              <div className="form-group">
+                <ProfileForm optionsByProfile={optionsByProfile} ig="fhir" />
+              </div>
+              <FormInputItem<FormState, 'profile'>
+                name="profile"
+                textLabel="Or if you have your own profile, you can paste it here:"
+                fileLabel="Or upload your profile in a file:"
+                state={profileState}
+                dispatch={dispatch}
+              />
+            </div>
+          </div>
         </div>
-        <FormInputItem<FormState, 'profile'>
-          name="profile"
-          textLabel="Or if you have your own profile, you can paste it here:"
-          fileLabel="Or upload your profile in a file:"
-          state={profileState}
-          dispatch={dispatch}
-        />
       </div>
+
+      <br />
 
       <div className="form-group">
         <input type="submit" value="Validate" className="btn btn-primary" disabled={invalidResource} />
