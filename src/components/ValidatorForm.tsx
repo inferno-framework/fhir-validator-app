@@ -91,6 +91,15 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
 
           <div id="advanced-body" className="collapse" aria-labelledby="advanced-header" data-parent="#advanced-options">
             <div className="card-body">
+              <p>
+                By default, the FHIR Validator validates your resources using
+                the profile URLs found in the "meta.profile" field of your
+                resource (or the Base FHIR profiles if no profile URLs are
+                present). However, you may choose to use existing profiles
+                from other Implementation Guides or use your own profile to
+                validate your resources.
+              </p>
+              <br />
               <div className="form-group">
                 <ProfileForm optionsByProfile={optionsByProfile} ig="fhir" />
               </div>
