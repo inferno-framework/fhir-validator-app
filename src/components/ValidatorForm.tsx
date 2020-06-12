@@ -4,10 +4,10 @@ import { ResourceForm } from './ResourceForm';
 import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
 
-export interface ValidatorProps {
+interface ValidatorProps {
   readonly basePath: string;
   readonly profiles: Record<string, string[]>;
-};
+}
 
 export function ValidatorForm({ basePath, profiles }: ValidatorProps) {
   const optionsByProfile = new Map<string, SelectOption[]>();
