@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { ResourceForm } from './ResourceForm';
-
 import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
 

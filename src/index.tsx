@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { ValidatorForm } from './components/ValidatorForm';
-
 import { Resource } from "./components/Resource";
 
 const validatorElement = document.getElementById('validator');
