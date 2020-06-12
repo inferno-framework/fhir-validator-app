@@ -4,7 +4,7 @@ import { ProfileSelect } from './ProfileSelect';
 import { SelectOption } from '../models/SelectOption';
 
 export interface ProfileProps {
-  readonly optionsByProfile: Map<String, SelectOption[]>;
+  readonly optionsByProfile: Map<string, SelectOption[]>;
   readonly ig: string;
 }
 
