@@ -5,11 +5,11 @@ import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
 
 interface ValidatorProps {
-  readonly basePath: string;
-  readonly profiles: Record<string, string[]>;
+  readonly basePath?: string;
+  readonly profiles?: Record<string, string[]>;
 }
 
-export function ValidatorForm({ basePath, profiles }: ValidatorProps) {
+export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
   const optionsByProfile = new Map<string, SelectOption[]>();
   Object.entries(profiles).forEach(([ig, profiles]) => {
     const opts = profiles.map((profile: string) => new SelectOption(profile, profile));
@@ -17,7 +17,7 @@ export function ValidatorForm({ basePath, profiles }: ValidatorProps) {
   });
 
   return (
-    <form action={basePath + "/validate"} method="post" encType="multipart/form-data">
+    <form action={basePath + '/validate'} method="post" encType="multipart/form-data">
       <div className="jumbotron">
         <div className="form-group">
           <ResourceForm />
