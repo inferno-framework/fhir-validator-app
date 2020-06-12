@@ -8,7 +8,7 @@ import { Resource } from "./components/Resource";
 const validatorElement = document.getElementById('validator');
 if (validatorElement) {
   const basePath = validatorElement.getAttribute('data-base-path');
-  const profiles: Map<string, string[]> = JSON.parse(atob(validatorElement.getAttribute('data-profiles')));
+  const profiles: Record<string, string[]> = JSON.parse(atob(validatorElement.getAttribute('data-profiles')));
   ReactDOM.render(
     <React.StrictMode>
       <ValidatorForm basePath={basePath} profiles={profiles} />

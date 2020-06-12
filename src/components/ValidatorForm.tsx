@@ -7,7 +7,7 @@ import { ProfileForm } from './ProfileForm';
 
 export interface ValidatorProps {
   readonly basePath: string;
-  readonly profiles: Map<string, string[]>;
+  readonly profiles: Record<string, string[]>;
 };
 
 export function ValidatorForm({ basePath, profiles }: ValidatorProps) {
