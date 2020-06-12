@@ -13,7 +13,7 @@ describe('<ValidatorForm />', () => {
     render(<ValidatorForm />);
   });
 
-  it.skip('displays the name of the file that was uploaded', () => {
+  it('displays the name of the file that was uploaded', () => {
     const { getByLabelText, queryByLabelText } = render(<ValidatorForm />);
 
     const fileInput = getByLabelText(/upload.*resource/i);
@@ -23,7 +23,7 @@ describe('<ValidatorForm />', () => {
     expect(queryByLabelText(/foobar\.json/)).toBeTruthy();
   });
 
-  it.skip('disables textarea iff file is uploaded', () => {
+  it('disables textarea iff file is uploaded', () => {
     const { getByLabelText } = render(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
@@ -38,7 +38,7 @@ describe('<ValidatorForm />', () => {
   });
 
   it('can detect valid/invalid JSON and report missing "resourceType"', () => {
-    const { getByLabelText, queryByText } = render(<ValidatorForm basePath="" profiles={new Map()} />);
+    const { getByLabelText, queryByText } = render(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
 
@@ -60,7 +60,7 @@ describe('<ValidatorForm />', () => {
   });
 
   it('can detect valid/invalid XML and report missing xmlns', () => {
-    const { getByLabelText, queryByText } = render(<ValidatorForm basePath="" profiles={new Map()} />);
+    const { getByLabelText, queryByText } = render(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
 
@@ -85,7 +85,7 @@ describe('<ValidatorForm />', () => {
   });
 
   it('enables the submit button iff a resource is uploaded or the input is valid JSON/XML', () => {
-    const { getByLabelText, getByDisplayValue } = render(<ValidatorForm basePath="" profiles={new Map()} />);
+    const { getByLabelText, getByDisplayValue } = render(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
     const fileInput = getByLabelText(/upload.*resource/i);
