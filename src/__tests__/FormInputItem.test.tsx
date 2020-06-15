@@ -1,24 +1,31 @@
 import React, { useReducer } from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
-import { FormInputItem } from '../components/FormInputItem';
-import { FormContext, formReducer } from '../components/ValidatorForm';
+import {
+  FormInputItem,
+  State,
+  Action,
+  reducer,
+  initialState,
+} from '../components/FormInputItem';
+
+type TestState = { hello: State };
+
+function testReducer({ hello }: TestState, action: Action): TestState {
+  return { hello: reducer(hello, action) };
+}
 
 function WrappedInput({ validator } : { validator?: (input: string) => string }) {
-  const [{ resource: resourceState }, dispatch] = useReducer(formReducer, {
-    resource: { type: 'input', input: '', error: '' },
-    profile: { type: 'input', input: '', error: '' },
-  });
+  const [formState, dispatch] = useReducer(testReducer, { hello: initialState });
 
   return (
-    <FormContext.Provider value={dispatch}>
-      <FormInputItem
-        name="resource"
-        textLabel="foo"
-        fileLabel="bar"
-        state={resourceState}
-        validator={validator}
-      />
-    </FormContext.Provider>
+    <FormInputItem<TestState, 'hello'>
+      name="hello"
+      textLabel="foo"
+      fileLabel="bar"
+      state={formState.hello}
+      dispatch={dispatch}
+      validator={validator}
+    />
   );
 }
 
