@@ -16,18 +16,28 @@ import {
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
 type FormState = { resource: FormInputItemState, profile: FormInputItemState };
-type FormAction = { name: KeysWithValue<FormState, FormInputItemState> } & FormInputItemAction;
+type FormAction =
+  | ({ name: KeysWithValue<FormState, FormInputItemState> } & FormInputItemAction)
+  | { name: 'RESET' };
+
+const initialFormState: FormState = {
+  resource: initialFormInputItemState,
+  profile: initialFormInputItemState,
+};
 
 function formReducerWithHistory(history: History<FormState>) {
   return function formReducer(state: FormState, action: FormAction): FormState {
-    const { name } = action;
-    switch (name) {
+    switch (action.name) {
       case 'resource':
       case 'profile': {
         const newState = { ...state };
-        newState[name] = formInputItemReducer(state[name], action);
+        newState[action.name] = formInputItemReducer(state[action.name], action);
         history.replace(history.location.pathname, newState);
         return newState;
+      }
+      case 'RESET': {
+        history.replace(history.location.pathname, initialFormState);
+        return initialFormState;
       }
     }
   };
@@ -42,10 +52,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
   const history = useHistory<FormState>();
   const [{ resource: resourceState, profile: profileState }, dispatch] = useReducer(
     formReducerWithHistory(history),
-    history.location.state || {
-      resource: initialFormInputItemState,
-      profile: initialFormInputItemState,
-    }
+    history.location.state || initialFormState,
   );
 
   const optionsByProfile = new Map<string, SelectOption[]>();
@@ -128,6 +135,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
 
       <div className="form-group">
         <input type="submit" value="Validate" className="btn btn-primary" disabled={invalidResource} />
+        <input type="button" value="Reset" className="btn btn-primary ml-3" onClick={() => dispatch({ name: 'RESET' })} />
       </div>
     </form>
   );
