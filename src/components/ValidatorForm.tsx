@@ -1,4 +1,5 @@
 import React, { useReducer } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { resourceValidator } from '../models/Resource';
 import { SelectOption } from '../models/SelectOption';
@@ -36,6 +37,7 @@ interface ValidatorProps {
 }
 
 export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
+  const history = useHistory();
   const [{ resource: resourceState, profile: profileState }, dispatch] = useReducer(formReducer, {
     resource: initialFormInputItemState,
     profile: initialFormInputItemState,
@@ -48,14 +50,16 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
   });
 
   const invalidResource = (resourceState.mode === 'text') && (!resourceState.input || !!resourceState.error);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    if (invalidResource) {
-      e.preventDefault();
+    e.preventDefault();
+    if (!invalidResource) {
+      history.push('/validate');
     }
   };
 
   return (
-    <form action={basePath + '/validate'} method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <div className="card">
         <div className="card-header">
           Resource
