@@ -19,18 +19,15 @@ export function reducer(state: State, action: Action): State {
 
       const { input, validator } = action;
       return {
-        ...state,
+        mode: 'text',
         input,
         error: validator ? validator(input) : '',
       };
     }
-    case 'UPLOAD_FILE': {
-      const { file } = action;
-      return { ...state, mode: 'file', file };
-    }
-    case 'REMOVE_FILE': {
+    case 'UPLOAD_FILE':
+      return { mode: 'file', file: action.file };
+    case 'REMOVE_FILE':
       return (state.mode === 'file') ? initialState : state;
-    }
   }
 };
 

@@ -1,5 +1,6 @@
 import React, { useReducer } from 'react';
 import { useHistory } from 'react-router-dom';
+import { History } from 'history';
 
 import { resourceValidator } from '../models/Resource';
 import { SelectOption } from '../models/SelectOption';
@@ -17,18 +18,19 @@ type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof 
 type FormState = { resource: FormInputItemState, profile: FormInputItemState };
 type FormAction = { name: KeysWithValue<FormState, FormInputItemState> } & FormInputItemAction;
 
-function formReducer(state: FormState, action: FormAction): FormState {
-  const { name } = action;
-  switch (name) {
-    case 'resource':
-    case 'profile': {
-      const newFormInputItemState = formInputItemReducer(state[name], action);
-      return {
-        ...state,
-        [name]: newFormInputItemState,
-      };
+function formReducerWithHistory(history: History<FormState>) {
+  return function formReducer(state: FormState, action: FormAction): FormState {
+    const { name } = action;
+    switch (name) {
+      case 'resource':
+      case 'profile': {
+        const newState = { ...state };
+        newState[name] = formInputItemReducer(state[name], action);
+        history.replace(history.location.pathname, newState);
+        return newState;
+      }
     }
-  }
+  };
 }
 
 interface ValidatorProps {
@@ -37,11 +39,14 @@ interface ValidatorProps {
 }
 
 export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
-  const history = useHistory();
-  const [{ resource: resourceState, profile: profileState }, dispatch] = useReducer(formReducer, {
-    resource: initialFormInputItemState,
-    profile: initialFormInputItemState,
-  });
+  const history = useHistory<FormState>();
+  const [{ resource: resourceState, profile: profileState }, dispatch] = useReducer(
+    formReducerWithHistory(history),
+    history.location.state || {
+      resource: initialFormInputItemState,
+      profile: initialFormInputItemState,
+    }
+  );
 
   const optionsByProfile = new Map<string, SelectOption[]>();
   Object.entries(profiles).forEach(([ig, profiles]) => {
