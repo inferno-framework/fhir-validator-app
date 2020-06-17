@@ -1,20 +1,21 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import { ValidatorForm } from '../components/ValidatorForm';
 
 describe('<ValidatorForm />', () => {
   it('renders without crashing', () => {
-    render(<ValidatorForm basePath="" profiles={{}} />);
+    render(<ValidatorForm basePath="" profiles={{}} />, { wrapper: MemoryRouter });
   });
 
   it('handles optional arguments without crashing', () => {
-    render(<ValidatorForm basePath="" />);
-    render(<ValidatorForm profiles={{}} />);
-    render(<ValidatorForm />);
+    render(<ValidatorForm basePath="" />, { wrapper: MemoryRouter });
+    render(<ValidatorForm profiles={{}} />, { wrapper: MemoryRouter });
+    render(<ValidatorForm />, { wrapper: MemoryRouter });
   });
 
   it('displays the name of the file that was uploaded', () => {
-    const { getByLabelText, queryByLabelText } = render(<ValidatorForm />);
+    const { getByLabelText, queryByLabelText } = render(<ValidatorForm />, { wrapper: MemoryRouter });
 
     const fileInput = getByLabelText(/upload.*resource/i);
     const file = new File(['{ "foo": "bar" }'], 'foobar.json', { type: 'text/json' });
@@ -24,7 +25,7 @@ describe('<ValidatorForm />', () => {
   });
 
   it('disables textarea iff file is uploaded', () => {
-    const { getByLabelText } = render(<ValidatorForm />);
+    const { getByLabelText } = render(<ValidatorForm />, { wrapper: MemoryRouter });
 
     const textField = getByLabelText(/paste.*resource/i);
     const fileInput = getByLabelText(/upload.*resource/i);
@@ -38,7 +39,7 @@ describe('<ValidatorForm />', () => {
   });
 
   it('can detect valid/invalid JSON and report missing "resourceType"', () => {
-    const { getByLabelText, queryByText } = render(<ValidatorForm />);
+    const { getByLabelText, queryByText } = render(<ValidatorForm />, { wrapper: MemoryRouter });
 
     const textField = getByLabelText(/paste.*resource/i);
 
@@ -60,7 +61,7 @@ describe('<ValidatorForm />', () => {
   });
 
   it('can detect valid/invalid XML and report missing xmlns', () => {
-    const { getByLabelText, queryByText } = render(<ValidatorForm />);
+    const { getByLabelText, queryByText } = render(<ValidatorForm />, { wrapper: MemoryRouter });
 
     const textField = getByLabelText(/paste.*resource/i);
 
@@ -85,7 +86,7 @@ describe('<ValidatorForm />', () => {
   });
 
   it('enables the submit button iff a resource is uploaded or the input is valid JSON/XML', () => {
-    const { getByLabelText, getByDisplayValue } = render(<ValidatorForm />);
+    const { getByLabelText, getByDisplayValue } = render(<ValidatorForm />, { wrapper: MemoryRouter });
 
     const textField = getByLabelText(/paste.*resource/i);
     const fileInput = getByLabelText(/upload.*resource/i);
