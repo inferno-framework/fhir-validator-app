@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { ProfileSelect } from './ProfileSelect';
 import { SelectOption } from '../models/SelectOption';
-import { FormState } from './ValidatorForm';
+import { FormState, ProfileSelectWithContext } from './ValidatorForm';
 
 export interface ProfileProps {
   readonly optionsByProfile: Map<string, SelectOption[]>;
@@ -29,7 +28,7 @@ export function ProfileForm({
         <option value="us_core">US Core v3.1.0</option>
         <option value="saner">SANER-IG</option>
       </select>
-      <ProfileSelect options={opts} />
+      <ProfileSelectWithContext options={opts} />
     </div>
   );
 }

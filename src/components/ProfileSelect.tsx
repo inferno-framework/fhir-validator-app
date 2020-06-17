@@ -1,18 +1,32 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Select from 'react-select';
 
-export class ProfileSelect extends Component<any, {}> {
-  render() {
-    return (
-      <div>
-        <label htmlFor="profile_select">Select a profile:</label>
-        <Select
-          isClearable
-          options={ this.props.options }
-          name="profile_select"
-          id="profile_select"
-        />
-      </div>
-    );
-  }
+import { SelectOption } from '../models/SelectOption';
+import { FormState } from './ValidatorForm';
+
+export interface ProfileSelectProps {
+  readonly options: SelectOption[];
+  readonly context: [FormState, React.Dispatch<{ name: 'profile_select', value: SelectOption }>];
+}
+
+export function ProfileSelect({
+  options,
+  context: [formState, dispatch],
+}: ProfileSelectProps) {
+  const value = formState['profile_select'];
+  const handleChange = (value: SelectOption) => dispatch({ name: 'profile_select', value });
+
+  return (
+    <div>
+      <label htmlFor="profile_select">Select a profile:</label>
+      <Select
+        isClearable
+        options={options}
+        name="profile_select"
+        id="profile_select"
+        value={value}
+        onChange={handleChange}
+      />
+    </div>
+  );
 }

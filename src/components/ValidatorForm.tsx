@@ -5,6 +5,7 @@ import { History } from 'history';
 import { resourceValidator } from '../models/Resource';
 import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
+import { ProfileSelect } from './ProfileSelect';
 import {
   FormInputItem,
   FormInputItemProps,
@@ -21,20 +22,20 @@ export interface FormState {
   resource: FormInputItemState;
   profile: FormInputItemState;
   implementation_guide: string;
-  profile_select: string;
+  profile_select: SelectOption;
 };
 
 type FormAction =
   | ({ name: KeysWithValue<FormState, FormInputItemState> } & FormInputItemAction)
   | ({ name: 'implementation_guide', value: string })
-  | ({ name: 'profile_select', value: string })
+  | ({ name: 'profile_select', value: SelectOption })
   | { name: 'RESET' };
 
 const initialFormState: FormState = {
   resource: initialFormInputItemState,
   profile: initialFormInputItemState,
   implementation_guide: 'fhir',
-  profile_select: '',
+  profile_select: null,
 };
 
 const formReducerWithHistory = (history: History<FormState>) => (
@@ -49,7 +50,10 @@ const formReducerWithHistory = (history: History<FormState>) => (
       newState[action.name] = formInputItemReducer(state[action.name], action);
       break;
     }
-    case 'implementation_guide':
+    case 'implementation_guide': {
+      newState[action.name] = action.value;
+      break;
+    }
     case 'profile_select': {
       newState[action.name] = action.value;
       break;
@@ -74,6 +78,7 @@ const ProfileFormInputItem = withContext(
   (props: FormInputItemProps<FormState, 'profile'>) => FormInputItem(props),
 );
 const ProfileFormWithContext = withContext(FormContext, ProfileForm);
+export const ProfileSelectWithContext = withContext(FormContext, ProfileSelect);
 
 interface ValidatorProps {
   readonly basePath?: string;
