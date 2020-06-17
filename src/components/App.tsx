@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -8,6 +8,14 @@ import {
 import { ValidatorForm } from './ValidatorForm';
 
 export function App() {
+  const [profiles, setProfiles] = useState<Record<string, string[]>>({});
+
+  useEffect(() => {
+    fetch('data/profiles.json')
+      .then(response => response.json())
+      .then(setProfiles);
+  }, []);
+
   return (
     <Router>
       <div className="container">
@@ -25,7 +33,7 @@ export function App() {
         <Switch>
           <Route exact path="/">
             <h1>FHIR Validator</h1>
-            <ValidatorForm />
+            <ValidatorForm profiles={profiles} />
           </Route>
           <Route path="/validate">
             Validation Results
