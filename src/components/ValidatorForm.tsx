@@ -52,6 +52,8 @@ const formReducerWithHistory = (history: History<FormState>) => (
     }
     case 'implementation_guide': {
       newState[action.name] = action.value;
+      // keep profile_select value in sync with the selected implementation_guide
+      newState['profile_select'] = null;
       break;
     }
     case 'profile_select': {
