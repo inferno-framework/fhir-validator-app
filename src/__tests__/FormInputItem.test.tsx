@@ -23,7 +23,7 @@ function WrappedInput({ validator } : { validator?: (input: string) => string })
       textLabel="foo"
       fileLabel="bar"
       state={formState.hello}
-      dispatch={dispatch}
+      context={dispatch}
       validator={validator}
     />
   );
