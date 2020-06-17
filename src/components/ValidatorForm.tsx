@@ -64,7 +64,7 @@ const formReducerWithHistory = (history: History<FormState>) => (
   return newState;
 };
 
-export const FormContext = React.createContext<React.Dispatch<FormAction>>(null!);
+export const FormContext = React.createContext<[FormState, React.Dispatch<FormAction>]>(null!);
 const ResourceFormInputItem = withContext(
   FormContext,
   (props: FormInputItemProps<FormState, 'resource'>) => FormInputItem(props),
@@ -81,10 +81,11 @@ interface ValidatorProps {
 
 export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
   const history = useHistory<FormState>();
-  const [{ resource: resourceState, profile: profileState }, dispatch] = useReducer(
+  const reducerStateDispatch = useReducer(
     formReducerWithHistory(history),
     history.location.state || initialFormState,
   );
+  const [{ resource: resourceState }, dispatch] = reducerStateDispatch;
 
   const optionsByProfile = new Map<string, SelectOption[]>();
   Object.entries(profiles).forEach(([ig, profiles]) => {
@@ -102,7 +103,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
   };
 
   return (
-    <FormContext.Provider value={dispatch}>
+    <FormContext.Provider value={reducerStateDispatch}>
       <form onSubmit={handleSubmit}>
         <div className="card">
           <div className="card-header">
@@ -114,7 +115,6 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
               name="resource"
               textLabel="Paste your FHIR resource here:"
               fileLabel="Or upload a resource in a file:"
-              state={resourceState}
               validator={resourceValidator}
             />
           </div>
@@ -154,7 +154,6 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
                   name="profile"
                   textLabel="Or if you have your own profile, you can paste it here:"
                   fileLabel="Or upload your profile in a file:"
-                  state={profileState}
                 />
               </div>
             </div>

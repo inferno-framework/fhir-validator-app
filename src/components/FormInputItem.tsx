@@ -35,17 +35,15 @@ export interface FormInputItemProps<S extends Record<N, State>, N extends keyof 
   readonly name: N;
   readonly textLabel: string;
   readonly fileLabel: string;
-  readonly state: State;
-  readonly context: React.Dispatch<{ name: N } & Action>;
   readonly validator?: (input: string) => string;
+  readonly context: [S, React.Dispatch<{ name: N } & Action>];
 };
 
 export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
   name,
   textLabel,
   fileLabel,
-  state,
-  context: dispatch,
+  context: [formState, dispatch],
   validator,
 }: FormInputItemProps<S, N>) {
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => dispatch({
@@ -67,6 +65,7 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
   const textFieldName = `${name}_field`;
   const fileInputName = `${name}_file`;
 
+  const state = formState[name] as State;
   const textFieldClass = state.mode === 'text' ? (state.error && 'is-invalid') : 'disabled';
 
   return (
