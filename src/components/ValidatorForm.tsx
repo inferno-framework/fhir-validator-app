@@ -17,12 +17,12 @@ import { withContext } from '../hoc/withContext';
 
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
-interface FormState {
+export interface FormState {
   resource: FormInputItemState;
   profile: FormInputItemState;
   implementation_guide: string;
   profile_select: string;
-}
+};
 
 type FormAction =
   | ({ name: KeysWithValue<FormState, FormInputItemState> } & FormInputItemAction)
@@ -33,7 +33,7 @@ type FormAction =
 const initialFormState: FormState = {
   resource: initialFormInputItemState,
   profile: initialFormInputItemState,
-  implementation_guide: '',
+  implementation_guide: 'fhir',
   profile_select: '',
 };
 
@@ -73,6 +73,7 @@ const ProfileFormInputItem = withContext(
   FormContext,
   (props: FormInputItemProps<FormState, 'profile'>) => FormInputItem(props),
 );
+const ProfileFormWithContext = withContext(FormContext, ProfileForm);
 
 interface ValidatorProps {
   readonly basePath?: string;
@@ -148,7 +149,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
                 </p>
                 <br />
                 <div className="form-group">
-                  <ProfileForm optionsByProfile={optionsByProfile} ig="fhir" />
+                  <ProfileFormWithContext optionsByProfile={optionsByProfile} />
                 </div>
                 <ProfileFormInputItem
                   name="profile"
