@@ -11,7 +11,7 @@ interface UploadFileAction { type: 'UPLOAD_FILE', file: File };
 interface RemoveFileAction { type: 'REMOVE_FILE' };
 export type Action = ChangeInputAction | UploadFileAction | RemoveFileAction;
 
-export function reducer(state: State, action: Action): State {
+export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'CHANGE_INPUT': {
       if (state.mode !== 'text')

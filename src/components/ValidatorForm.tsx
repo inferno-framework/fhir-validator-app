@@ -17,33 +17,52 @@ import { withContext } from '../hoc/withContext';
 
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
-type FormState = { resource: FormInputItemState, profile: FormInputItemState };
+interface FormState {
+  resource: FormInputItemState;
+  profile: FormInputItemState;
+  implementation_guide: string;
+  profile_select: string;
+}
+
 type FormAction =
   | ({ name: KeysWithValue<FormState, FormInputItemState> } & FormInputItemAction)
+  | ({ name: 'implementation_guide', value: string })
+  | ({ name: 'profile_select', value: string })
   | { name: 'RESET' };
 
 const initialFormState: FormState = {
   resource: initialFormInputItemState,
   profile: initialFormInputItemState,
+  implementation_guide: '',
+  profile_select: '',
 };
 
-function formReducerWithHistory(history: History<FormState>) {
-  return function formReducer(state: FormState, action: FormAction): FormState {
-    switch (action.name) {
-      case 'resource':
-      case 'profile': {
-        const newState = { ...state };
-        newState[action.name] = formInputItemReducer(state[action.name], action);
-        history.replace(history.location.pathname, newState);
-        return newState;
-      }
-      case 'RESET': {
-        history.replace(history.location.pathname, initialFormState);
-        return initialFormState;
-      }
+const formReducerWithHistory = (history: History<FormState>) => (
+  state: FormState,
+  action: FormAction,
+): FormState => {
+  let newState = { ...state };
+
+  switch (action.name) {
+    case 'resource':
+    case 'profile': {
+      newState[action.name] = formInputItemReducer(state[action.name], action);
+      break;
     }
-  };
-}
+    case 'implementation_guide':
+    case 'profile_select': {
+      newState[action.name] = action.value;
+      break;
+    }
+    case 'RESET': {
+      newState = initialFormState;
+      break;
+    }
+  }
+
+  history.replace(history.location.pathname, newState);
+  return newState;
+};
 
 export const FormContext = React.createContext<React.Dispatch<FormAction>>(null!);
 const ResourceFormInputItem = withContext(
