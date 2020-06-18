@@ -2,7 +2,13 @@ import React, { useReducer } from 'react';
 import { useHistory } from 'react-router-dom';
 import { History } from 'history';
 
-import { resourceValidator } from '../models/Resource';
+import {
+  JSONResource,
+  isJsonResource,
+  isXmlResource,
+  parseResource,
+  resourceValidator
+} from '../models/Resource';
 import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
 import { ProfileSelect } from './ProfileSelect';
@@ -27,8 +33,8 @@ export interface FormState {
 
 type FormAction =
   | ({ name: KeysWithValue<FormState, FormInputItemState> } & FormInputItemAction)
-  | ({ name: 'implementation_guide', value: string })
-  | ({ name: 'profile_select', value: SelectOption })
+  | { name: 'implementation_guide', value: string }
+  | { name: 'profile_select', value: SelectOption }
   | { name: 'RESET' };
 
 const initialFormState: FormState = {
@@ -38,9 +44,9 @@ const initialFormState: FormState = {
   profile_select: null,
 };
 
-const formReducerWithHistory = (history: History<FormState>) => (
+const formReducerWith = (history: History<FormState>) => (
   state: FormState,
-  action: FormAction,
+  action: FormAction
 ): FormState => {
   let newState = { ...state };
 
@@ -82,6 +88,54 @@ const ProfileFormInputItem = withContext(
 const ProfileFormWithContext = withContext(FormContext, ProfileForm);
 export const ProfileSelectWithContext = withContext(FormContext, ProfileSelect);
 
+// This function either resolves with the URL of the profile that was
+// successfully uploaded or rejects if the profile failed to be uploaded
+const addProfile = async (profileBlob: string): Promise<string> => {
+  const profile = parseResource(profileBlob);
+
+  let profileBlobUrl: string;
+  if (isJsonResource(profile, 'StructureDefinition')) {
+    profileBlobUrl = profile.url;
+  } else if (isXmlResource(profile, 'StructureDefinition')) {
+    const urlElement = [...profile.documentElement.children].find(elt => elt.nodeName === 'url')!;
+    profileBlobUrl = urlElement.getAttribute('value')!;
+  } else {
+    throw new Error('Profile was not a StructureDefinition');
+  }
+
+  const response = await fetch('http://localhost:8080/profile', {
+    method: 'POST',
+    body: profileBlob,
+  });
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  } else {
+    return profileBlobUrl;
+  }
+};
+
+// This function either resolves with the OperationOutcome response from the
+// '/validate' endpoint or rejects if the resource failed to be validated
+const validateWith = (profileUrls: string[]) => async (
+  resourceBlob: string
+): Promise<JSONResource<'OperationOutcome'>> => {
+  const resource = parseResource(resourceBlob);
+  const resourceType = isJsonResource(resource) ? resource.resourceType : resource.documentElement.nodeName;
+  const contentType = isJsonResource(resource) ? 'json' : 'xml';
+  if (profileUrls.length === 0) {
+    profileUrls.push(`http://hl7.org/fhir/StructureDefinition/${resourceType}`);
+  }
+  const params = new URLSearchParams({ profile: profileUrls.join(',') });
+
+  const response = await fetch(`http://localhost:8080/validate?${params}`, {
+    method: 'POST',
+    headers: { 'Content-Type': `application/fhir+${contentType}` },
+    body: resourceBlob,
+  });
+  return response.json();
+};
+
 interface ValidatorProps {
   readonly basePath?: string;
   readonly profiles?: Record<string, string[]>;
@@ -90,10 +144,10 @@ interface ValidatorProps {
 export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
   const history = useHistory<FormState>();
   const reducerStateDispatch = useReducer(
-    formReducerWithHistory(history),
+    formReducerWith(history),
     history.location.state || initialFormState,
   );
-  const [{ resource: resourceState }, dispatch] = reducerStateDispatch;
+  const [formState, dispatch] = reducerStateDispatch;
 
   const optionsByProfile = new Map<string, SelectOption[]>();
   Object.entries(profiles).forEach(([ig, profiles]) => {
@@ -101,13 +155,38 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     optionsByProfile.set(ig, opts);
   });
 
+  const resourceState = formState.resource;
   const invalidResource = (resourceState.mode === 'text') && (!resourceState.input || !!resourceState.error);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!invalidResource) {
-      history.push(basePath + '/validate');
+    if (invalidResource) {
+      return console.error('Failed to submit form: Resource is invalid');
     }
+
+    const {
+      resource: resourceState,
+      profile: profileState,
+      profile_select: profileSelectState,
+    } = formState;
+
+    const selectedProfile = profileSelectState?.value;
+    const profileUrls = selectedProfile ? [selectedProfile] : [];
+
+    const resourcePromise = resourceState.mode === 'text' ? resourceState.input.trim() : resourceState.file.text();
+    const profilePromise = profileState.mode === 'text' ? profileState.input.trim() : profileState.file.text();
+
+    if (profilePromise) {
+      Promise.resolve(profilePromise)
+        .then(addProfile)
+        .then(profileUrl => profileUrls.push(profileUrl))
+        .catch(error => console.error(`Failed to upload profile: ${error?.message}`));
+    }
+
+    Promise.resolve(resourcePromise)
+      .then(validateWith(profileUrls))
+      .then(() => history.push(basePath + '/validate'))
+      .catch(error => console.error(`Failed to validate resource: ${error?.message}`));
   };
 
   return (
