@@ -6,6 +6,7 @@ import {
   Link,
 } from 'react-router-dom';
 import { ValidatorForm } from './ValidatorForm';
+import { Results } from './Results';
 
 const BASE_PATH = '';
 
@@ -38,7 +39,7 @@ export function App() {
             <ValidatorForm basePath={BASE_PATH} profiles={profiles} />
           </Route>
           <Route path={BASE_PATH + '/validate'}>
-            Validation Results
+            <Results />
           </Route>
         </Switch>
       </div>

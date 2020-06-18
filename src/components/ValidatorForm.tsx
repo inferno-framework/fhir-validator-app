@@ -185,7 +185,10 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
 
     Promise.resolve(resourcePromise)
       .then(validateWith(profileUrls))
-      .then(() => history.push(basePath + '/validate'))
+      .then(outcome => history.push(basePath + '/validate', {
+        outcome,
+        profileUrls,
+      } as any))
       .catch(error => console.error(`Failed to validate resource: ${error?.message}`));
   };
 
