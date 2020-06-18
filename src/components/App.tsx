@@ -7,6 +7,8 @@ import {
 } from 'react-router-dom';
 import { ValidatorForm } from './ValidatorForm';
 
+const BASE_PATH = '';
+
 export function App() {
   const [profiles, setProfiles] = useState<Record<string, string[]>>({});
 
@@ -22,20 +24,20 @@ export function App() {
         <nav>
           <ul>
             <li>
-              <Link to="/">Home</Link>
+              <Link to={BASE_PATH + '/'}>Home</Link>
             </li>
             <li>
-              <Link to="/validate">Validate</Link>
+              <Link to={BASE_PATH + '/validate'}>Validate</Link>
             </li>
           </ul>
         </nav>
 
         <Switch>
-          <Route exact path="/">
+          <Route exact path={BASE_PATH + '/'}>
             <h1>FHIR Validator</h1>
-            <ValidatorForm profiles={profiles} />
+            <ValidatorForm basePath={BASE_PATH} profiles={profiles} />
           </Route>
-          <Route path="/validate">
+          <Route path={BASE_PATH + '/validate'}>
             Validation Results
           </Route>
         </Switch>

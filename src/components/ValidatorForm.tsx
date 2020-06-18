@@ -106,7 +106,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!invalidResource) {
-      history.push('/validate');
+      history.push(basePath + '/validate');
     }
   };
 
