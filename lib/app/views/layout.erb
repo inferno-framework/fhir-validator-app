@@ -42,11 +42,12 @@
       <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
       <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
       <script src="http://localhost:35729/livereload.js"></script>
+      <script src="<%= base_path %>/static/js/dist/main.js"></script>
     <% else %>
       <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
       <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+      <script src="<%= base_path %>/static/js/dist/<%= Dir.glob('public/js/dist/main.*.js').first.split('/').last %>"></script>
     <% end %>
 
-    <script src="<%= base_path%>/static/js/dist/main.js"></script>
   </body>
 </html>

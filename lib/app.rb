@@ -19,6 +19,9 @@ module FHIRValidator
     set :views, settings.root + '/app/views'
     set :public_folder, (proc { File.join(settings.root, '..', 'public') })
     set :static, true
+    if ENV['RACK_ENV'] == 'production'
+      set :static_cache_control, [:public, max_age: 31_536_000] # cache static files for 1 year
+    end
 
     l = ::Logger.new(STDOUT, level: 'info', progname: 'Inferno')
     l.formatter = proc do |severity, _datetime, progname, msg|

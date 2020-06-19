@@ -38,6 +38,7 @@ RUN rm -rf /var/www/fhir_validator/node_modules
 ### Set up environment
 
 ENV APP_ENV=production
+ENV RACK_ENV=production
 EXPOSE 4567
 
 CMD ["bundle", "exec", "rackup", "-o", "0.0.0.0"]
