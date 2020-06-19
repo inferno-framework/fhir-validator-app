@@ -1,24 +1,23 @@
 import React from "react";
 import { render, fireEvent, waitForElement, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
 
 import { Resource, ResourceProps } from '../components/Resource';
 
 function renderResource(props: Partial<ResourceProps> = {}) {
   const defaultProps: ResourceProps = {
-    resource: btoa("{ 'foo': 'bar'}"),
-    resourceType: 'json',
-    errors: btoa("[]"),
-    warnings: btoa("[]"),
-    information: btoa("[]")
+    resource: '{ "foo": "bar"}',
+    contentType: 'json',
+    errors: [],
+    warnings: [],
+    information: [],
   }
   return render(<Resource {...defaultProps} {...props} />);
 };
 
 describe("<Resource />", () => {
-  test("Should display a simple JSON object", async () => {
-    const { findByTestId } = renderResource();
-    const resource = await findByTestId("syntax-highlight");
+  test("Should display a simple JSON object", () => {
+    const { getByTestId } = renderResource();
+    const resource = getByTestId("syntax-highlight");
 
     expect(resource).toHaveTextContent(/foo/);
     expect(resource).toHaveTextContent(/bar/);
