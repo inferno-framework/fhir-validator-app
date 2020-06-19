@@ -1,6 +1,7 @@
 export interface JSONResource<T extends string = string> {
   resourceType: T;
   url: string | (T extends 'StructureDefinition' ? never : undefined);
+  issue: any[] | (T extends 'OperationOutcome' ? never : undefined);
 };
 export interface XMLResource<_T extends string = string> extends Document {};
 
