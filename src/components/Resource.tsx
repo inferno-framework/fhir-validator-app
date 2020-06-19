@@ -10,66 +10,57 @@ SyntaxHighlighter.registerLanguage('xml', xml);
 
 export interface ResourceProps {
   readonly resource: string;
-  readonly resourceType: string;
-  readonly errors: string;
-  readonly warnings: string;
-  readonly information: string;
-}
-
-export interface IssueJson {
-  readonly line: number;
-  readonly text: string;
+  readonly contentType: 'json' | 'xml';
+  readonly errors: Issue[];
+  readonly warnings: Issue[];
+  readonly information: Issue[];
 }
 
 // 'Resource' describes the shape of props.
 // State is never set so we use the '{}' type.
 export class Resource extends React.Component<ResourceProps, {}> {
   render() {
-    const errors = this.parseIssueArray(this.decodeResource(this.props.errors));
-    const warnings = this.parseIssueArray(this.decodeResource(this.props.warnings));
-    const information = this.parseIssueArray(this.decodeResource(this.props.information));
+    const {
+      resource,
+      contentType,
+      errors,
+      warnings,
+      information,
+    } = this.props;
     const errorLines = errors.map(e => e.line);
     const warningLines = warnings.map(w => w.line);
     const infoLines = information.map(i => i.line);
     return(
-      <SyntaxHighlighter language={this.props.resourceType} 
+      <SyntaxHighlighter
+        language={contentType}
         style={docco}
-        showLineNumbers={true}
-        wrapLines={true}
+        showLineNumbers
+        wrapLines
         lineProps={(lineNumber: number) => {
           return this.highlightProps(lineNumber, errorLines, warningLines, infoLines);
         }}
         lineNumberProps={(lineNumber: number) => {
           return this.highlightProps(lineNumber, errorLines, warningLines, infoLines);
         }}
-        data-testid="syntax-highlight">
-        { this.decodeResource(this.props.resource) }
+        data-testid="syntax-highlight"
+      >
+        {resource}
       </SyntaxHighlighter>
     );
   }
 
   highlightProps(lineNumber: number, errorLines: number[], warningLines: number[], infoLines: number[]): any {
-    let style = { 'backgroundColor': '' };
-    let className = null;
+    const style = { backgroundColor: '' };
     if (errorLines.includes(lineNumber)) {
       style.backgroundColor = "#f8d7da";
-      return { style: style, id: `error-${lineNumber}`};
+      return { style, id: `error-${lineNumber}`};
     } else if (warningLines.includes(lineNumber)) {
       style.backgroundColor = "#fff3cd";
-      return { style: style, id: `error-${lineNumber}` };
+      return { style, id: `error-${lineNumber}` };
     } else if (infoLines.includes(lineNumber)) {
       style.backgroundColor = "#d1ecf1";
-      return { style: style, id: `error-${lineNumber}` };
+      return { style, id: `error-${lineNumber}` };
     }
-    return { style: style };
-  }
-
-  decodeResource(resourceString: string):string {
-    return atob(resourceString);
-  }
-
-  parseIssueArray(issueString: string):Issue[] {
-    const json = JSON.parse(issueString);
-    return json.map((obj: IssueJson) => new Issue(obj['line'], obj['text']));
+    return { style };
   }
 }

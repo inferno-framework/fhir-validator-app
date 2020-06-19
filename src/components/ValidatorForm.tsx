@@ -115,11 +115,12 @@ const addProfile = async (profileBlob: string): Promise<string> => {
   }
 };
 
-// This function either resolves with the OperationOutcome response from the
-// '/validate' endpoint or rejects if the resource failed to be validated
+// This function either resolves with the OperationOutcome response and other
+// details of the resource validated at the '/validate' endpoint or rejects if
+// the resource failed to be validated
 const validateWith = (profileUrls: string[]) => async (
   resourceBlob: string
-): Promise<JSONResource<'OperationOutcome'>> => {
+)  => {
   const resource = parseResource(resourceBlob);
   const resourceType = isJsonResource(resource) ? resource.resourceType : resource.documentElement.nodeName;
   const contentType = isJsonResource(resource) ? 'json' : 'xml';
@@ -133,7 +134,12 @@ const validateWith = (profileUrls: string[]) => async (
     headers: { 'Content-Type': `application/fhir+${contentType}` },
     body: resourceBlob,
   });
-  return response.json();
+  return {
+    outcome: await response.json() as JSONResource<'OperationOutcome'>,
+    profileUrls,
+    resourceBlob,
+    contentType,
+  };
 };
 
 interface ValidatorProps {
@@ -185,10 +191,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
 
     Promise.resolve(resourcePromise)
       .then(validateWith(profileUrls))
-      .then(outcome => history.push(basePath + '/validate', {
-        outcome,
-        profileUrls,
-      } as any))
+      .then(results => history.push(basePath + '/validate', results as any))
       .catch(error => console.error(`Failed to validate resource: ${error?.message}`));
   };
 

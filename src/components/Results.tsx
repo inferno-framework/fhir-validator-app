@@ -5,6 +5,7 @@ import { JSONResource } from '../models/Resource';
 import { Issue } from '../models/Issue';
 
 import { Issues } from './Issues';
+import { Resource } from './Resource';
 
 type OperationOutcome = JSONResource<'OperationOutcome'>;
 type OIssue = OperationOutcome['issue'][0];
@@ -12,6 +13,8 @@ type OIssue = OperationOutcome['issue'][0];
 interface ResultsState {
   outcome: OperationOutcome;
   profileUrls: string[];
+  resourceBlob: string;
+  contentType: 'json' | 'xml';
 }
 
 const OO_ISSUE_LINE = 'http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line';
@@ -32,7 +35,12 @@ const issuesBySeverity = (issues: OIssue[], severity: string) =>
 
 export function Results() {
   const history = useHistory<ResultsState>();
-  const { outcome: { issue = [] }, profileUrls } = history.location.state;
+  const {
+    outcome: { issue = [] },
+    profileUrls,
+    resourceBlob,
+    contentType,
+  } = history.location.state;
 
   const fatals = issuesBySeverity(issue, 'fatal');
   const errors = issuesBySeverity(issue, 'error');
@@ -68,14 +76,13 @@ export function Results() {
       </div>
 
       <div className="container">
-        {/* <div id="resourceDisplay" */}
-        {/*   data-resource-type="<%= @resource_type %>" */}
-        {/*   data-resource-string="<%= @resource_string %>" */}
-        {/*   data-issues-errors="<%= Base64.encode64(@results[:errors].to_json) %>" */}
-        {/*   data-issues-warnings="<%= Base64.encode64(@results[:warnings].to_json) %>" */}
-        {/*   data-issues-information="<%= Base64.encode64(@results[:information].to_json) %>" */}
-        {/* > */}
-        {/* </div> */}
+       <Resource
+         contentType={contentType}
+         resource={resourceBlob}
+         errors={errors}
+         warnings={warnings}
+         information={information}
+        />
       </div>
     </>
   );
