@@ -179,17 +179,14 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     const selectedProfile = profileSelectState?.value;
     const profileUrls = selectedProfile ? [selectedProfile] : [];
 
-    const resourcePromise = resourceState.mode === 'text' ? resourceState.input.trim() : resourceState.file.text();
-    const profilePromise = profileState.mode === 'text' ? profileState.input.trim() : profileState.file.text();
+    const resourcePromise = resourceState.mode === 'text' ? resourceState.input : resourceState.file.text();
+    const profilePromise = profileState.mode === 'text' ? profileState.input : profileState.file.text();
 
-    if (profilePromise) {
-      Promise.resolve(profilePromise)
-        .then(addProfile)
-        .then(profileUrl => profileUrls.push(profileUrl))
-        .catch(error => console.error(`Failed to upload profile: ${error?.message}`));
-    }
-
-    Promise.resolve(resourcePromise)
+    Promise.resolve(profilePromise)
+      .then(addProfile)
+      .then(profileUrl => profileUrls.push(profileUrl))
+      .catch(error => console.error(`Failed to upload profile: ${error?.message}`))
+      .then(() => resourcePromise)
       .then(validateWith(profileUrls))
       .then(results => history.push(basePath + '/validate', { ...formState, results }))
       .catch(error => console.error(`Failed to validate resource: ${error?.message}`));
