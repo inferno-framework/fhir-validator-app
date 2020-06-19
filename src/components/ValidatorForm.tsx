@@ -183,8 +183,12 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     const profilePromise = profileState.mode === 'text' ? profileState.input : profileState.file.text();
 
     Promise.resolve(profilePromise)
-      .then(addProfile)
-      .then(profileUrl => profileUrls.push(profileUrl))
+      .then(async profileBlob => {
+        if (profileBlob.trim()) {
+          const profileUrl = await addProfile(profileBlob);
+          profileUrls.push(profileUrl);
+        }
+      })
       .catch(error => console.error(`Failed to upload profile: ${error?.message}`))
       .then(() => resourcePromise)
       .then(validateWith(profileUrls))
