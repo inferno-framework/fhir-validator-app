@@ -1,21 +1,22 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import { JSONResource } from '../models/Resource';
 import { Issue } from '../models/Issue';
 
 import { Issues } from './Issues';
 import { Resource } from './Resource';
+import { AppState } from './App';
 
 type OperationOutcome = JSONResource<'OperationOutcome'>;
 type OIssue = OperationOutcome['issue'][0];
 
-interface ResultsState {
+export interface ResultsState {
   outcome: OperationOutcome;
   profileUrls: string[];
   resourceBlob: string;
   contentType: 'json' | 'xml';
-}
+};
 
 const OO_ISSUE_LINE = 'http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line';
 
@@ -33,14 +34,18 @@ const issuesBySeverity = (issues: OIssue[], severity: string) =>
       return new Issue(issueLine(iss), issueText);
     });
 
-export function Results() {
-  const history = useHistory<ResultsState>();
+export function Results({ basePath = '' }) {
+  const history = useHistory<AppState>();
+  if (!history.location.state?.results) {
+    return <Redirect to={basePath + '/'} />;
+  }
+
   const {
     outcome: { issue = [] },
     profileUrls,
     resourceBlob,
     contentType,
-  } = history.location.state;
+  } = history.location.state.results;
 
   const fatals = issuesBySeverity(issue, 'fatal');
   const errors = issuesBySeverity(issue, 'error');

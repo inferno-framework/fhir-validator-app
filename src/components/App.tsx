@@ -5,10 +5,12 @@ import {
   Route,
   Link,
 } from 'react-router-dom';
-import { ValidatorForm } from './ValidatorForm';
-import { Results } from './Results';
+import { ValidatorForm, FormState } from './ValidatorForm';
+import { Results, ResultsState } from './Results';
 
 const BASE_PATH = '';
+
+export type AppState = FormState & { results?: ResultsState };
 
 export function App() {
   const [profiles, setProfiles] = useState<Record<string, string[]>>({});
@@ -39,7 +41,7 @@ export function App() {
             <ValidatorForm basePath={BASE_PATH} profiles={profiles} />
           </Route>
           <Route path={BASE_PATH + '/validate'}>
-            <Results />
+            <Results basePath={BASE_PATH} />
           </Route>
         </Switch>
       </div>

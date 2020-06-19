@@ -21,6 +21,7 @@ import {
   initialState as initialFormInputItemState,
 } from './FormInputItem';
 import { withContext } from '../hoc/withContext';
+import { AppState } from './App';
 
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
@@ -44,7 +45,7 @@ const initialFormState: FormState = {
   profile_select: null,
 };
 
-const formReducerWith = (history: History<FormState>) => (
+const formReducerWith = (history: History<AppState>) => (
   state: FormState,
   action: FormAction
 ): FormState => {
@@ -139,7 +140,7 @@ const validateWith = (profileUrls: string[]) => async (
     profileUrls,
     resourceBlob,
     contentType,
-  };
+  } as const;
 };
 
 interface ValidatorProps {
@@ -148,7 +149,7 @@ interface ValidatorProps {
 }
 
 export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
-  const history = useHistory<FormState>();
+  const history = useHistory<AppState>();
   const reducerStateDispatch = useReducer(
     formReducerWith(history),
     history.location.state || initialFormState,
@@ -191,7 +192,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
 
     Promise.resolve(resourcePromise)
       .then(validateWith(profileUrls))
-      .then(results => history.push(basePath + '/validate', results as any))
+      .then(results => history.push(basePath + '/validate', { ...formState, results }))
       .catch(error => console.error(`Failed to validate resource: ${error?.message}`));
   };
 
