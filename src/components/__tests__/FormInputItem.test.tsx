@@ -6,7 +6,7 @@ import {
   Action,
   reducer,
   initialState,
-} from '../components/FormInputItem';
+} from '../FormInputItem';
 
 type TestState = { hello: State };
 

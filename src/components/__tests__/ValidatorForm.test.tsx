@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
-import { ValidatorForm } from '../components/ValidatorForm';
+import { ValidatorForm } from '../ValidatorForm';
 
 describe('<ValidatorForm />', () => {
   it('renders without crashing', () => {

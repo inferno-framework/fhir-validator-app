@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent, waitForElement, screen } from "@testing-library/react";
 
-import { Resource, ResourceProps } from '../components/Resource';
+import { Resource, ResourceProps } from '../Resource';
 
 function renderResource(props: Partial<ResourceProps> = {}) {
   const defaultProps: ResourceProps = {
