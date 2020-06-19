@@ -24,13 +24,13 @@ const issueLocation = (issue: OIssue): string =>
   issue.expression?.join(', ') ?? issue.location.join(', ');
 
 const issueLine = (issue: OIssue): number =>
-  issue.extension.find((e: any) => e.url === OO_ISSUE_LINE).valueInteger;
+  issue.extension?.find((e: any) => e.url === OO_ISSUE_LINE).valueInteger ?? -1;
 
-const issuesBySeverity = (issues: OIssue[], severity: string) =>
+const issuesBySeverity = (issues: OIssue[], severity: string): Issue[] =>
   issues
     .filter(i => i.severity === severity)
     .map(iss => {
-      const issueText = `${issueLocation(iss)}: ${iss?.details?.text ?? ''}`
+      const issueText = `${issueLocation(iss)}: ${iss.details?.text ?? ''}`;
       return new Issue(issueLine(iss), issueText);
     });
 
