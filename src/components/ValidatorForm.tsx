@@ -1,8 +1,34 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 
-import { ResourceForm } from './ResourceForm';
+import { resourceValidator } from '../models/Resource';
 import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
+import {
+  FormInputItem,
+  State as FormInputItemState,
+  Action as FormInputItemAction,
+  reducer as formInputItemReducer,
+  initialState as initialFormInputItemState,
+} from './FormInputItem';
+
+type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
+
+type FormState = { resource: FormInputItemState, profile: FormInputItemState };
+type FormAction = { name: KeysWithValue<FormState, FormInputItemState> } & FormInputItemAction;
+
+function formReducer(state: FormState, action: FormAction): FormState {
+  const { name } = action;
+  switch (name) {
+    case 'resource':
+    case 'profile': {
+      const newFormInputItemState = formInputItemReducer(state[name], action);
+      return {
+        ...state,
+        [name]: newFormInputItemState,
+      };
+    }
+  }
+}
 
 interface ValidatorProps {
   readonly basePath?: string;
@@ -10,42 +36,52 @@ interface ValidatorProps {
 }
 
 export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
+  const [{ resource: resourceState, profile: profileState }, dispatch] = useReducer(formReducer, {
+    resource: initialFormInputItemState,
+    profile: initialFormInputItemState,
+  });
+
   const optionsByProfile = new Map<string, SelectOption[]>();
   Object.entries(profiles).forEach(([ig, profiles]) => {
     const opts = profiles.map((profile: string) => new SelectOption(profile, profile));
     optionsByProfile.set(ig, opts);
   });
 
+  const invalidResource = (resourceState.mode === 'text') && (!resourceState.input || !!resourceState.error);
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (invalidResource) {
+      e.preventDefault();
+    }
+  };
+
   return (
-    <form action={basePath + '/validate'} method="post" encType="multipart/form-data">
+    <form action={basePath + '/validate'} method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
       <div className="jumbotron">
-        <div className="form-group">
-          <ResourceForm />
-          <br />
-          <div className="custom-file">
-            <label htmlFor="resource" className="custom-file-label">Or upload a resource in a file:</label>
-            <input type="file" name="resource" id="resource" className="custom-file-input" />
-          </div>
-        </div>
+        <FormInputItem<FormState, 'resource'>
+          name="resource"
+          textLabel="Paste your FHIR resource here:"
+          fileLabel="Or upload a resource in a file:"
+          state={resourceState}
+          dispatch={dispatch}
+          validator={resourceValidator}
+        />
       </div>
 
       <div className="jumbotron">
         <div className="form-group">
           <ProfileForm optionsByProfile={optionsByProfile} ig="fhir" />
         </div>
-        <div className="form-group">
-          <label htmlFor="profile_field">Or if you have your own profile, you can paste it here:</label>
-          <textarea name="profile_field" id="profile_field" className="form-control disable-me custom-text-area disable-me-input" rows={8} />
-          <br />
-          <div className="custom-file">
-            <label htmlFor="profile_file" className="custom-file-label disable-me-textarea disable-me-input">Or upload your profile in a file:</label>
-            <input type="file" name="profile_file" id="profile_file" className="custom-file-input disable-me-textarea disable-me-input" />
-          </div>
-        </div>
+        <FormInputItem<FormState, 'profile'>
+          name="profile"
+          textLabel="Or if you have your own profile, you can paste it here:"
+          fileLabel="Or upload your profile in a file:"
+          state={profileState}
+          dispatch={dispatch}
+        />
       </div>
 
       <div className="form-group">
-        <input type="submit" className="btn btn-primary" />
+        <input type="submit" value="Validate" className="btn btn-primary" disabled={invalidResource} />
       </div>
     </form>
   );
