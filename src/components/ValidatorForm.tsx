@@ -22,6 +22,7 @@ import {
 } from './FormInputItem';
 import { withContext } from '../hoc/withContext';
 import { AppState } from './App';
+import { ResultsState } from './Results';
 
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
@@ -118,9 +119,10 @@ const addProfile = async (profileBlob: string): Promise<string> => {
 // This function either resolves with the OperationOutcome response and other
 // details of the resource validated at the '/validate' endpoint or rejects if
 // the resource failed to be validated
-const validateWith = (profileUrls: string[]) => async (
+const validateWith = async (
+  profileUrls: string[],
   resourceBlob: string
-)  => {
+): Promise<ResultsState> => {
   const resource = parseResource(resourceBlob);
   const resourceType = isJsonResource(resource) ? resource.resourceType : resource.documentElement.nodeName;
   const contentType = isJsonResource(resource) ? 'json' : 'xml';
@@ -139,7 +141,7 @@ const validateWith = (profileUrls: string[]) => async (
     profileUrls,
     resourceBlob,
     contentType,
-  } as const;
+  };
 };
 
 interface ValidatorProps {
@@ -182,18 +184,22 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     const resourcePromise = resourceState.mode === 'text' ? resourceState.input : resourceState.file.text();
     const profilePromise = profileState.mode === 'text' ? profileState.input : profileState.file.text();
 
-    Promise.resolve(profilePromise)
-      .then(async profileBlob => {
-        if (profileBlob.trim()) {
-          const profileUrl = await addProfile(profileBlob);
-          profileUrls.push(profileUrl);
-        }
-      })
-      .catch(error => console.error(`Failed to upload profile: ${error?.message}`))
-      .then(() => resourcePromise)
-      .then(validateWith(profileUrls))
-      .then(results => history.push(basePath + '/validate', { ...formState, results }))
-      .catch(error => console.error(`Failed to validate resource: ${error?.message}`));
+    try {
+      const profileBlob = await profilePromise;
+      if (profileBlob.trim()) {
+        const profileUrl = await addProfile(profileBlob);
+        profileUrls.push(profileUrl);
+      }
+    } catch (error) {
+      console.error(`Failed to upload profile: ${error?.message}`);
+    }
+
+    try {
+      const results = await validateWith(profileUrls, await resourcePromise);
+      history.push(basePath + '/validate', { ...formState, results });
+    } catch (error) {
+      console.error(`Failed to validate resource: ${error?.message}`);
+    }
   };
 
   return (
