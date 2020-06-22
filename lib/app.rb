@@ -108,7 +108,7 @@ module FHIRValidator
     end
 
     def get_resource(params)
-      resource_file = params.dig(:resource, :tempfile)
+      resource_file = params.dig(:resource_file, :tempfile)
       resource_blob = params[:resource_field]
       if resource_file
         File.read(resource_file)
