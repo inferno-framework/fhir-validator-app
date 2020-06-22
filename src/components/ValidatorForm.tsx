@@ -79,11 +79,11 @@ const formReducerWith = (history: History<AppState>) => (
 export const FormContext = React.createContext<[FormState, React.Dispatch<FormAction>]>(null!);
 const ResourceFormInputItem = withContext(
   FormContext,
-  (props: FormInputItemProps<FormState, 'resource'>) => FormInputItem(props),
+  FormInputItem as React.ComponentType<FormInputItemProps<FormState, 'resource'>>
 );
 const ProfileFormInputItem = withContext(
   FormContext,
-  (props: FormInputItemProps<FormState, 'profile'>) => FormInputItem(props),
+  FormInputItem as React.ComponentType<FormInputItemProps<FormState, 'profile'>>
 );
 const ProfileFormWithContext = withContext(FormContext, ProfileForm);
 export const ProfileSelectWithContext = withContext(FormContext, ProfileSelect);
