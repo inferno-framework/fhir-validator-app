@@ -30,7 +30,7 @@ export interface FormState {
   resource: FormInputItemState;
   profile: FormInputItemState;
   implementation_guide: string;
-  profile_select?: SelectOption;
+  profile_select: SelectOption | null;
 };
 
 type FormAction =
@@ -43,6 +43,7 @@ const initialFormState: FormState = {
   resource: initialFormInputItemState,
   profile: initialFormInputItemState,
   implementation_guide: 'fhir',
+  profile_select: null,
 };
 
 const formReducerWith = (history: History<AppState>) => (
@@ -60,7 +61,7 @@ const formReducerWith = (history: History<AppState>) => (
     case 'implementation_guide': {
       newState[action.name] = action.value;
       // keep profile_select value in sync with the selected implementation_guide
-      delete newState['profile_select'];
+      newState['profile_select'] = null;
       break;
     }
     case 'profile_select': {
