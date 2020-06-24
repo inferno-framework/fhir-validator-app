@@ -24,17 +24,6 @@ export function App() {
 
   return (
     <div className="container">
-      <nav>
-        <ul>
-          <li>
-            <Link to={BASE_PATH + '/'}>Home</Link>
-          </li>
-          <li>
-            <Link to={BASE_PATH + RESULTS_PATH}>Validate</Link>
-          </li>
-        </ul>
-      </nav>
-
       <Switch>
         <Route exact path={BASE_PATH + '/'}>
           <h1>FHIR Validator</h1>
