@@ -21,7 +21,14 @@ const input10 = parser.parseFromString('<Patient xmlns="http://hl7.org/fhir"></P
 const input11 = parser.parseFromString('<StructureDefinition xmlns="http://hl7.org/fhir"></StructureDefinition>', 'text/xml');
 const input12 = parser.parseFromString('<StructureDefinition xmlns="http://hl7.org/fhir"><url value="http://thebomb.com"/></StructureDefinition>', 'text/xml');
 const input13 = parser.parseFromString('<OperationOutcome xmlns="http://hl7.org/fhir"></OperationOutcome>', 'text/xml');
-const input14 = parser.parseFromString('<OperationOutcome xmlns="http://hl7.org/fhir"><issue/></OperationOutcome>', 'text/xml');
+const input14 = parser.parseFromString(`
+  <OperationOutcome xmlns="http://hl7.org/fhir">
+    <issue>
+      <severity value="error"/>
+      <code value="code-invalid"/>
+    </issue>
+  </OperationOutcome>
+`, 'text/xml');
 const input15 = parser.parseFromString('<OperationOutcome xmlns="http://hl7.org/fhir"><url value="http://website.com"/></OperationOutcome>', 'text/xml');
 
 describe('isJsonResource', () => {
