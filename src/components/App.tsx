@@ -5,7 +5,7 @@ import {
   Link,
 } from 'react-router-dom';
 import { ValidatorForm, FormState } from './ValidatorForm';
-import { Results, ResultsState } from './Results';
+import { Results, ResultsState, RESULTS_PATH } from './Results';
 
 const BASE_PATH = '';
 
@@ -30,7 +30,7 @@ export function App() {
             <Link to={BASE_PATH + '/'}>Home</Link>
           </li>
           <li>
-            <Link to={BASE_PATH + '/validate'}>Validate</Link>
+            <Link to={BASE_PATH + RESULTS_PATH}>Validate</Link>
           </li>
         </ul>
       </nav>
@@ -40,7 +40,7 @@ export function App() {
           <h1>FHIR Validator</h1>
           <ValidatorForm basePath={BASE_PATH} profiles={profiles} />
         </Route>
-        <Route path={BASE_PATH + '/validate'}>
+        <Route path={BASE_PATH + RESULTS_PATH}>
           <Results basePath={BASE_PATH} />
         </Route>
       </Switch>

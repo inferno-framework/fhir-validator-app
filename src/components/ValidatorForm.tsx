@@ -22,7 +22,7 @@ import {
 } from './FormInputItem';
 import { withContext } from '../hoc/withContext';
 import { AppState } from './App';
-import { ResultsState } from './Results';
+import { ResultsState, RESULTS_PATH } from './Results';
 
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
@@ -197,7 +197,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
 
     try {
       const results = await validateWith(profileUrls, await resourcePromise);
-      history.push(basePath + '/validate', { ...formState, results });
+      history.push(basePath + RESULTS_PATH, { ...formState, results });
     } catch (error) {
       console.error(`Failed to validate resource: ${error?.message}`);
     }

@@ -18,6 +18,7 @@ export interface ResultsState {
   contentType: 'json' | 'xml';
 };
 
+export const RESULTS_PATH = '/results';
 const OO_ISSUE_LINE = 'http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line';
 
 const issueLocation = (issue: OIssue): string =>
