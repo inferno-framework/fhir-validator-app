@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Link,
@@ -22,29 +21,27 @@ export function App() {
   }, []);
 
   return (
-    <Router>
-      <div className="container">
-        <nav>
-          <ul>
-            <li>
-              <Link to={BASE_PATH + '/'}>Home</Link>
-            </li>
-            <li>
-              <Link to={BASE_PATH + '/validate'}>Validate</Link>
-            </li>
-          </ul>
-        </nav>
+    <div className="container">
+      <nav>
+        <ul>
+          <li>
+            <Link to={BASE_PATH + '/'}>Home</Link>
+          </li>
+          <li>
+            <Link to={BASE_PATH + '/validate'}>Validate</Link>
+          </li>
+        </ul>
+      </nav>
 
-        <Switch>
-          <Route exact path={BASE_PATH + '/'}>
-            <h1>FHIR Validator</h1>
-            <ValidatorForm basePath={BASE_PATH} profiles={profiles} />
-          </Route>
-          <Route path={BASE_PATH + '/validate'}>
-            <Results basePath={BASE_PATH} />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
+      <Switch>
+        <Route exact path={BASE_PATH + '/'}>
+          <h1>FHIR Validator</h1>
+          <ValidatorForm basePath={BASE_PATH} profiles={profiles} />
+        </Route>
+        <Route path={BASE_PATH + '/validate'}>
+          <Results basePath={BASE_PATH} />
+        </Route>
+      </Switch>
+    </div>
   );
 };
