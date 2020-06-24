@@ -15,9 +15,11 @@ export function App() {
   const [profiles, setProfiles] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
+    let aborted = false;
     fetch('data/profiles.json')
       .then(response => response.json())
-      .then(setProfiles);
+      .then(profiles => !aborted && setProfiles(profiles));
+    return () => aborted = true;
   }, []);
 
   return (
