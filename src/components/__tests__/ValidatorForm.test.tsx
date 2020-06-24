@@ -1,21 +1,21 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { render, fireEvent, waitFor, screen } from '@testing-library/react';
+import { renderWithRouter } from '../test-utils';
+import { fireEvent, waitFor, screen } from '@testing-library/react';
 import { ValidatorForm } from '../ValidatorForm';
 
 describe('<ValidatorForm />', () => {
   it('renders without crashing', () => {
-    render(<ValidatorForm basePath="" profiles={{}} />, { wrapper: MemoryRouter });
+    renderWithRouter(<ValidatorForm basePath="" profiles={{}} />);
   });
 
   it('handles optional arguments without crashing', () => {
-    render(<ValidatorForm basePath="" />, { wrapper: MemoryRouter });
-    render(<ValidatorForm profiles={{}} />, { wrapper: MemoryRouter });
-    render(<ValidatorForm />, { wrapper: MemoryRouter });
+    renderWithRouter(<ValidatorForm basePath="" />);
+    renderWithRouter(<ValidatorForm profiles={{}} />);
+    renderWithRouter(<ValidatorForm />);
   });
 
   it('displays the name of the file that was uploaded', () => {
-    const { getByLabelText, queryByLabelText } = render(<ValidatorForm />, { wrapper: MemoryRouter });
+    const { getByLabelText, queryByLabelText } = renderWithRouter(<ValidatorForm />);
 
     const fileInput = getByLabelText(/upload.*resource/i);
     const file = new File(['{ "foo": "bar" }'], 'foobar.json', { type: 'text/json' });
@@ -25,7 +25,7 @@ describe('<ValidatorForm />', () => {
   });
 
   it('disables textarea iff file is uploaded', () => {
-    const { getByLabelText } = render(<ValidatorForm />, { wrapper: MemoryRouter });
+    const { getByLabelText } = renderWithRouter(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
     const fileInput = getByLabelText(/upload.*resource/i);
@@ -39,7 +39,7 @@ describe('<ValidatorForm />', () => {
   });
 
   it('can detect valid/invalid JSON and report missing "resourceType"', () => {
-    const { getByLabelText, queryByText } = render(<ValidatorForm />, { wrapper: MemoryRouter });
+    const { getByLabelText, queryByText } = renderWithRouter(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
 
@@ -61,7 +61,7 @@ describe('<ValidatorForm />', () => {
   });
 
   it('can detect valid/invalid XML and report missing xmlns', () => {
-    const { getByLabelText, queryByText } = render(<ValidatorForm />, { wrapper: MemoryRouter });
+    const { getByLabelText, queryByText } = renderWithRouter(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
 
@@ -86,7 +86,7 @@ describe('<ValidatorForm />', () => {
   });
 
   it('enables the submit button iff a resource is uploaded or the input is valid JSON/XML', () => {
-    const { getByLabelText, getByDisplayValue } = render(<ValidatorForm />, { wrapper: MemoryRouter });
+    const { getByLabelText, getByDisplayValue } = renderWithRouter(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
     const fileInput = getByLabelText(/upload.*resource/i);
