@@ -205,7 +205,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
 
   return (
     <FormContext.Provider value={reducerStateDispatch}>
-      <form onSubmit={handleSubmit}>
+      <form role="form" onSubmit={handleSubmit}>
         <div className="card">
           <div className="card-header">
             Resource

@@ -1,6 +1,7 @@
 import React from 'react';
-import { renderWithRouter } from '../test-utils';
+import selectEvent from 'react-select-event';
 import { fireEvent, waitFor, screen } from '@testing-library/react';
+import { renderWithRouter } from '../test-utils';
 import { ValidatorForm } from '../ValidatorForm';
 
 describe('<ValidatorForm />', () => {
@@ -115,5 +116,35 @@ describe('<ValidatorForm />', () => {
 
     fireEvent.change(fileInput, { target: { files: [] } });
     expect(submitButton).toBeDisabled();
+  });
+
+  it('clears the profile select field if the implementation guide is changed', async () => {
+    const { getByLabelText, getByRole } = renderWithRouter(
+      <ValidatorForm
+        profiles={{
+          fhir: ['http://hl7.org/fhir/StructureDefinition/Patient'],
+          us_core: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient'],
+        }}
+      />
+    );
+
+    const igSelect = getByLabelText(/implementation guide/i);
+    const profileSelect = getByLabelText(/select.*profile/i);
+
+    fireEvent.change(igSelect, { target: { value: 'fhir' } });
+    expect(getByRole('form')).toHaveFormValues({ profile_select: '' });
+
+    await selectEvent.select(profileSelect, /Patient/);
+    expect(getByRole('form')).toHaveFormValues({
+      profile_select: 'http://hl7.org/fhir/StructureDefinition/Patient',
+    });
+
+    fireEvent.change(igSelect, { target: { value: 'us_core' } });
+    expect(getByRole('form')).toHaveFormValues({ profile_select: '' });
+
+    await selectEvent.select(profileSelect, /us-core-patient/);
+    expect(getByRole('form')).toHaveFormValues({
+      profile_select: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient',
+    });
   });
 });

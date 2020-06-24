@@ -41,6 +41,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "html-webpack-plugin": "^4.3.0",
     "jest": "^25.5.3",
+    "react-select-event": "^4.1.4",
     "source-map-loader": "^0.2.4",
     "ts-jest": "^25.4.0",
     "ts-loader": "^7.0.0",
