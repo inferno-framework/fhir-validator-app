@@ -22,10 +22,10 @@ export const RESULTS_PATH = '/results';
 const OO_ISSUE_LINE = 'http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line';
 
 const issueLocation = (issue: OIssue): string =>
-  issue.expression?.join(', ') ?? issue.location.join(', ');
+  issue.expression?.join(', ') ?? issue.location?.join(', ') ?? '';
 
 const issueLine = (issue: OIssue): number =>
-  issue.extension?.find((e: any) => e.url === OO_ISSUE_LINE).valueInteger ?? -1;
+  issue.extension?.find((e: any) => e.url === OO_ISSUE_LINE)?.valueInteger ?? -1;
 
 const issuesBySeverity = (issues: OIssue[], severity: string): Issue[] =>
   issues
