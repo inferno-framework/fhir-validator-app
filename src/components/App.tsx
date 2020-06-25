@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Switch,
-  Route,
-  Link,
-} from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { ValidatorForm, FormState } from './ValidatorForm';
 import { Results, ResultsState, RESULTS_PATH } from './Results';
 
