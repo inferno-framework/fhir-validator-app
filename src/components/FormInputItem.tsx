@@ -96,12 +96,6 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
       </div>
       <br />
       <div className="custom-file">
-        <label htmlFor={fileInputName} className={`custom-file-label ${state.mode === 'file' ? 'selected' : ''}`}>
-          {state.mode === 'file'
-            ? state.status === 'loading' ? 'Loading...' : state.file.name
-            : fileLabel
-          }
-        </label>
         <input
           type="file"
           name={fileInputName}
@@ -109,6 +103,12 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
           className={`custom-file-input ${fileInputClass}`}
           onChange={handleFileChange}
         />
+        <label htmlFor={fileInputName} className={`custom-file-label ${state.mode === 'file' ? 'selected' : ''}`}>
+          {state.mode === 'file'
+            ? state.status === 'loading' ? 'Loading...' : state.file.name
+            : fileLabel
+          }
+        </label>
         <div className="invalid-feedback">
           {state.mode === 'file' && state.error}
         </div>
