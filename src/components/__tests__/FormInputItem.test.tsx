@@ -10,16 +10,21 @@ import {
 
 type TestState = { hello: State };
 
+const testValidator = (input: string): string => {
+  const valid = /^yes|no$/i.test(input);
+  return valid ? '' : 'you have entered invalid input';
+};
+
 const testReducer = ({ hello }: TestState, action: Action): TestState => (
   { hello: reducer(hello, action) }
 );
 
-const TestFormInputItem = ({ validator } : { validator?: (input: string) => string }) => (
+const TestFormInputItem = () => (
   <FormInputItem
     name="hello"
     textLabel="foo"
     fileLabel="bar"
-    validator={validator}
+    validator={testValidator}
     context={useReducer(testReducer, { hello: initialState })}
   />
 );
@@ -50,14 +55,8 @@ describe('<FormInputItem />', () => {
     expect(fileInput).toBeEnabled();
   });
 
-  // validator used for test below
-  const simpleValidator = (input: string): string => {
-    const valid = /^yes|no$/i.test(input);
-    return valid ? '' : 'you have entered invalid input';
-  };
-
   it('correctly validates text input and only begins validation after user inputs text', () => {
-    const { getByLabelText, queryByText } = render(<TestFormInputItem validator={simpleValidator} />);
+    const { getByLabelText, queryByText } = render(<TestFormInputItem />);
 
     const textField = getByLabelText('foo');
     const fileInput = getByLabelText('bar');
@@ -82,7 +81,7 @@ describe('<FormInputItem />', () => {
   });
 
   it('allows a file upload to be cancelled, re-enabling the text field', () => {
-    const { getByLabelText, queryByLabelText } = render(<TestFormInputItem validator={simpleValidator} />);
+    const { getByLabelText, queryByLabelText } = render(<TestFormInputItem />);
 
     const textField = getByLabelText('foo');
     const fileInput = getByLabelText('bar');
