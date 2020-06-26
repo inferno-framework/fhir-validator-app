@@ -57,12 +57,13 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files[0];
+    e.target.value = ''; // allow file to be re-uploaded
     if (file) {
       dispatch({ name, type: 'UPLOAD_FILE', file });
-    } else {
-      dispatch({ name, type: 'REMOVE_FILE' });
     }
   };
+
+  const handleRemoveFile = () => dispatch({ name, type: 'REMOVE_FILE' });
 
   const textFieldName = `${name}_field`;
   const fileInputName = `${name}_file`;
@@ -95,23 +96,32 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
         {state.mode === 'text' && state.error}
       </div>
       <br />
-      <div className="custom-file">
-        <input
-          type="file"
-          name={fileInputName}
-          id={fileInputName}
-          className={`custom-file-input ${fileInputClass}`}
-          onChange={handleFileChange}
-        />
-        <label htmlFor={fileInputName} className={`custom-file-label ${state.mode === 'file' ? 'selected' : ''}`}>
-          {state.mode === 'file'
-            ? state.status === 'loading' ? 'Loading...' : state.file.name
-            : fileLabel
-          }
-        </label>
-        <div className="invalid-feedback">
-          {state.mode === 'file' && state.error}
+      <div className="input-group">
+        <div className="custom-file flex-wrap">
+          <input
+            type="file"
+            name={fileInputName}
+            id={fileInputName}
+            className={`custom-file-input ${fileInputClass}`}
+            onChange={handleFileChange}
+          />
+          <label htmlFor={fileInputName} className={`custom-file-label ${state.mode === 'file' ? 'selected' : ''}`}>
+            {state.mode === 'file'
+              ? state.status === 'loading' ? 'Loading...' : state.file.name
+              : fileLabel
+            }
+          </label>
+          <div className="invalid-feedback w-100">
+            {state.mode === 'file' && state.error}
+          </div>
         </div>
+        {state.mode === 'file' && state.status === 'done' &&
+          <div className="input-group-append">
+            <button type="button" className="btn btn-outline-secondary" onClick={handleRemoveFile}>
+              Remove
+            </button>
+          </div>
+        }
       </div>
     </div>
   );
