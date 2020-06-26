@@ -40,20 +40,5 @@ describe('<App />', () => {
     expect(getByLabelText(/paste.*resource/i)).toHaveValue('{ "resourceType": "Patient" }');
   });
 
-  it('can use previous history to persist state after an unmount', async () => {
-    const { getByLabelText: getBefore, unmount, history } = renderWithRouter(<App />);
-    const  textField = getBefore(/paste.*resource/i);
-
-    expect(textField).toHaveValue('');
-
-    fireEvent.change(textField, { target: { value: 'foobar' } });
-    expect(unmount()).toBe(true);
-
-    const { getByLabelText: getAfter } = renderWithRouter(<App />, { history });
-
-    expect(getAfter(/paste.*resource/i)).toHaveValue('foobar');
-    await waitFor(() => {});
-  });
-
   it.todo('allows removing an uploaded file after going back in history');
 });

@@ -1,6 +1,5 @@
 import React, { useReducer } from 'react';
 import { useHistory } from 'react-router-dom';
-import { History } from 'history';
 
 import {
   JSONResource,
@@ -46,12 +45,8 @@ const initialFormState: FormState = {
   profile_select: null,
 };
 
-const formReducerWith = (history: History<AppState>) => (
-  state: FormState,
-  action: FormAction
-): FormState => {
+const formReducer = (state: FormState, action: FormAction): FormState => {
   let newState = { ...state };
-
   switch (action.name) {
     case 'resource':
     case 'profile': {
@@ -73,8 +68,6 @@ const formReducerWith = (history: History<AppState>) => (
       break;
     }
   }
-
-  history.replace(history.location.pathname, newState);
   return newState;
 };
 
@@ -152,11 +145,10 @@ interface ValidatorProps {
 
 export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
   const history = useHistory<AppState>();
-  const reducerStateDispatch = useReducer(
-    formReducerWith(history),
+  const [formState, dispatch] = useReducer(
+    formReducer,
     history.location.state || initialFormState,
   );
-  const [formState, dispatch] = reducerStateDispatch;
 
   const optionsByProfile = new Map<string, SelectOption[]>();
   Object.entries(profiles).forEach(([ig, profiles]) => {
@@ -197,6 +189,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
 
     try {
       const results = await validateWith(profileUrls, await resourcePromise);
+      history.replace(history.location.pathname, formState);
       history.push(basePath + RESULTS_PATH, { ...formState, results });
     } catch (error) {
       console.error(`Failed to validate resource: ${error?.message}`);
@@ -204,7 +197,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
   };
 
   return (
-    <FormContext.Provider value={reducerStateDispatch}>
+    <FormContext.Provider value={[formState, dispatch]}>
       <form role="form" onSubmit={handleSubmit}>
         <div className="card">
           <div className="card-header">
