@@ -162,8 +162,19 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     optionsByProfile.set(ig, opts);
   });
 
-  const resourceState = formState.resource;
-  const invalidResource = (resourceState.mode === 'text') && (!resourceState.input || !!resourceState.error);
+  const {
+    resource: {
+      text: resourceBlob,
+      error: resourceError,
+    },
+    profile: {
+      text: profileBlob,
+    },
+    profile_select: profileSelectState,
+    error,
+  } = formState;
+
+  const invalidResource = !resourceBlob || !!resourceError;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -171,20 +182,10 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
       return console.error('Failed to submit form: Resource is invalid');
     }
 
-    const {
-      resource: resourceState,
-      profile: profileState,
-      profile_select: profileSelectState,
-    } = formState;
-
     const selectedProfile = profileSelectState?.value;
     const profileUrls = selectedProfile ? [selectedProfile] : [];
 
-    const resourcePromise = resourceState.mode === 'text' ? resourceState.input : resourceState.file.text();
-    const profilePromise = profileState.mode === 'text' ? profileState.input : profileState.file.text();
-
     try {
-      const profileBlob = await profilePromise;
       if (profileBlob.trim()) {
         const profileUrl = await addProfile(profileBlob);
         profileUrls.push(profileUrl);
@@ -194,7 +195,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     }
 
     try {
-      const results = await validateWith(profileUrls, await resourcePromise);
+      const results = await validateWith(profileUrls, resourceBlob);
       history.replace(history.location.pathname, formState);
       history.push(basePath + RESULTS_PATH, { ...formState, results });
     } catch (error) {

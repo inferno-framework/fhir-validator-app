@@ -1,31 +1,37 @@
 import React from 'react';
 
-export const initialState: State = { mode: 'text', input: '', error: '' };
+export const initialState: State = { mode: 'text', text: '', error: '' };
 
-interface TextState { mode: 'text', input: string, error: string };
-interface FileState { mode: 'file', file: File };
+interface TextState { mode: 'text', text: string, error: string };
+interface FileState { mode: 'file', text: string, error: string, file: File, status: 'loading' | 'done' };
 export type State = TextState | FileState;
 
-interface ChangeInputAction { type: 'CHANGE_INPUT', input: string, validator?: (input: string) => string };
+interface ChangeTextAction { type: 'CHANGE_TEXT', text: string, validator?: (input: string) => string };
 interface UploadFileAction { type: 'UPLOAD_FILE', file: File };
 interface RemoveFileAction { type: 'REMOVE_FILE' };
-export type Action = ChangeInputAction | UploadFileAction | RemoveFileAction;
+export type Action = ChangeTextAction | UploadFileAction | RemoveFileAction;
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'CHANGE_INPUT': {
-      if (state.mode !== 'text')
-        return state;
-
-      const { input, validator } = action;
+    case 'CHANGE_TEXT': {
+      const { text, validator } = action;
       return {
-        mode: 'text',
-        input,
-        error: validator ? validator(input) : '',
+        ...state,
+        text,
+        error: validator ? validator(text) : '',
+        ...state.mode === 'file' && { status: 'done' },
       };
     }
-    case 'UPLOAD_FILE':
-      return { mode: 'file', file: action.file };
+    case 'UPLOAD_FILE': {
+      const { file } = action;
+      return {
+        mode: 'file',
+        file,
+        text: '',
+        error: '',
+        status: 'loading',
+      };
+    }
     case 'REMOVE_FILE':
       return (state.mode === 'file') ? initialState : state;
   }
@@ -46,12 +52,8 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
   context: [formState, dispatch],
   validator,
 }: FormInputItemProps<S, N>) {
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => dispatch({
-    name,
-    type: 'CHANGE_INPUT',
-    input: e.target.value,
-    validator,
-  });
+  const changeText = (text: string) => dispatch({ name, type: 'CHANGE_TEXT', text, validator });
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => changeText(e.target.value);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files[0];
@@ -67,6 +69,7 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
 
   const state = formState[name] as State;
   const textFieldClass = state.mode === 'text' ? (state.error && 'is-invalid') : 'disabled';
+  const fileInputClass = state.mode === 'file' ? (state.error && 'is-invalid') : '';
 
   return (
     <div className="form-group">
@@ -76,7 +79,7 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
         id={textFieldName}
         className={`form-control custom-text-area ${textFieldClass}`}
         rows={8}
-        value={state.mode === 'text' ? state.input : ''}
+        value={state.mode === 'text' ? state.text : ''}
         onChange={handleTextChange}
         disabled={state.mode !== 'text'}
       />
