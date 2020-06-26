@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -149,6 +149,10 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     formReducer,
     history.location.state || initialFormState,
   );
+
+  useEffect(() => {
+    window.onbeforeunload = () => history.replace(history.location.pathname);
+  }, []);
 
   const optionsByProfile = new Map<string, SelectOption[]>();
   Object.entries(profiles).forEach(([ig, profiles]) => {
