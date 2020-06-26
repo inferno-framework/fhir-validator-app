@@ -28,36 +28,38 @@ describe('<Issues />', () => {
   });
 
   it('correctly pluralizes severity', () => {
-    let { queryByText, unmount } = render(<Issues issues={[]} severity="error" />);
+    // No issues tests
+    const { queryByText, rerender } = render(<Issues issues={[]} severity="error" />);
     expect(queryByText(/no.*error.*issues/i)).toBeTruthy();
-    expect(unmount()).toBe(true);
-    ({ queryByText, unmount } = render(<Issues issues={[]} severity="warning" />));
+
+    rerender(<Issues issues={[]} severity="warning" />);
     expect(queryByText(/no.*warning.*issues/i)).toBeTruthy();
-    expect(unmount()).toBe(true);
-    ({ queryByText, unmount } = render(<Issues issues={[]} severity="information" />));
+
+    rerender(<Issues issues={[]} severity="information" />);
     expect(queryByText(/no.*information.*issues/i)).toBeTruthy();
-    expect(unmount()).toBe(true);
 
+    // Single issue tests
     const singleIssue = [new Issue(0, '')];
-    ({ queryByText, unmount } = render(<Issues issues={singleIssue} severity="error" />));
-    expect(queryByText(/validation.*error(?!s)/i)).toBeTruthy();
-    expect(unmount()).toBe(true);
-    ({ queryByText, unmount } = render(<Issues issues={singleIssue} severity="warning" />));
-    expect(queryByText(/warning(?!s)/i)).toBeTruthy();
-    expect(unmount()).toBe(true);
-    ({ queryByText, unmount } = render(<Issues issues={singleIssue} severity="information" />));
-    expect(queryByText(/information(?!s)/i)).toBeTruthy();
-    expect(unmount()).toBe(true);
 
-    const multipleIssues = [new Issue(0, ''), new Issue(1, '')];
-    ({ queryByText, unmount } = render(<Issues issues={multipleIssues} severity="error" />));
-    expect(queryByText(/validation.*errors/i)).toBeTruthy();
-    expect(unmount()).toBe(true);
-    ({ queryByText, unmount } = render(<Issues issues={multipleIssues} severity="warning" />));
-    expect(queryByText(/warnings/i)).toBeTruthy();
-    expect(unmount()).toBe(true);
-    ({ queryByText, unmount } = render(<Issues issues={multipleIssues} severity="information" />));
+    rerender(<Issues issues={singleIssue} severity="error" />);
+    expect(queryByText(/validation.*error(?!s)/i)).toBeTruthy();
+
+    rerender(<Issues issues={singleIssue} severity="warning" />);
+    expect(queryByText(/warning(?!s)/i)).toBeTruthy();
+
+    rerender(<Issues issues={singleIssue} severity="information" />);
     expect(queryByText(/information(?!s)/i)).toBeTruthy();
-    expect(unmount()).toBe(true);
+
+    // Multiple issues tests
+    const multipleIssues = [new Issue(0, ''), new Issue(1, '')];
+
+    rerender(<Issues issues={multipleIssues} severity="error" />);
+    expect(queryByText(/validation.*errors/i)).toBeTruthy();
+
+    rerender(<Issues issues={multipleIssues} severity="warning" />);
+    expect(queryByText(/warnings/i)).toBeTruthy();
+
+    rerender(<Issues issues={multipleIssues} severity="information" />);
+    expect(queryByText(/information(?!s)/i)).toBeTruthy();
   });
 });
