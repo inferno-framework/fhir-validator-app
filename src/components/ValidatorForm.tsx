@@ -30,12 +30,14 @@ export interface FormState {
   profile: FormInputItemState;
   implementation_guide: string;
   profile_select: SelectOption | null;
+  error: string;
 };
 
 type FormAction =
   | ({ name: KeysWithValue<FormState, FormInputItemState> } & FormInputItemAction)
   | { name: 'implementation_guide', value: string }
   | { name: 'profile_select', value: SelectOption }
+  | { name: 'SET_ERROR', error: string }
   | { name: 'RESET' };
 
 const initialFormState: FormState = {
@@ -43,6 +45,7 @@ const initialFormState: FormState = {
   profile: initialFormInputItemState,
   implementation_guide: 'fhir',
   profile_select: null,
+  error: '',
 };
 
 const formReducer = (state: FormState, action: FormAction): FormState => {
@@ -61,6 +64,10 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
     }
     case 'profile_select': {
       newState[action.name] = action.value;
+      break;
+    }
+    case 'SET_ERROR': {
+      newState.error = action.error;
       break;
     }
     case 'RESET': {
@@ -176,10 +183,15 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
 
   const invalidResource = !resourceBlob || !!resourceError;
 
+  const handleError = (error: string) => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      dispatch({ name: 'SET_ERROR', error });
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (invalidResource) {
-      return console.error('Failed to submit form: Resource is invalid');
+      return handleError('Failed to submit form: Resource is invalid');
     }
 
     const selectedProfile = profileSelectState?.value;
@@ -191,7 +203,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
         profileUrls.push(profileUrl);
       }
     } catch (error) {
-      console.error(`Failed to upload profile: ${error?.message}`);
+      return handleError(`Failed to upload profile: ${error?.message}`);
     }
 
     try {
@@ -199,12 +211,25 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
       history.replace(history.location.pathname, formState);
       history.push(basePath + RESULTS_PATH, { ...formState, results });
     } catch (error) {
-      console.error(`Failed to validate resource: ${error?.message}`);
+      return handleError(`Failed to validate resource: ${error?.message}`);
     }
   };
 
   return (
     <FormContext.Provider value={[formState, dispatch]}>
+      {error &&
+        <div className="alert alert-danger fade show">
+          {error}
+          <button
+            type="button"
+            className="close"
+            aria-label="Close"
+            onClick={() => dispatch({ name: 'SET_ERROR', error: '' })}
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      }
       <form role="form" onSubmit={handleSubmit}>
         <div className="card">
           <div className="card-header">
