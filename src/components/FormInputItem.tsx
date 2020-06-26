@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export const initialState: State = { mode: 'text', text: '', error: '' };
 
@@ -71,6 +71,14 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
   const textFieldClass = state.mode === 'text' ? (state.error && 'is-invalid') : 'disabled';
   const fileInputClass = state.mode === 'file' ? (state.error && 'is-invalid') : '';
 
+  useEffect(() => {
+    if (state.mode === 'file' && state.status === 'loading') {
+      state.file.text()
+        .then(changeText)
+        .catch(error => error?.message ?? 'There was an error reading the uploaded file')
+    }
+  }, [state]);
+
   return (
     <div className="form-group">
       <label htmlFor={textFieldName}>{textLabel}</label>
@@ -89,15 +97,21 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
       <br />
       <div className="custom-file">
         <label htmlFor={fileInputName} className={`custom-file-label ${state.mode === 'file' ? 'selected' : ''}`}>
-          {state.mode === 'file' ? state.file.name : fileLabel}
+          {state.mode === 'file'
+            ? state.status === 'loading' ? 'Loading...' : state.file.name
+            : fileLabel
+          }
         </label>
         <input
           type="file"
           name={fileInputName}
           id={fileInputName}
-          className="custom-file-input"
+          className={`custom-file-input ${fileInputClass}`}
           onChange={handleFileChange}
         />
+        <div className="invalid-feedback">
+          {state.mode === 'file' && state.error}
+        </div>
       </div>
     </div>
   );
