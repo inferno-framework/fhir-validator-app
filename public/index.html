@@ -24,6 +24,34 @@
       .card-header.btn:focus {
         box-shadow: none;
       }
+
+      .custom-file-input.is-invalid:focus~.custom-file-label {
+        box-shadow: none;
+      }
+
+      .custom-file-input:focus~.custom-file-label {
+        box-shadow: none;
+      }
+
+      .input-group.is-invalid:focus-within {
+        border-color: #dc3545;
+        border-radius: 0.25rem;
+        box-shadow: 0 0 0 0.2rem rgba(220,53,69,.25);
+      }
+
+      .input-group:focus-within {
+        border-color: #80bdff;
+        border-radius: 0.25rem;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+      }
+
+      .input-group.is-invalid .btn {
+        border-color: #dc3545;
+      }
+
+      .input-group .btn {
+        border-color: #80bdff;
+      }
     </style>
 
     <title>FHIR Validator</title>

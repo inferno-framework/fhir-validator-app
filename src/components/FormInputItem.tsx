@@ -96,7 +96,7 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
         {state.mode === 'text' && state.error}
       </div>
       <br />
-      <div className="input-group">
+      <div className={`input-group ${fileInputClass}`}>
         <div className="custom-file flex-wrap">
           <input
             type="file"
