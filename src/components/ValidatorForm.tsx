@@ -151,7 +151,9 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
   );
 
   useEffect(() => {
-    window.onbeforeunload = () => history.replace(history.location.pathname);
+    const deleteHistoryState = () => history.replace(history.location.pathname);
+    window.addEventListener('beforeunload', deleteHistoryState);
+    return () => window.removeEventListener('beforeunload', deleteHistoryState);
   }, []);
 
   const optionsByProfile = new Map<string, SelectOption[]>();
