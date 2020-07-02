@@ -2,20 +2,17 @@ This app is a stand-alone [FHIR](http://fhir.hl7.org/) resource validator. Using
 
 ## Running the FHIR Validator App in development
 ### Requirements:
-* Ruby (the version specified in `.ruby-version`) with `bundler` installed
 * Node `12` with `npm` installed
 * Docker (to run the FHIR validator wrapper)
 
 ### Setup
 From the root directory of `fhir-validator-app`:
-* `bundle install`
 * `npm install`
 
 ### Running the app:
 From the root directory of `fhir-validator-app`:
 * Run the Typescript compilation engine: `npm start`
   * Note: this will auto-recompile whenever you save a change to one of the Typescript files, and will trigger a page refresh if you have the app open in development
-* Run the Ruby server: `bundle exec rackup`
 * Run the validator wrapper: `docker run -p 8080:4567 infernocommunity/fhir-validator-wrapper:latest`
 * Navigate to the app in your browser of choice at http://localhost:4567
 
