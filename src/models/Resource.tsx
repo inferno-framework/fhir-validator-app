@@ -1,8 +1,7 @@
-export interface JSONResource<T extends string = string> {
-  resourceType: T;
-  url: string | (T extends 'StructureDefinition' ? never : undefined);
-  issue: any[] | (T extends 'OperationOutcome' ? never : undefined);
-};
+export type JSONResource<T extends string = string> =
+  { resourceType: T }
+& (T extends 'StructureDefinition' ? { url: string } : {})
+& (T extends 'OperationOutcome' ? { issue: any[] } : {});
 export interface XMLResource<_T extends string = string> extends Document {};
 
 export function isJsonResource(o: unknown): o is JSONResource;
@@ -16,6 +15,8 @@ export function isJsonResource<T extends string = string>(o: unknown, type?: T):
     } else switch (type) {
       case 'StructureDefinition':
         return 'url' in o && typeof o['url'] === 'string';
+      case 'OperationOutcome':
+        return 'issue' in o && o['issue'] as any instanceof Array;
       default:
         return true;
     }
@@ -37,6 +38,8 @@ export function isXmlResource<T extends string = string>(o: unknown, type?: T): 
         const urlElement = [...o.documentElement.children].find(elt => elt.nodeName === 'url');
         return !!urlElement && typeof urlElement.getAttribute('value') === 'string';
       }
+      case 'OperationOutcome':
+        return !![...o.documentElement.children].find(elt => elt.nodeName === 'issue');
       default:
         return true;
     }
