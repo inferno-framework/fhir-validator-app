@@ -10,7 +10,6 @@ describe('<Results />', () => {
     const results: ResultsState = {
       outcome: {
         resourceType: 'OperationOutcome',
-        url: undefined,
         issue: [],
       },
       profileUrls: [],

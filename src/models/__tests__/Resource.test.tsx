@@ -82,14 +82,13 @@ describe('isJsonResource', () => {
     expect(R.isJsonResource(input4, 'StructureDefinition')).toBe(false);
     expect(R.isJsonResource(input5, 'StructureDefinition')).toBe(false);
 
-    // TODO: commented tests fail in order to accommodate bug in fhir-validator-wrapper
     // only input4 is a valid OperationOutcome JSONResource
     expect(R.isJsonResource(input0, 'OperationOutcome')).toBe(false);
     expect(R.isJsonResource(input1, 'OperationOutcome')).toBe(false);
     expect(R.isJsonResource(input2, 'OperationOutcome')).toBe(false);
-    /* expect(R.isJsonResource(input3, 'OperationOutcome')).toBe(false); */
+    expect(R.isJsonResource(input3, 'OperationOutcome')).toBe(false);
     expect(R.isJsonResource(input4, 'OperationOutcome')).toBe(true);
-    /* expect(R.isJsonResource(input5, 'OperationOutcome')).toBe(false); */
+    expect(R.isJsonResource(input5, 'OperationOutcome')).toBe(false);
 
     // none are valid MedicationRequest JSONResources
     expect(R.isJsonResource(input0, 'MedicationRequest')).toBe(false);
@@ -157,14 +156,13 @@ describe('isXmlResource', () => {
     expect(R.isXmlResource(input14, 'StructureDefinition')).toBe(false);
     expect(R.isXmlResource(input15, 'StructureDefinition')).toBe(false);
 
-    // TODO: commented tests fail in order to accommodate bug in fhir-validator-wrapper
     // only input14 is a valid OperationOutcome XMLResource
     expect(R.isXmlResource(input10, 'OperationOutcome')).toBe(false);
     expect(R.isXmlResource(input11, 'OperationOutcome')).toBe(false);
     expect(R.isXmlResource(input12, 'OperationOutcome')).toBe(false);
-    /* expect(R.isXmlResource(input13, 'OperationOutcome')).toBe(false); */
+    expect(R.isXmlResource(input13, 'OperationOutcome')).toBe(false);
     expect(R.isXmlResource(input14, 'OperationOutcome')).toBe(true);
-    /* expect(R.isXmlResource(input15, 'OperationOutcome')).toBe(false); */
+    expect(R.isXmlResource(input15, 'OperationOutcome')).toBe(false);
 
     // none are valid MedicationRequest XMLResources
     expect(R.isXmlResource(input10, 'MedicationRequest')).toBe(false);
