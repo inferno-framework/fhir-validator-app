@@ -1,7 +1,6 @@
 const path = require('path');
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
-const liveReload = require('webpack-livereload-plugin');
 
 module.exports = merge(common, {
   mode: "development",
@@ -16,8 +15,4 @@ module.exports = merge(common, {
   devtool: "source-map",
 
   watch: true,
-
-  plugins: [
-    new liveReload(),
-  ],
 });
