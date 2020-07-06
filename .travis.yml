@@ -1,30 +1,6 @@
-language: ruby
-cache: 
-  - bundler
+language: node_js
+cache:
   - npm
-jobs:
-  include:
-    - language: ruby
-      name: "Test with Ruby 2.5"
-      rvm: 2.5
-      before_install:
-      - gem update --system
-      - gem install bundler
-      script:
-      - bundle exec rake
-      - bundle exec rubocop
-    - language: ruby
-      name: "Test with Ruby 2.7"
-      rvm: 2.7
-      before_install:
-      - gem update --system
-      - gem install bundler
-      script:
-      - bundle exec rake
-      - bundle exec rubocop
-    - language: node_js
-      name: "test JS with Node LTS"
-      node_js: lts/*
 notifications:
   email:
     recipients:
