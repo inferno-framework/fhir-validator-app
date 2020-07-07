@@ -42,7 +42,7 @@ export function Results({ basePath = '' }) {
   }
 
   const {
-    outcome: { issue = [] },
+    outcome: { issue },
     profileUrls,
     resourceBlob,
     contentType,
