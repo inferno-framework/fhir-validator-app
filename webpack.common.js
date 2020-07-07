@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { EnvironmentPlugin } = require('webpack');
 
 module.exports = {
     resolve: {
@@ -31,6 +32,10 @@ module.exports = {
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, 'public/index.html'),
         filename: 'index.html',
+      }),
+      new EnvironmentPlugin({
+        BASE_PATH: '',
+        VALIDATOR_URL: 'http://localhost:8080/',
       }),
     ],
 
