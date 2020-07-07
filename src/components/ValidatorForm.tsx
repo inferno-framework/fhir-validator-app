@@ -5,7 +5,6 @@ import { validateWith, addProfile } from '../models/HL7Validator';
 import { resourceValidator } from '../models/Resource';
 import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
-import { ProfileSelect } from './ProfileSelect';
 import {
   FormInputItem,
   FormInputItemProps,
@@ -81,8 +80,6 @@ const ProfileFormInputItem = withContext(
   FormContext,
   FormInputItem as React.ComponentType<FormInputItemProps<FormState, 'profile'>>
 );
-const ProfileFormWithContext = withContext(FormContext, ProfileForm);
-export const ProfileSelectWithContext = withContext(FormContext, ProfileSelect);
 
 interface ValidatorProps {
   readonly basePath?: string;
@@ -207,7 +204,7 @@ export function ValidatorForm({ basePath = '' }: ValidatorProps) {
                 </p>
                 <br />
                 <div className="form-group">
-                  <ProfileFormWithContext />
+                  <ProfileForm />
                 </div>
                 <ProfileFormInputItem
                   name="profile"
