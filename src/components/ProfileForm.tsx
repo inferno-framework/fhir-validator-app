@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 
 import { getIgs, loadIg } from '../models/HL7Validator';
 import { SelectOption } from '../models/SelectOption';
-import { FormState, ProfileSelectWithContext } from './ValidatorForm';
+import { ProfileSelect } from './ProfileSelect';
+import { FormContext } from './ValidatorForm';
 
-export interface ProfileProps {
-  readonly context: [FormState, React.Dispatch<{ name: 'implementation_guide', value: string }>];
-}
-
-export function ProfileForm({ context: [formState, dispatch] }: ProfileProps) {
+export function ProfileForm() {
+  const [formState, dispatch] = useContext(FormContext);
   const [isDisabled, setIsDisabled] = useState(false);
   const [igs, setIgs] = useState<string[]>([]);
   const [profiles, setProfiles] = useState<Record<string, string[]>>({});
@@ -44,7 +42,7 @@ export function ProfileForm({ context: [formState, dispatch] }: ProfileProps) {
       <select name="implementation_guide" id="implementation_guide" onChange={handleChange} value={ig}>
         {igs.map(ig => <option key={ig} value={ig}>{ig}</option>)}
       </select>
-      <ProfileSelectWithContext options={options ?? []} isDisabled={isDisabled} />
+      <ProfileSelect options={options ?? []} isDisabled={isDisabled} />
     </div>
   );
 }
