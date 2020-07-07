@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import { ValidatorForm, FormState } from './ValidatorForm';
 import { Results, ResultsState, RESULTS_PATH } from './Results';
 
-const BASE_PATH = '';
+const BASE_PATH = process.env.BASE_PATH ?? '';
 
 export type AppState = FormState & { results?: ResultsState };
 
