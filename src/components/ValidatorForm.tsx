@@ -1,13 +1,8 @@
 import React, { useReducer, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import {
-  JSONResource,
-  isJsonResource,
-  isXmlResource,
-  parseResource,
-  resourceValidator
-} from '../models/Resource';
+import { validateWith, addProfile } from '../models/HL7Validator';
+import { resourceValidator } from '../models/Resource';
 import { SelectOption } from '../models/SelectOption';
 import { ProfileForm } from './ProfileForm';
 import { ProfileSelect } from './ProfileSelect';
@@ -21,7 +16,7 @@ import {
 } from './FormInputItem';
 import { withContext } from '../hoc/withContext';
 import { AppState } from './App';
-import { ResultsState, RESULTS_PATH } from './Results';
+import { RESULTS_PATH } from './Results';
 
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
@@ -89,61 +84,6 @@ const ProfileFormInputItem = withContext(
 );
 const ProfileFormWithContext = withContext(FormContext, ProfileForm);
 export const ProfileSelectWithContext = withContext(FormContext, ProfileSelect);
-
-// This function either resolves with the URL of the profile that was
-// successfully uploaded or rejects if the profile failed to be uploaded
-const addProfile = async (profileBlob: string): Promise<string> => {
-  const profile = parseResource(profileBlob);
-
-  let profileBlobUrl: string;
-  if (isJsonResource(profile, 'StructureDefinition')) {
-    profileBlobUrl = profile.url;
-  } else if (isXmlResource(profile, 'StructureDefinition')) {
-    const urlElement = [...profile.documentElement.children].find(elt => elt.nodeName === 'url')!;
-    profileBlobUrl = urlElement.getAttribute('value')!;
-  } else {
-    throw new Error('Profile was not a StructureDefinition');
-  }
-
-  const response = await fetch('http://localhost:8080/profile', {
-    method: 'POST',
-    body: profileBlob,
-  });
-
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  } else {
-    return profileBlobUrl;
-  }
-};
-
-// This function either resolves with the OperationOutcome response and other
-// details of the resource validated at the '/validate' endpoint or rejects if
-// the resource failed to be validated
-const validateWith = async (
-  profileUrls: string[],
-  resourceBlob: string
-): Promise<ResultsState> => {
-  const resource = parseResource(resourceBlob);
-  const resourceType = isJsonResource(resource) ? resource.resourceType : resource.documentElement.nodeName;
-  const contentType = isJsonResource(resource) ? 'json' : 'xml';
-  if (profileUrls.length === 0) {
-    profileUrls.push(`http://hl7.org/fhir/StructureDefinition/${resourceType}`);
-  }
-  const params = new URLSearchParams({ profile: profileUrls.join(',') });
-
-  const response = await fetch(`http://localhost:8080/validate?${params}`, {
-    method: 'POST',
-    headers: { 'Content-Type': `application/fhir+${contentType}` },
-    body: resourceBlob,
-  });
-  return {
-    outcome: await response.json() as JSONResource<'OperationOutcome'>,
-    profileUrls,
-    resourceBlob,
-    contentType,
-  };
-};
 
 interface ValidatorProps {
   readonly basePath?: string;
