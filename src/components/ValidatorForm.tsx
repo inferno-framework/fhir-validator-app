@@ -23,7 +23,7 @@ type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof 
 export interface FormState {
   resource: FormInputItemState;
   profile: FormInputItemState;
-  implementation_guide: string;
+  implementation_guide?: string;
   profile_select: SelectOption | null;
   error: string;
 };
@@ -38,7 +38,6 @@ type FormAction =
 const initialFormState: FormState = {
   resource: initialFormInputItemState,
   profile: initialFormInputItemState,
-  implementation_guide: 'fhir',
   profile_select: null,
   error: '',
 };
@@ -87,10 +86,9 @@ export const ProfileSelectWithContext = withContext(FormContext, ProfileSelect);
 
 interface ValidatorProps {
   readonly basePath?: string;
-  readonly profiles?: Record<string, string[]>;
 }
 
-export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) {
+export function ValidatorForm({ basePath = '' }: ValidatorProps) {
   const history = useHistory<AppState>();
   const [formState, dispatch] = useReducer(
     formReducer,
@@ -102,12 +100,6 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     window.addEventListener('beforeunload', deleteHistoryState);
     return () => window.removeEventListener('beforeunload', deleteHistoryState);
   }, []);
-
-  const optionsByProfile = new Map<string, SelectOption[]>();
-  Object.entries(profiles).forEach(([ig, profiles]) => {
-    const opts = profiles.map((profile: string) => new SelectOption(profile, profile));
-    optionsByProfile.set(ig, opts);
-  });
 
   const {
     resource: {
@@ -215,7 +207,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
                 </p>
                 <br />
                 <div className="form-group">
-                  <ProfileFormWithContext optionsByProfile={optionsByProfile} />
+                  <ProfileFormWithContext />
                 </div>
                 <ProfileFormInputItem
                   name="profile"
