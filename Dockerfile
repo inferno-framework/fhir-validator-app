@@ -1,44 +1,18 @@
-FROM node:10 AS nodejs
-
-FROM ruby:2.5.6
-
-ENV LANG C.UTF-8
-
-ENV NODE_MAJOR 10
-
-RUN groupadd --gid 1000 node \
-  && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
-
-COPY --from=nodejs /usr/local/bin/node /usr/local/bin/
-COPY --from=nodejs /usr/local/lib/node_modules /usr/local/lib/node_modules
-COPY --from=nodejs /opt/ /opt/
-
-RUN ln -sf /usr/local/bin/node /usr/local/bin/nodejs \
-  && ln -sf ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
-  && ln -sf ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
-
-WORKDIR /var/www/fhir_validator
-
-### Install dependencies
-
-COPY Gemfile* /var/www/fhir_validator/
-RUN /usr/local/bin/gem update --system
-RUN /usr/local/bin/gem install bundler
-# Throw an error if Gemfile & Gemfile.lock are out of sync
-RUN /usr/local/bin/bundle config --global frozen 1
-RUN /usr/local/bin/bundle install
-
-COPY . /var/www/fhir_validator/
-
+# build environment
+FROM node:13.12.0-alpine as build
+WORKDIR /app
+ENV PATH /app/node_modules/.bin:$PATH
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm ci --silent
 RUN npm install
+COPY . ./
+ENV NODE_ENV production
 RUN npm run build
-# remnove node_modules, as it's not needed after the build is run
-RUN rm -rf /var/www/fhir_validator/node_modules
 
-### Set up environment
-
-ENV APP_ENV=production
-ENV RACK_ENV=production
-EXPOSE 4567
-
-CMD ["bundle", "exec", "rackup", "-o", "0.0.0.0"]
+FROM nginx:stable-alpine
+COPY --from=build /app/public/js/dist/* /usr/share/nginx/html/
+COPY --from=build /app/public/data/profiles.json /usr/share/nginx/html/data/profiles.json
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
