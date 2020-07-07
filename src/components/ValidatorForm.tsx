@@ -114,8 +114,8 @@ export function ValidatorForm({ basePath = '' }: ValidatorProps) {
   const disableSubmit = !resourceBlob || !!resourceError || !!profileError;
 
   const handleError = (error: string) => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      dispatch({ name: 'SET_ERROR', error });
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    dispatch({ name: 'SET_ERROR', error });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
