@@ -3,11 +3,14 @@ import { parseResource, isJsonResource, isXmlResource } from './Resource';
 const VALIDATOR_URL = process.env.VALIDATOR_URL ?? 'http://localhost:8080/';
 
 const validatorFetch = async (
+  method: string,
   path: string,
-  options?: { params?: Record<string, string> } & RequestInit
+  init: RequestInit = {}
 ) => {
-  const { params = {}, ...init } = options ?? {};
-  const response = await fetch(`${VALIDATOR_URL}/${path}?${new URLSearchParams(params)}`, init);
+  const response = await fetch(`${VALIDATOR_URL}/${path}`, {
+    ...init,
+    method,
+  });
   if (!response.ok) {
     throw new Error(response.statusText);
   }
@@ -33,9 +36,8 @@ export const validateWith = async (profileUrls: string[], resourceBlob: string) 
     profileUrls.push(`http://hl7.org/fhir/StructureDefinition/${resourceType}`);
   }
 
-  const outcome = await validatorFetch('validate', {
-    params: { profile: profileUrls.join(',') },
-    method: 'POST',
+  const profile = profileUrls.join(',');
+  const outcome = await validatorFetch('POST', `validate?${new URLSearchParams({ profile })}`, {
     headers: { 'Content-Type': `application/fhir+${contentType}` },
     body: resourceBlob,
   }).then(parseJson);
@@ -67,25 +69,19 @@ export const addProfile = async (profileBlob: string): Promise<string> => {
     throw new Error('Profile was not a StructureDefinition');
   }
 
-  await validatorFetch('profile', {
-    method: 'POST',
-    body: profileBlob,
-  });
+  await validatorFetch('POST', 'profile', { body: profileBlob });
   return profileBlobUrl;
 };
 
 export const getIgs = (): Promise<Record<string, string>> =>
-  validatorFetch('igs').then(parseJson);
+  validatorFetch('GET', 'igs').then(parseJson);
 
 // This function takes a package ID of an IG from packages.fhir.org and loads
 // the IG into the external validator
 export const loadIg = (id: string): Promise<string[]> =>
-  validatorFetch('ig', {
-    params: { id },
-    method: 'POST',
-  }).then(parseJson);
+  validatorFetch('PUT', `igs/${id}`).then(parseJson);
 
 // This function retrieves a mapping from package ID of an IG to a list of
 // canonical URLs of profiles belonging to the IG
 export const getProfilesByIg = (): Promise<Record<string, string[]>> =>
-  validatorFetch('profiles-by-ig').then(parseJson);
+  validatorFetch('GET', 'profiles-by-ig').then(parseJson);
