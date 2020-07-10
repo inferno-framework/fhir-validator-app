@@ -10,6 +10,7 @@ export interface ProfileSelectProps {
 
 export function ProfileSelect({ options }: ProfileSelectProps) {
   const [formState, dispatch] = useContext(FormContext);
+  const ig = formState['implementation_guide']?.value;
   const value = formState['profile_select'];
   const handleChange = (value: SelectOption) => dispatch({ name: 'profile_select', value });
 
@@ -18,7 +19,8 @@ export function ProfileSelect({ options }: ProfileSelectProps) {
       <label htmlFor="profile_select">Select a profile:</label>
       <Select
         isClearable
-        isLoading={!options}
+        isDisabled={!ig}
+        isLoading={!!ig && !options}
         options={options}
         name="profile_select"
         id="profile_select"
