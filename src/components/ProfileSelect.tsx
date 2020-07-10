@@ -18,7 +18,7 @@ export function ProfileSelect({ options }: ProfileSelectProps) {
       <label htmlFor="profile_select">Select a profile:</label>
       <Select
         isClearable
-        isDisabled={!options}
+        isLoading={!options}
         options={options}
         name="profile_select"
         id="profile_select"
