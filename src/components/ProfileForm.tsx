@@ -8,7 +8,7 @@ import { FormContext } from './ValidatorForm';
 
 export function ProfileForm() {
   const [formState, dispatch] = useContext(FormContext);
-  const [igs, setIgs] = useState<string[]>([]);
+  const [igs, setIgs] = useState<string[]>();
   const [profiles, setProfiles] = useState<Record<string, string[]>>({});
 
   const ig = formState['implementation_guide']?.value ?? 'hl7.fhir.r4.core';
