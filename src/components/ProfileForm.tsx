@@ -16,7 +16,7 @@ export function ProfileForm() {
 
   useEffect(() => {
     let aborted = false;
-    getIgs().then(igs => !aborted && setIgs([...Object.keys(igs)].sort()));
+    getIgs().then(igs => !aborted && setIgs(Object.keys(igs).sort()));
     return () => aborted = true;
   }, []);
 
