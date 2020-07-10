@@ -7,7 +7,6 @@ import { FormContext } from './ValidatorForm';
 
 export function ProfileForm() {
   const [formState, dispatch] = useContext(FormContext);
-  const [isDisabled, setIsDisabled] = useState(false);
   const [igs, setIgs] = useState<string[]>([]);
   const [profiles, setProfiles] = useState<Record<string, string[]>>({});
 
@@ -23,10 +22,7 @@ export function ProfileForm() {
   useEffect(() => {
     let aborted = false;
     if (!options) {
-      setIsDisabled(true);
-      loadIg(ig)
-        .then(urls => !aborted && setProfiles(profiles => ({ ...profiles, [ig]: urls })))
-        .finally(() => !aborted && setIsDisabled(false));
+      loadIg(ig).then(urls => !aborted && setProfiles(profiles => ({ ...profiles, [ig]: urls })));
     }
     return () => aborted = true;
   }, [ig, options]);
@@ -42,7 +38,7 @@ export function ProfileForm() {
       <select name="implementation_guide" id="implementation_guide" onChange={handleChange} value={ig}>
         {igs.map(ig => <option key={ig} value={ig}>{ig}</option>)}
       </select>
-      <ProfileSelect options={options ?? []} isDisabled={isDisabled} />
+      <ProfileSelect options={options} />
     </div>
   );
 }
