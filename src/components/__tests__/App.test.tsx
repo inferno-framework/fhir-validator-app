@@ -1,11 +1,9 @@
 import React from 'react';
 import { fireEvent, waitFor, screen } from '@testing-library/react';
-import { renderWithRouter } from '../test-utils';
+import { renderWithRouter, mockFetch } from '../test-utils';
 import { App } from '../App';
 
-(global as any).fetch = jest.fn(() => Promise.resolve({
-  json: () => Promise.resolve({}),
-}));
+beforeAll(mockFetch);
 
 describe('<App />', () => {
   it('renders without crashing', async () => {

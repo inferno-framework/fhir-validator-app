@@ -1,8 +1,10 @@
 import React from 'react';
 import selectEvent from 'react-select-event';
 import { fireEvent, waitFor, screen } from '@testing-library/react';
-import { renderWithRouter } from '../test-utils';
+import { renderWithRouter, mockFetch } from '../test-utils';
 import { ValidatorForm } from '../ValidatorForm';
+
+beforeAll(mockFetch);
 
 describe('<ValidatorForm />', () => {
   it('renders without crashing', () => {
