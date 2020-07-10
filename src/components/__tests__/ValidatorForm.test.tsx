@@ -136,24 +136,24 @@ describe('<ValidatorForm />', () => {
     await waitFor(() => {});
   });
 
-  it.skip('clears the profile select field if the implementation guide is changed', async () => {
+  it('clears the profile select field if the implementation guide is changed', async () => {
     const { getByLabelText, getByRole } = renderWithRouter(<ValidatorForm />);
 
     const igSelect = getByLabelText(/implementation guide/i);
     const profileSelect = getByLabelText(/select.*profile/i);
 
-    fireEvent.change(igSelect, { target: { value: 'fhir' } });
+    await selectEvent.select(igSelect, /r4\.core/);
     expect(getByRole('form')).toHaveFormValues({ profile_select: '' });
 
-    await selectEvent.select(profileSelect, /Patient/);
+    await selectEvent.select(profileSelect, /Patient$/);
     expect(getByRole('form')).toHaveFormValues({
       profile_select: 'http://hl7.org/fhir/StructureDefinition/Patient',
     });
 
-    fireEvent.change(igSelect, { target: { value: 'us_core' } });
+    await selectEvent.select(igSelect, /us\.core/);
     expect(getByRole('form')).toHaveFormValues({ profile_select: '' });
 
-    await selectEvent.select(profileSelect, /us-core-patient/);
+    await selectEvent.select(profileSelect, /us-core-patient$/);
     expect(getByRole('form')).toHaveFormValues({
       profile_select: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient',
     });
