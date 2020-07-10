@@ -7,14 +7,17 @@ import { ValidatorForm } from '../ValidatorForm';
 beforeAll(mockFetch);
 
 describe('<ValidatorForm />', () => {
-  it('renders without crashing', () => {
+  it('renders without crashing', async () => {
     renderWithRouter(<ValidatorForm basePath="" />);
+    // fix act(...) warning: https://kentcdodds.com/blog/write-fewer-longer-tests#appendix
+    await waitFor(() => {});
   });
 
-  it('handles optional arguments without crashing', () => {
+  it('handles optional arguments without crashing', async () => {
     renderWithRouter(<ValidatorForm basePath="" />);
     renderWithRouter(<ValidatorForm />);
     renderWithRouter(<ValidatorForm />);
+    await waitFor(() => {});
   });
 
   it('displays the name of the file that was uploaded', async () => {
@@ -43,7 +46,7 @@ describe('<ValidatorForm />', () => {
     await waitFor(() => expect(textField).toBeDisabled());
   });
 
-  it('can detect valid/invalid JSON and report missing "resourceType"', () => {
+  it('can detect valid/invalid JSON and report missing "resourceType"', async () => {
     const { getByLabelText, queryByText } = renderWithRouter(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
@@ -63,9 +66,10 @@ describe('<ValidatorForm />', () => {
     fireEvent.change(textField, { target: { value: `{ "resourceType": "Patient" }` } });
     expect(queryByText(/invalid.*JSON/i)).toBeFalsy();
     expect(queryByText(/missing.*resourceType/i)).toBeFalsy();
+    await waitFor(() => {});
   });
 
-  it('can detect valid/invalid XML and report missing xmlns', () => {
+  it('can detect valid/invalid XML and report missing xmlns', async () => {
     const { getByLabelText, queryByText } = renderWithRouter(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
@@ -88,6 +92,7 @@ describe('<ValidatorForm />', () => {
     fireEvent.change(textField, { target: { value: `<MedicationRequest xmlns="http://hl7.org/fhir"></MedicationRequest>` } });
     expect(queryByText(/invalid.*XML/i)).toBeFalsy();
     expect(queryByText(/missing.*xmlns/i)).toBeFalsy();
+    await waitFor(() => {});
   });
 
   it('enables the submit button iff the resource pasted/uploaded is valid JSON/XML', async () => {
@@ -128,6 +133,7 @@ describe('<ValidatorForm />', () => {
 
     fireEvent.click(getByText(/remove/i));
     expect(submitButton).toBeDisabled();
+    await waitFor(() => {});
   });
 
   it.skip('clears the profile select field if the implementation guide is changed', async () => {
