@@ -37,6 +37,7 @@ export function ProfileForm() {
   return (
     <div className="form-group">
       <GuideSelect igs={igs} />
+      <br />
       <ProfileSelect options={options} />
     </div>
   );
