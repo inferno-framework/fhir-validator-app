@@ -69,7 +69,7 @@ export const addProfile = async (profileBlob: string): Promise<string> => {
     throw new Error('Profile was not a StructureDefinition');
   }
 
-  await validatorFetch('POST', 'profile', { body: profileBlob });
+  await validatorFetch('POST', 'profiles', { body: profileBlob });
   return profileBlobUrl;
 };
 
