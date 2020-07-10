@@ -22,14 +22,14 @@ type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof 
 export interface FormState {
   resource: FormInputItemState;
   profile: FormInputItemState;
-  implementation_guide?: string;
+  implementation_guide: SelectOption | null;
   profile_select: SelectOption | null;
   error: string;
 };
 
 type FormAction =
   | ({ name: KeysWithValue<FormState, FormInputItemState> } & FormInputItemAction)
-  | { name: 'implementation_guide', value: string }
+  | { name: 'implementation_guide', value: SelectOption }
   | { name: 'profile_select', value: SelectOption }
   | { name: 'SET_ERROR', error: string }
   | { name: 'RESET' };
@@ -37,6 +37,7 @@ type FormAction =
 const initialFormState: FormState = {
   resource: initialFormInputItemState,
   profile: initialFormInputItemState,
+  implementation_guide: null,
   profile_select: null,
   error: '',
 };

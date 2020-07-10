@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 
 import { getIgs, loadIg } from '../models/HL7Validator';
 import { SelectOption } from '../models/SelectOption';
+import { GuideSelect } from './GuideSelect';
 import { ProfileSelect } from './ProfileSelect';
 import { FormContext } from './ValidatorForm';
 
@@ -10,7 +11,7 @@ export function ProfileForm() {
   const [igs, setIgs] = useState<string[]>([]);
   const [profiles, setProfiles] = useState<Record<string, string[]>>({});
 
-  const ig = formState['implementation_guide'] ?? 'hl7.fhir.r4.core';
+  const ig = formState['implementation_guide']?.value ?? 'hl7.fhir.r4.core';
   const options = profiles[ig]?.map(profile => new SelectOption(profile, profile));
 
   useEffect(() => {
@@ -27,17 +28,9 @@ export function ProfileForm() {
     return () => aborted = true;
   }, [ig, options]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => dispatch({
-    name: 'implementation_guide',
-    value: e.target.value,
-  });
-
   return (
     <div className="form-group">
-      <label htmlFor="implementation_guide">Pick an Implementation Guide to validate against:&nbsp;</label>
-      <select name="implementation_guide" id="implementation_guide" onChange={handleChange} value={ig}>
-        {igs.map(ig => <option key={ig} value={ig}>{ig}</option>)}
-      </select>
+      <GuideSelect igs={igs} />
       <ProfileSelect options={options} />
     </div>
   );
