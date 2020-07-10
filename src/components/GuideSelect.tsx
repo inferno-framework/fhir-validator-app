@@ -16,7 +16,7 @@ export function GuideSelect({ igs }: GuideSelectProps) {
 
   return (
     <div>
-      <label htmlFor="implementation_guide">Select a profile:</label>
+      <label htmlFor="implementation_guide">Pick an Implementation Guide to validate against:</label>
       <Select
         isClearable
         isLoading={!options}
