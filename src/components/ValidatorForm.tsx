@@ -176,12 +176,13 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
     },
     profile: {
       text: profileBlob,
+      error: profileError,
     },
     profile_select: profileSelectState,
     error,
   } = formState;
 
-  const invalidResource = !resourceBlob || !!resourceError;
+  const disableSubmit = !resourceBlob || !!resourceError || !!profileError;
 
   const handleError = (error: string) => {
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -190,7 +191,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (invalidResource) {
+    if (disableSubmit) {
       return handleError('Failed to submit form: Resource is invalid');
     }
 
@@ -280,6 +281,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
                   name="profile"
                   textLabel="Or if you have your own profile, you can paste it here:"
                   fileLabel="Or upload your profile in a file:"
+                  validator={input => input && resourceValidator(input)}
                 />
               </div>
             </div>
@@ -289,7 +291,7 @@ export function ValidatorForm({ basePath = '', profiles = {} }: ValidatorProps) 
         <br />
 
         <div className="form-group">
-          <input type="submit" value="Validate" className="btn btn-primary" disabled={invalidResource} />
+          <input type="submit" value="Validate" className="btn btn-primary" disabled={disableSubmit} />
           <input type="button" value="Reset" className="btn btn-primary ml-3" onClick={() => dispatch({ name: 'RESET' })} />
         </div>
       </form>
