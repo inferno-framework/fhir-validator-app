@@ -11,7 +11,7 @@ interface UploadFileAction { type: 'UPLOAD_FILE', file: File };
 interface RemoveFileAction { type: 'REMOVE_FILE' };
 export type Action = ChangeInputAction | UploadFileAction | RemoveFileAction;
 
-export function reducer(state: State, action: Action): State {
+export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'CHANGE_INPUT': {
       if (state.mode !== 'text')
@@ -19,18 +19,15 @@ export function reducer(state: State, action: Action): State {
 
       const { input, validator } = action;
       return {
-        ...state,
+        mode: 'text',
         input,
         error: validator ? validator(input) : '',
       };
     }
-    case 'UPLOAD_FILE': {
-      const { file } = action;
-      return { ...state, mode: 'file', file };
-    }
-    case 'REMOVE_FILE': {
+    case 'UPLOAD_FILE':
+      return { mode: 'file', file: action.file };
+    case 'REMOVE_FILE':
       return (state.mode === 'file') ? initialState : state;
-    }
   }
 };
 
@@ -38,17 +35,15 @@ export interface FormInputItemProps<S extends Record<N, State>, N extends keyof 
   readonly name: N;
   readonly textLabel: string;
   readonly fileLabel: string;
-  readonly state: State;
-  readonly dispatch: React.Dispatch<{ name: N } & Action>;
   readonly validator?: (input: string) => string;
+  readonly context: [S, React.Dispatch<{ name: N } & Action>];
 };
 
 export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
   name,
   textLabel,
   fileLabel,
-  state,
-  dispatch,
+  context: [formState, dispatch],
   validator,
 }: FormInputItemProps<S, N>) {
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => dispatch({
@@ -70,6 +65,7 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
   const textFieldName = `${name}_field`;
   const fileInputName = `${name}_file`;
 
+  const state = formState[name] as State;
   const textFieldClass = state.mode === 'text' ? (state.error && 'is-invalid') : 'disabled';
 
   return (

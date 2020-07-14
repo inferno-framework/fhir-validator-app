@@ -10,7 +10,7 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "start": "webpack --config webpack.dev.js",
+    "start": "webpack-dev-server --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js"
   },
   "repository": {
@@ -34,22 +34,27 @@
     "@types/jest": "^25.2.1",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
+    "@types/react-router-dom": "^5.1.5",
     "@types/react-select": "^3.0.12",
     "@types/react-syntax-highlighter": "^11.0.4",
     "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^4.3.0",
     "jest": "^25.5.3",
+    "react-select-event": "^4.1.4",
     "source-map-loader": "^0.2.4",
     "ts-jest": "^25.4.0",
     "ts-loader": "^7.0.0",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0",
     "webpack-livereload-plugin": "^2.3.0",
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
     "react-select": "^3.1.0",
     "react-syntax-highlighter": "^12.2.1",
     "react-syntax-highlighter-virtualized-renderer": "^1.1.0"
