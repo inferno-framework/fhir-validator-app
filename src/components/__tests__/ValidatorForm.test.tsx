@@ -15,17 +15,18 @@ describe('<ValidatorForm />', () => {
     renderWithRouter(<ValidatorForm />);
   });
 
-  it('displays the name of the file that was uploaded', () => {
+  it('displays the name of the file that was uploaded', async () => {
     const { getByLabelText, queryByLabelText } = renderWithRouter(<ValidatorForm />);
 
     const fileInput = getByLabelText(/upload.*resource/i);
-    const file = new File(['{ "foo": "bar" }'], 'foobar.json', { type: 'text/json' });
+    const file = new File([], 'foobar.txt', {});
+    file.text = async () => '';
     fireEvent.change(fileInput, { target: { files: [file] } });
 
-    expect(queryByLabelText(/foobar\.json/)).toBeTruthy();
+    await waitFor(() => expect(queryByLabelText(/foobar\.txt/)).toBeTruthy());
   });
 
-  it('disables textarea iff file is uploaded', () => {
+  it('disables textarea iff file is uploaded', async () => {
     const { getByLabelText } = renderWithRouter(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
@@ -33,10 +34,11 @@ describe('<ValidatorForm />', () => {
 
     expect(textField).toBeEnabled();
 
-    const file = new File(['{ "foo": "bar" }'], 'foobar.json', { type: 'text/json' });
+    const file = new File([], 'foobar.txt', {});
+    file.text = async () => '';
     fireEvent.change(fileInput, { target: { files: [file] } });
 
-    expect(textField).toBeDisabled();
+    await waitFor(() => expect(textField).toBeDisabled());
   });
 
   it('can detect valid/invalid JSON and report missing "resourceType"', () => {
@@ -86,8 +88,8 @@ describe('<ValidatorForm />', () => {
     expect(queryByText(/missing.*xmlns/i)).toBeFalsy();
   });
 
-  it('enables the submit button iff a resource is uploaded or the input is valid JSON/XML', () => {
-    const { getByLabelText, getByDisplayValue } = renderWithRouter(<ValidatorForm />);
+  it('enables the submit button iff the resource pasted/uploaded is valid JSON/XML', async () => {
+    const { getByLabelText, getByDisplayValue, getByText } = renderWithRouter(<ValidatorForm />);
 
     const textField = getByLabelText(/paste.*resource/i);
     const fileInput = getByLabelText(/upload.*resource/i);
@@ -110,11 +112,19 @@ describe('<ValidatorForm />', () => {
     fireEvent.change(textField, { target: { value: `<ValidXML></ValidXML>` } });
     expect(submitButton).toBeDisabled();
 
-    const file = new File(['{ "foo": "bar" }'], 'foobar.json', { type: 'text/json' });
-    fireEvent.change(fileInput, { target: { files: [file] } });
-    expect(submitButton).toBeEnabled();
+    const invalidFile = new File([], 'invalid.txt', {});
+    invalidFile.text = async () => '';
+    fireEvent.change(fileInput, { target: { files: [invalidFile] } });
+    expect(submitButton).toBeDisabled();
+    await waitFor(() => expect(submitButton).toBeDisabled());
 
-    fireEvent.change(fileInput, { target: { files: [] } });
+    const validFile = new File(['{"resourceType":"Patient"}'], 'valid.txt', {});
+    validFile.text = async () => '{"resourceType":"Patient"}';
+    fireEvent.change(fileInput, { target: { files: [validFile] } });
+    expect(submitButton).toBeDisabled();
+    await waitFor(() => expect(submitButton).toBeEnabled());
+
+    fireEvent.click(getByText(/remove/i));
     expect(submitButton).toBeDisabled();
   });
 
