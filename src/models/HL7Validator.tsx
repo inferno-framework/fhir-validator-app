@@ -36,7 +36,7 @@ export const validateWith = async (profileUrls: string[], resourceBlob: string) 
     profileUrls.push(`http://hl7.org/fhir/StructureDefinition/${resourceType}`);
   }
 
-  const profile = profileUrls.join(',');
+  const profile = [...new Set(profileUrls)].join(',');
   const outcome = await validatorFetch('POST', `validate?${new URLSearchParams({ profile })}`, {
     headers: { 'Content-Type': `application/fhir+${contentType}` },
     body: resourceBlob,
