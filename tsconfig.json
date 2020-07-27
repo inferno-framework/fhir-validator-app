@@ -1,12 +1,18 @@
 {
-    "compilerOptions": {
-        "outDir": "./public/js/dist",
-        "sourceMap": true,
-        "strict": true,
-        "module": "commonjs",
-        "target": "es6",
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "jsx": "react",
-        "esModuleInterop": true
-    }
+  "compilerOptions": {
+    "target": "es6",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "jsx": "react",
+    "sourceMap": true,
+    "outDir": "./public/js/dist",
+    "baseUrl": "src"
+  }
 }
