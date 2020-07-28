@@ -1,13 +1,13 @@
 import React from 'react';
-import { fireEvent, waitFor, screen } from '@testing-library/react';
 import { renderWithRouter } from '../test-utils';
 import { createMemoryHistory } from 'history';
-import { Results, ResultsState, RESULTS_PATH } from '../Results';
+import { Results, RESULTS_PATH } from '../Results';
+import { ValidationResult } from '../../models/HL7Validator';
 
 describe('<Results />', () => {
   it('renders without crashing', () => {
     const history = createMemoryHistory();
-    const results: ResultsState = {
+    const results: ValidationResult = {
       outcome: {
         resourceType: 'OperationOutcome',
         issue: [],

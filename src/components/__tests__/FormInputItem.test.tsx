@@ -1,12 +1,6 @@
 import React, { useReducer } from 'react';
-import { render, fireEvent, waitFor, screen } from '@testing-library/react';
-import {
-  FormInputItem,
-  State,
-  Action,
-  reducer,
-  initialState,
-} from '../FormInputItem';
+import { render, fireEvent, waitFor } from '@testing-library/react';
+import { FormInputItem, State, Action, reducer, initialState } from '../FormInputItem';
 
 type TestState = { hello: State };
 
@@ -15,11 +9,11 @@ const testValidator = (input: string): string => {
   return valid ? '' : 'you have entered invalid input';
 };
 
-const testReducer = ({ hello }: TestState, action: Action): TestState => (
-  { hello: reducer(hello, action) }
-);
+const testReducer = ({ hello }: TestState, action: Action): TestState => ({
+  hello: reducer(hello, action),
+});
 
-const TestFormInputItem = () => (
+const TestFormInputItem = (): React.ReactElement => (
   <FormInputItem
     name="hello"
     textLabel="foo"
@@ -47,7 +41,7 @@ describe('<FormInputItem />', () => {
     expect(fileInput).toBeEnabled();
 
     const file = new File([], 'world.json', {});
-    file.text = async () => '';
+    file.text = (): Promise<string> => Promise.resolve('');
     fireEvent.change(fileInput, { target: { files: [file] } });
 
     await waitFor(() => expect(getByLabelText(/world\.json/)).toBe(fileInput));
@@ -63,9 +57,9 @@ describe('<FormInputItem />', () => {
     const fileInput = getByLabelText('bar');
 
     const validFile = new File(['YES'], 'valid.txt', {});
-    validFile.text = async () => 'YES';
+    validFile.text = (): Promise<string> => Promise.resolve('YES');
     const invalidFile = new File(['nooo'], 'invalid.txt', {});
-    invalidFile.text = async () => 'nooo';
+    invalidFile.text = (): Promise<string> => Promise.resolve('nooo');
 
     expect(queryByText(/invalid input/i)).toBeFalsy();
 
@@ -94,7 +88,7 @@ describe('<FormInputItem />', () => {
     const textField = getByLabelText('foo');
     const fileInput = getByLabelText('bar');
     const file = new File([], 'filename.txt', {});
-    file.text = async () => '';
+    file.text = (): Promise<string> => Promise.resolve('');
 
     fireEvent.change(textField, { target: { value: 'hello' } });
     expect(textField).toHaveValue('hello');

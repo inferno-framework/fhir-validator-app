@@ -1,4 +1,4 @@
-import { parseResource, isJsonResource, isXmlResource } from './Resource';
+import { JSONResource, parseResource, isJsonResource, isXmlResource } from './Resource';
 
 const VALIDATOR_URL = process.env.VALIDATOR_URL ?? 'http://localhost:8080/';
 
@@ -6,7 +6,7 @@ const validatorFetch = async (
   method: string,
   path: string,
   init: RequestInit = {}
-) => {
+): Promise<Response> => {
   const response = await fetch(`${VALIDATOR_URL}/${path}`, {
     ...init,
     method,
@@ -17,7 +17,7 @@ const validatorFetch = async (
   return response;
 };
 
-const parseJson = async (response: Response) => {
+const parseJson = async (response: Response): ReturnType<Body['json']> => {
   try {
     return await response.json();
   } catch (e) {
@@ -25,12 +25,24 @@ const parseJson = async (response: Response) => {
   }
 };
 
+export interface ValidationResult {
+  outcome: JSONResource<'OperationOutcome'>;
+  profileUrls: string[];
+  resourceBlob: string;
+  contentType: 'json' | 'xml';
+}
+
 // This function either resolves with the OperationOutcome response and other
 // details of the resource validated at the '/validate' endpoint or rejects
 // if the resource failed to be validated
-export const validateWith = async (profileUrls: string[], resourceBlob: string) => {
+export const validateWith = async (
+  profileUrls: string[],
+  resourceBlob: string
+): Promise<ValidationResult> => {
   const resource = parseResource(resourceBlob);
-  const resourceType = isJsonResource(resource) ? resource.resourceType : resource.documentElement.nodeName;
+  const resourceType = isJsonResource(resource)
+    ? resource.resourceType
+    : resource.documentElement.nodeName;
   const contentType = isJsonResource(resource) ? 'json' : 'xml';
   if (profileUrls.length === 0) {
     profileUrls.push(`http://hl7.org/fhir/StructureDefinition/${resourceType}`);
@@ -51,7 +63,7 @@ export const validateWith = async (profileUrls: string[], resourceBlob: string) 
     profileUrls,
     resourceBlob,
     contentType,
-  } as const;
+  };
 };
 
 // This function either resolves with the URL of the profile that was
@@ -63,8 +75,12 @@ export const addProfile = async (profileBlob: string): Promise<string> => {
   if (isJsonResource(profile, 'StructureDefinition')) {
     profileBlobUrl = profile.url;
   } else if (isXmlResource(profile, 'StructureDefinition')) {
-    const urlElement = [...profile.documentElement.children].find(elt => elt.nodeName === 'url')!;
-    profileBlobUrl = urlElement.getAttribute('value')!;
+    const urlElement = [...profile.documentElement.children].find((elt) => elt.nodeName === 'url');
+    const url = urlElement?.getAttribute('value');
+    if (!url) {
+      throw new Error('No profile url found in StructureDefinition');
+    }
+    profileBlobUrl = url;
   } else {
     throw new Error('Profile was not a StructureDefinition');
   }

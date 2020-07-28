@@ -1,66 +1,75 @@
 import React from 'react';
 import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
-import { render } from '@testing-library/react';
+import { createMemoryHistory, MemoryHistory } from 'history';
+import { render, RenderResult } from '@testing-library/react';
 import { JSONResource } from '../models/Resource';
 
 type RenderOptions = {
   route?: string;
-  history?: ReturnType<typeof createMemoryHistory>;
+  history?: MemoryHistory;
 };
 
 // Adapted from: https://testing-library.com/docs/example-react-router
 export const renderWithRouter = (
   ui: JSX.Element,
-  {
-    route = '/',
-    history = createMemoryHistory({ initialEntries: [route] }),
-  }: RenderOptions = {}
-) => {
-  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  { route = '/', history = createMemoryHistory({ initialEntries: [route] }) }: RenderOptions = {}
+): RenderResult & { history: MemoryHistory } => {
+  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <Router history={history}>{children}</Router>
   );
   return {
-    ...render(ui, { wrapper: Wrapper }),
+    ...render(ui, { wrapper: Wrapper as React.ComponentType }),
     history,
   };
-}
+};
 
-export const mockFetch = () => {
-  (global as any).fetch = jest.fn(async (path: string) => {
-    const response: any = { ok: true };
-    let match: RegExpMatchArray;
-    if (path.match(/\/validate(\?.*)?$/)) {
-      response.json = async (): Promise<JSONResource<'OperationOutcome'>> => ({
-        resourceType: 'OperationOutcome',
-        issue: [],
-      });
-    } else if (path.match(/\/profiles/)) {
-    } else if (match = path.match(/\/igs\/(?<id>.+)/)) {
-      switch (match.groups.id) {
+type MockGlobal = NodeJS.Global & { fetch: jest.Mock<MockResponse, [string]> };
+type MockResponse = {
+  ok: boolean;
+  statusText?: string;
+  json?: () => Promise<string[] | Record<string, string> | JSONResource<'OperationOutcome'>>;
+};
+
+export const mockFetch = (): void => {
+  (global as MockGlobal).fetch = jest.fn((path: string) => {
+    const response: MockResponse = { ok: true };
+    let match: RegExpMatchArray | null;
+    if (/\/validate(\?.*)?$/.exec(path)) {
+      response.json = (): Promise<JSONResource<'OperationOutcome'>> =>
+        Promise.resolve({
+          resourceType: 'OperationOutcome',
+          issue: [],
+        });
+    } else if (/\/profiles/.exec(path)) {
+      return response;
+    } else if ((match = /\/igs\/(?<id>.+)/.exec(path))) {
+      switch (match.groups?.id) {
         case 'hl7.fhir.r4.core': {
-          response.json = async () => [
-            'http://hl7.org/fhir/StructureDefinition/Patient',
-            'http://hl7.org/fhir/StructureDefinition/MedicationRequest',
-          ];
+          response.json = (): Promise<string[]> =>
+            Promise.resolve([
+              'http://hl7.org/fhir/StructureDefinition/Patient',
+              'http://hl7.org/fhir/StructureDefinition/MedicationRequest',
+            ]);
           break;
         }
         case 'hl7.fhir.us.core': {
-          response.json = async () => [
-            'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient',
-            'http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest',
-          ];
+          response.json = (): Promise<string[]> =>
+            Promise.resolve([
+              'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient',
+              'http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest',
+            ]);
           break;
         }
         default:
-          response.json = async (): Promise<string[]> => [];
-        break;
+          response.json = (): Promise<string[]> => Promise.resolve([]);
+          break;
       }
-    } else if (/\/igs$/.test(path)) {
-      response.json = async () => ({
-        'hl7.fhir.r4.core': 'http://packages2.fhir.org/packages/hl7.fhir.r4.core/4.0.1',
-        'hl7.fhir.us.core': 'http://packages2.fhir.org/packages/hl7.fhir.us.core/3.1.0',
-      });
+    } else if (path.endsWith('/igs')) {
+      response.json = (): Promise<Record<string, string>> =>
+        Promise.resolve({
+          'hl7.fhir.r4.core': 'http://packages2.fhir.org/packages/hl7.fhir.r4.core/4.0.1',
+          'hl7.fhir.us.core': 'http://packages2.fhir.org/packages/hl7.fhir.us.core/3.1.0',
+        });
     } else {
       response.ok = false;
       response.statusText = '404 Not Found';

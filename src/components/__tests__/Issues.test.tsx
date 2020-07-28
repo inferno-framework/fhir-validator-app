@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { Issue } from '../../models/Issue';
 import { Issues } from '../Issues';
 

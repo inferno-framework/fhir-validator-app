@@ -1,5 +1,6 @@
 import React, { useReducer, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { ValueType as ValuesType, OptionTypeBase } from 'react-select';
 
 import { validateWith, addProfile } from '../models/HL7Validator';
 import { resourceValidator } from '../models/Resource';
@@ -13,32 +14,37 @@ import {
   reducer as formInputItemReducer,
   initialState as initialFormInputItemState,
 } from './FormInputItem';
-import { withContext } from '../hoc/withContext';
+import { withContext, WithContextProps } from '../hoc/withContext';
 import { AppState } from './App';
 import { RESULTS_PATH } from './Results';
 
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
+type ValueType<OptionType extends OptionTypeBase> = Exclude<
+  ValuesType<OptionType>,
+  ReadonlyArray<OptionType>
+>;
+
 export interface FormState {
   resource: FormInputItemState;
   profile: FormInputItemState;
-  implementation_guide: SelectOption | null;
-  profile_select: SelectOption | null;
+  implementationGuide: ValueType<SelectOption>;
+  profileSelect: ValuesType<SelectOption>;
   error: string;
-};
+}
 
 type FormAction =
   | ({ name: KeysWithValue<FormState, FormInputItemState> } & FormInputItemAction)
-  | { name: 'implementation_guide', value: SelectOption }
-  | { name: 'profile_select', value: SelectOption }
-  | { name: 'SET_ERROR', error: string }
+  | { name: 'implementationGuide'; value: FormState['implementationGuide'] }
+  | { name: 'profileSelect'; value: FormState['profileSelect'] }
+  | { name: 'SET_ERROR'; error: FormState['error'] }
   | { name: 'RESET' };
 
 const initialFormState: FormState = {
   resource: initialFormInputItemState,
   profile: initialFormInputItemState,
-  implementation_guide: null,
-  profile_select: null,
+  implementationGuide: null,
+  profileSelect: null,
   error: '',
 };
 
@@ -50,13 +56,13 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
       newState[action.name] = formInputItemReducer(state[action.name], action);
       break;
     }
-    case 'implementation_guide': {
+    case 'implementationGuide': {
       newState[action.name] = action.value;
-      // keep profile_select value in sync with the selected implementation_guide
-      newState['profile_select'] = null;
+      // keep profileSelect value in sync with the selected implementationGuide
+      newState.profileSelect = null;
       break;
     }
-    case 'profile_select': {
+    case 'profileSelect': {
       newState[action.name] = action.value;
       break;
     }
@@ -72,61 +78,58 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
   return newState;
 };
 
-export const FormContext = React.createContext<[FormState, React.Dispatch<FormAction>]>(null!);
+export const FormContext = React.createContext<[FormState, React.Dispatch<FormAction>]>([
+  initialFormState,
+  (): void => void 0,
+]);
+
 const ResourceFormInputItem = withContext(
   FormContext,
-  FormInputItem as React.ComponentType<FormInputItemProps<FormState, 'resource'>>
-);
+  FormInputItem as React.ComponentType<WithContextProps<[FormState, React.Dispatch<FormAction>]>>
+) as React.ComponentType<Omit<FormInputItemProps<FormState, 'resource'>, 'context'>>;
 const ProfileFormInputItem = withContext(
   FormContext,
-  FormInputItem as React.ComponentType<FormInputItemProps<FormState, 'profile'>>
-);
+  FormInputItem as React.ComponentType<WithContextProps<[FormState, React.Dispatch<FormAction>]>>
+) as React.ComponentType<Omit<FormInputItemProps<FormState, 'profile'>, 'context'>>;
 
 interface ValidatorProps {
   readonly basePath?: string;
 }
 
-export function ValidatorForm({ basePath = '' }: ValidatorProps) {
+export function ValidatorForm({ basePath = '' }: ValidatorProps): React.ReactElement {
   const history = useHistory<AppState>();
-  const [formState, dispatch] = useReducer(
-    formReducer,
-    history.location.state || initialFormState,
-  );
+  const [formState, dispatch] = useReducer(formReducer, history.location.state || initialFormState);
 
   useEffect(() => {
-    const deleteHistoryState = () => history.replace(history.location.pathname);
+    const deleteHistoryState = (): void => history.replace(history.location.pathname);
     window.addEventListener('beforeunload', deleteHistoryState);
-    return () => window.removeEventListener('beforeunload', deleteHistoryState);
-  }, []);
+    return (): void => window.removeEventListener('beforeunload', deleteHistoryState);
+  }, [history]);
 
   const {
-    resource: {
-      text: resourceBlob,
-      error: resourceError,
-    },
-    profile: {
-      text: profileBlob,
-      error: profileError,
-    },
-    profile_select: profileSelectState,
+    resource: { text: resourceBlob, error: resourceError },
+    profile: { text: profileBlob, error: profileError },
+    profileSelect,
     error,
   } = formState;
 
   const disableSubmit = !resourceBlob || !!resourceError || !!profileError;
 
-  const handleError = (error: string) => {
+  const handleError = (error: string): void => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     dispatch({ name: 'SET_ERROR', error });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (disableSubmit) {
       return handleError('Failed to submit form: Resource is invalid');
     }
 
-    const selectedProfile = profileSelectState?.value;
-    const profileUrls = selectedProfile ? [selectedProfile] : [];
+    const empty: ValueType<SelectOption>[] = [];
+    const profileUrls = empty
+      .concat(profileSelect)
+      .flatMap((option) => (option == null ? [] : [option.value]));
 
     try {
       if (profileBlob.trim()) {
@@ -148,24 +151,22 @@ export function ValidatorForm({ basePath = '' }: ValidatorProps) {
 
   return (
     <FormContext.Provider value={[formState, dispatch]}>
-      {error &&
+      {error && (
         <div className="alert alert-danger fade show">
           {error}
           <button
             type="button"
             className="close"
             aria-label="Close"
-            onClick={() => dispatch({ name: 'SET_ERROR', error: '' })}
+            onClick={(): void => dispatch({ name: 'SET_ERROR', error: '' })}
           >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-      }
-      <form role="form" onSubmit={handleSubmit}>
+      )}
+      <form aria-label="validator form" onSubmit={handleSubmit}>
         <div className="card">
-          <div className="card-header">
-            Resource
-          </div>
+          <div className="card-header">Resource</div>
 
           <div className="card-body">
             <ResourceFormInputItem
@@ -193,15 +194,19 @@ export function ValidatorForm({ basePath = '' }: ValidatorProps) {
               Advanced Options
             </button>
 
-            <div id="advanced-body" className="collapse" aria-labelledby="advanced-header" data-parent="#advanced-options">
+            <div
+              id="advanced-body"
+              className="collapse"
+              aria-labelledby="advanced-header"
+              data-parent="#advanced-options"
+            >
               <div className="card-body">
                 <p>
-                  By default, the FHIR Validator validates your resources using
-                  the profile URLs found in the "meta.profile" field of your
-                  resource (or the Base FHIR profiles if no profile URLs are
-                  present). However, you may choose to use existing profiles
-                  from other Implementation Guides or use your own profile to
-                  validate your resources.
+                  By default, the FHIR Validator validates your resources using the profile URLs
+                  found in the "meta.profile" field of your resource (or the Base FHIR profiles if
+                  no profile URLs are present). However, you may choose to use existing profiles
+                  from other Implementation Guides or use your own profile to validate your
+                  resources.
                 </p>
                 <br />
                 <div className="form-group">
@@ -211,7 +216,7 @@ export function ValidatorForm({ basePath = '' }: ValidatorProps) {
                   name="profile"
                   textLabel="Or if you have your own profile, you can paste it here:"
                   fileLabel="Or upload your profile in a file:"
-                  validator={input => input && resourceValidator(input)}
+                  validator={(input: string): string => input && resourceValidator(input)}
                 />
               </div>
             </div>
@@ -221,10 +226,20 @@ export function ValidatorForm({ basePath = '' }: ValidatorProps) {
         <br />
 
         <div className="form-group">
-          <input type="submit" value="Validate" className="btn btn-primary" disabled={disableSubmit} />
-          <input type="button" value="Reset" className="btn btn-primary ml-3" onClick={() => dispatch({ name: 'RESET' })} />
+          <input
+            type="submit"
+            value="Validate"
+            className="btn btn-primary"
+            disabled={disableSubmit}
+          />
+          <input
+            type="button"
+            value="Reset"
+            className="btn btn-primary ml-3"
+            onClick={(): void => dispatch({ name: 'RESET' })}
+          />
         </div>
       </form>
     </FormContext.Provider>
   );
-};
+}
