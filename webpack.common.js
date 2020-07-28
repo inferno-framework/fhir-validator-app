@@ -5,7 +5,7 @@ const { EnvironmentPlugin } = require('webpack');
 module.exports = {
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: [".ts", ".tsx", ".jsx", ".js"]
+    extensions: ['.ts', '.tsx', '.jsx', '.js'],
   },
 
   module: {
@@ -15,17 +15,17 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           {
-            loader: "ts-loader"
-          }
-        ]
+            loader: 'ts-loader',
+          },
+        ],
       },
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       {
-        enforce: "pre",
+        enforce: 'pre',
         test: /\.js$/,
-        loader: "source-map-loader"
-      }
-    ]
+        loader: 'source-map-loader',
+      },
+    ],
   },
 
   plugins: [
@@ -40,7 +40,7 @@ module.exports = {
   ],
 
   output: {
-    path: path.resolve(__dirname, "./public/js/dist")
+    path: path.resolve(__dirname, './public/js/dist'),
   },
 
   // When importing a module whose path matches one of the following, just
@@ -48,12 +48,11 @@ module.exports = {
   // This is important because it allows us to avoid bundling all of our
   // dependencies, which allows browsers to cache those libraries between builds.
   externals: {
-    "react": "React",
-    "react-dom": "ReactDOM"
+    react: 'React',
+    'react-dom': 'ReactDOM',
   },
 
   optimization: {
-    usedExports: true
-  }
-
+    usedExports: true,
+  },
 };
