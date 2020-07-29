@@ -14,11 +14,9 @@ export const renderWithRouter = (
   ui: JSX.Element,
   { route = '/', history = createMemoryHistory({ initialEntries: [route] }) }: RenderOptions = {}
 ): RenderResult & { history: MemoryHistory } => {
-  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <Router history={history}>{children}</Router>
-  );
+  const Wrapper: React.FC = ({ children }) => <Router history={history}>{children}</Router>;
   return {
-    ...render(ui, { wrapper: Wrapper as React.ComponentType }),
+    ...render(ui, { wrapper: Wrapper }),
     history,
   };
 };
