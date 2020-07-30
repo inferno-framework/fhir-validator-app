@@ -95,6 +95,10 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
   const textFieldClass = state.mode === 'text' ? state.error && 'is-invalid' : 'disabled';
   const fileInputClass = state.mode === 'file' ? state.error && 'is-invalid' : '';
 
+  if (state.mode === 'file') {
+    fileLabel = state.status === 'loading' ? 'Loading...' : state.file.name;
+  }
+
   useEffect(() => {
     if (state.mode === 'file' && state.status === 'loading') {
       state.file
@@ -131,11 +135,7 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
             htmlFor={fileInputName}
             className={`custom-file-label ${state.mode === 'file' ? 'selected' : ''}`}
           >
-            {state.mode === 'file'
-              ? state.status === 'loading'
-                ? 'Loading...'
-                : state.file.name
-              : fileLabel}
+            {fileLabel}
           </label>
           <div className="invalid-feedback w-100">{state.mode === 'file' && state.error}</div>
         </div>
