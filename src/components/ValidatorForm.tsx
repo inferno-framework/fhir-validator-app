@@ -1,4 +1,12 @@
-import React, { useReducer, useEffect } from 'react';
+import React, {
+  useReducer,
+  useEffect,
+  FormEvent,
+  createContext,
+  ReactElement,
+  Dispatch,
+  ComponentType,
+} from 'react';
 import { useHistory } from 'react-router-dom';
 import { ValueType as ValuesType, OptionTypeBase } from 'react-select';
 
@@ -78,25 +86,25 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
   return newState;
 };
 
-export const FormContext = React.createContext<[FormState, React.Dispatch<FormAction>]>([
+export const FormContext = createContext<[FormState, Dispatch<FormAction>]>([
   initialFormState,
   (): void => void 0,
 ]);
 
 const ResourceFormInputItem = withContext(
   FormContext,
-  FormInputItem as React.ComponentType<WithContextProps<[FormState, React.Dispatch<FormAction>]>>
-) as React.ComponentType<Omit<FormInputItemProps<FormState, 'resource'>, 'context'>>;
+  FormInputItem as ComponentType<WithContextProps<[FormState, Dispatch<FormAction>]>>
+) as ComponentType<Omit<FormInputItemProps<FormState, 'resource'>, 'context'>>;
 const ProfileFormInputItem = withContext(
   FormContext,
-  FormInputItem as React.ComponentType<WithContextProps<[FormState, React.Dispatch<FormAction>]>>
-) as React.ComponentType<Omit<FormInputItemProps<FormState, 'profile'>, 'context'>>;
+  FormInputItem as ComponentType<WithContextProps<[FormState, Dispatch<FormAction>]>>
+) as ComponentType<Omit<FormInputItemProps<FormState, 'profile'>, 'context'>>;
 
 interface ValidatorProps {
   readonly basePath?: string;
 }
 
-export function ValidatorForm({ basePath = '' }: ValidatorProps): React.ReactElement {
+export function ValidatorForm({ basePath = '' }: ValidatorProps): ReactElement {
   const history = useHistory<AppState>();
   const [formState, dispatch] = useReducer(formReducer, history.location.state || initialFormState);
 
@@ -120,7 +128,7 @@ export function ValidatorForm({ basePath = '' }: ValidatorProps): React.ReactEle
     dispatch({ name: 'SET_ERROR', error });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (disableSubmit) {
       return handleError('Failed to submit form: Resource is invalid');

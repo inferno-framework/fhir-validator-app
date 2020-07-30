@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
 
 import { Issue as OIssue } from 'models/Resource';
@@ -25,7 +25,7 @@ const issuesBySeverity = (issues: OIssue[], severity: string): Issue[] =>
       return new Issue(issueLine(iss), issueText);
     });
 
-export function Results({ basePath = '' }): React.ReactElement {
+export function Results({ basePath = '' }): ReactElement {
   const history = useHistory<AppState>();
   if (!history.location.state?.results) {
     return <Redirect to={basePath + '/'} />;

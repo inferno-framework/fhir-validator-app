@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, ReactElement } from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { FormInputItem, State, Action, reducer, initialState } from '../FormInputItem';
 
@@ -13,7 +13,7 @@ const testReducer = ({ hello }: TestState, action: Action): TestState => ({
   hello: reducer(hello, action),
 });
 
-const TestFormInputItem = (): React.ReactElement => (
+const TestFormInputItem = (): ReactElement => (
   <FormInputItem
     name="hello"
     textLabel="foo"

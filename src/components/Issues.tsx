@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Issue } from 'models/Issue';
 
 interface IssuesProps {
@@ -6,7 +6,7 @@ interface IssuesProps {
   severity: 'error' | 'warning' | 'information';
 }
 
-export function Issues({ issues, severity }: IssuesProps): React.ReactElement {
+export function Issues({ issues, severity }: IssuesProps): ReactElement {
   if (issues.length === 0) {
     return <h2>No validation {severity} issues found</h2>;
   } else {

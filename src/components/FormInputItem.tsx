@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, ReactElement, Dispatch, ChangeEvent } from 'react';
 
 export const initialState: State = { mode: 'text', text: '', error: '' };
 
@@ -61,7 +61,7 @@ export interface FormInputItemProps<S extends Record<N, State>, N extends keyof 
   readonly textLabel: string;
   readonly fileLabel: string;
   readonly validator?: (input: string) => string;
-  readonly context: [S, React.Dispatch<{ name: N } & Action>];
+  readonly context: [S, Dispatch<{ name: N } & Action>];
 }
 
 export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
@@ -70,15 +70,15 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
   fileLabel,
   context: [formState, dispatch],
   validator,
-}: FormInputItemProps<S, N>): React.ReactElement {
+}: FormInputItemProps<S, N>): ReactElement {
   const changeText = useCallback(
     (text: string): void => dispatch({ name, type: 'CHANGE_TEXT', text, validator }),
     [dispatch, name, validator]
   );
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void =>
+  const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>): void =>
     changeText(e.target.value);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0];
     e.target.value = ''; // allow file to be re-uploaded
     if (file) {

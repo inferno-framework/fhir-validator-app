@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { ValidatorForm, FormState } from './ValidatorForm';
 import { Results, RESULTS_PATH } from './Results';
@@ -8,7 +8,7 @@ const BASE_PATH = process.env.BASE_PATH ?? '';
 
 export type AppState = FormState & { results?: ValidationResult };
 
-export function App(): React.ReactElement {
+export function App(): ReactElement {
   return (
     <div className="container">
       <Switch>

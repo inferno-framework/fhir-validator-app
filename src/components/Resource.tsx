@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement, Component } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter/dist/cjs/light';
 import json from 'react-syntax-highlighter/dist/cjs/languages/hljs/json';
 import xml from 'react-syntax-highlighter/dist/cjs/languages/hljs/xml';
@@ -23,8 +23,8 @@ interface HighlightProps {
 
 // 'Resource' describes the shape of props.
 // State is never set so we use the '{}' type.
-export class Resource extends React.Component<ResourceProps, {}> {
-  render(): React.ReactElement {
+export class Resource extends Component<ResourceProps, {}> {
+  render(): ReactElement {
     const { resource, contentType, errors, warnings, information } = this.props;
     const errorLines = errors.map((e) => e.line);
     const warningLines = warnings.map((w) => w.line);

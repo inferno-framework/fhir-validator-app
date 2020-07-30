@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, ReactElement } from 'react';
 import Select, { ValueType, ActionMeta } from 'react-select';
 
 import { SelectOption } from 'models/SelectOption';
@@ -8,7 +8,7 @@ export interface GuideSelectProps {
   readonly igs?: string[];
 }
 
-export function GuideSelect({ igs }: GuideSelectProps): React.ReactElement {
+export function GuideSelect({ igs }: GuideSelectProps): ReactElement {
   const [formState, dispatch] = useContext(FormContext);
   const value = formState.implementationGuide;
   const empty: (SelectOption | null | undefined)[] = [];

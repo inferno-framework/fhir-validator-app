@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, ReactElement } from 'react';
 
 import { getIgs, loadIg } from 'models/HL7Validator';
 import { SelectOption } from 'models/SelectOption';
@@ -6,7 +6,7 @@ import { GuideSelect } from './GuideSelect';
 import { ProfileSelect } from './ProfileSelect';
 import { FormContext } from './ValidatorForm';
 
-export function ProfileForm(): React.ReactElement {
+export function ProfileForm(): ReactElement {
   const [formState, dispatch] = useContext(FormContext);
   const [igs, setIgs] = useState<string[]>();
   const [profiles, setProfiles] = useState<Record<string, string[]>>({});

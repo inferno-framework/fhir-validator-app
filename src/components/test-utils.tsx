@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { render, RenderResult } from '@testing-library/react';
@@ -14,7 +14,7 @@ export const renderWithRouter = (
   ui: JSX.Element,
   { route = '/', history = createMemoryHistory({ initialEntries: [route] }) }: RenderOptions = {}
 ): RenderResult & { history: MemoryHistory } => {
-  const Wrapper: React.FC = ({ children }) => <Router history={history}>{children}</Router>;
+  const Wrapper: FC = ({ children }) => <Router history={history}>{children}</Router>;
   return {
     ...render(ui, { wrapper: Wrapper }),
     history,
