@@ -11,7 +11,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "start": "webpack-dev-server --open --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js"
+    "build": "webpack --config webpack.prod.js",
+    "lint": "eslint './src/**/*.{ts,tsx}'",
+    "lint:fix": "eslint './src/**/*.{ts,tsx}' --fix"
   },
   "repository": {
     "type": "git",
