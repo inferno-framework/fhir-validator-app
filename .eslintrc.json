@@ -25,6 +25,7 @@
     "brace-style": "off",
     "func-call-spacing": "off",
     "max-len": ["warn", { "code": 100, "ignoreStrings": true }],
-    "semi": "off"
+    "semi": "off",
+    "no-nested-ternary": "error"
   }
 }
