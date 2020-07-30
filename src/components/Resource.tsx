@@ -4,7 +4,7 @@ import json from 'react-syntax-highlighter/dist/cjs/languages/hljs/json';
 import xml from 'react-syntax-highlighter/dist/cjs/languages/hljs/xml';
 import docco from 'react-syntax-highlighter/dist/cjs/styles/hljs/docco';
 
-import { Issue } from '../models/Issue';
+import { Issue } from 'models/Issue';
 SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('xml', xml);
 

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Select, { ValueType, ActionMeta } from 'react-select';
 
-import { SelectOption } from '../models/SelectOption';
+import { SelectOption } from 'models/SelectOption';
 import { FormContext } from './ValidatorForm';
 
 export interface ProfileSelectProps {

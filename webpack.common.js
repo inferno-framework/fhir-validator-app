@@ -6,6 +6,8 @@ module.exports = {
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
     extensions: ['.ts', '.tsx', '.jsx', '.js'],
+    // Modules in ./src should take precedence over those in node_modules
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
   },
 
   module: {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { render, RenderResult } from '@testing-library/react';
-import { JSONResource } from '../models/Resource';
+import { JSONResource } from 'models/Resource';
 
 type RenderOptions = {
   route?: string;

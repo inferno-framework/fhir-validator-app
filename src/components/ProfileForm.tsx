@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 
-import { getIgs, loadIg } from '../models/HL7Validator';
-import { SelectOption } from '../models/SelectOption';
+import { getIgs, loadIg } from 'models/HL7Validator';
+import { SelectOption } from 'models/SelectOption';
 import { GuideSelect } from './GuideSelect';
 import { ProfileSelect } from './ProfileSelect';
 import { FormContext } from './ValidatorForm';

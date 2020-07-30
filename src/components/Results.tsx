@@ -1,8 +1,8 @@
 import React from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
 
-import { Issue as OIssue } from '../models/Resource';
-import { Issue } from '../models/Issue';
+import { Issue as OIssue } from 'models/Resource';
+import { Issue } from 'models/Issue';
 
 import { Issues } from './Issues';
 import { Resource } from './Resource';

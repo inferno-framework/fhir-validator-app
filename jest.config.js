@@ -21,4 +21,7 @@ module.exports = {
 
   // Module file extensions for importing
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+
+  // Resolve project modules from ./src
+  modulePaths: ['src'],
 };

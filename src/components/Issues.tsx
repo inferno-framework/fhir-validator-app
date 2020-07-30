@@ -1,5 +1,5 @@
 import React from 'react';
-import { Issue } from '../models/Issue';
+import { Issue } from 'models/Issue';
 
 interface IssuesProps {
   issues: Issue[];

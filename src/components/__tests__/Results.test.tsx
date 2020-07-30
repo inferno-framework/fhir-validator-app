@@ -1,8 +1,8 @@
 import React from 'react';
-import { renderWithRouter } from '../test-utils';
 import { createMemoryHistory } from 'history';
+import { renderWithRouter } from '../test-utils';
 import { Results, RESULTS_PATH } from '../Results';
-import { ValidationResult } from '../../models/HL7Validator';
+import { ValidationResult } from 'models/HL7Validator';
 
 describe('<Results />', () => {
   it('renders without crashing', () => {

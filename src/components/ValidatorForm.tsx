@@ -2,9 +2,10 @@ import React, { useReducer, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { ValueType as ValuesType, OptionTypeBase } from 'react-select';
 
-import { validateWith, addProfile } from '../models/HL7Validator';
-import { resourceValidator } from '../models/Resource';
-import { SelectOption } from '../models/SelectOption';
+import { withContext, WithContextProps } from 'hoc/withContext';
+import { validateWith, addProfile } from 'models/HL7Validator';
+import { resourceValidator } from 'models/Resource';
+import { SelectOption } from 'models/SelectOption';
 import { ProfileForm } from './ProfileForm';
 import {
   FormInputItem,
@@ -14,7 +15,6 @@ import {
   reducer as formInputItemReducer,
   initialState as initialFormInputItemState,
 } from './FormInputItem';
-import { withContext, WithContextProps } from '../hoc/withContext';
 import { AppState } from './App';
 import { RESULTS_PATH } from './Results';
 

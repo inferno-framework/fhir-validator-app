@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { ValidatorForm, FormState } from './ValidatorForm';
 import { Results, RESULTS_PATH } from './Results';
-import { ValidationResult } from '../models/HL7Validator';
+import { ValidationResult } from 'models/HL7Validator';
 
 const BASE_PATH = process.env.BASE_PATH ?? '';
 
