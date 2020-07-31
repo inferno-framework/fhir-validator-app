@@ -11,8 +11,10 @@ ENV NODE_ENV production
 RUN npm run build
 
 FROM nginx:stable-alpine
-COPY --from=build /app/public/js/dist/* /usr/share/nginx/html/
-COPY --from=build /app/public/data/profiles.json /usr/share/nginx/html/data/profiles.json
-COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/public/js/dist/* /etc/nginx/html/
+COPY nginx/nginx.conf /nginx.conf.template
+COPY nginx/entrypoint.sh /entrypoint.sh
+ENV validator_base_path '/'
 EXPOSE 80
+ENTRYPOINT [ "/entrypoint.sh" ]
 CMD ["nginx", "-g", "daemon off;"]
