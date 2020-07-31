@@ -1,6 +1,11 @@
 import { JSONResource, parseResource, isJsonResource, isXmlResource } from './Resource';
 
-const { VALIDATOR_URL = 'http://localhost:8080' } = process.env;
+interface config extends NodeJS.Global{
+  CONFIG: Record<string, string>
+}
+
+
+const VALIDATOR_URL = (global as config)?.CONFIG?.external_validator_url ?? 'http://localhost:4567';
 
 const validatorFetch = async (
   method: string,

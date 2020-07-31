@@ -12,6 +12,7 @@ RUN npm run build
 
 FROM nginx:stable-alpine
 COPY --from=build /app/public/js/dist/* /validator/
+COPY public/config.js /validator/
 COPY nginx/nginx.conf /nginx.conf.template
 COPY nginx/entrypoint.sh /entrypoint.sh
 ENV validator_base_path '/'
