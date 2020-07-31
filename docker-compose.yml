@@ -6,7 +6,8 @@ services:
     depends_on:
       - fhir_validator_service
     environment:
-      validator_base_path: /validator
+      EXTERNAL_VALIDATOR_URL: http://localhost:4567
+      VALIDATOR_BASE_PATH: /validator
     ports:
       - "80:80"
   fhir_validator_service:

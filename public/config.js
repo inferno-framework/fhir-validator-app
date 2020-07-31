@@ -1,3 +1,3 @@
 CONFIG = {
-  external_validator_url: ' http://localhost:4567',
+  externalValidatorUrl: 'http://localhost:8080',
 };

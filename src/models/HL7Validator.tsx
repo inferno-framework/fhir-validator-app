@@ -4,8 +4,7 @@ interface config extends NodeJS.Global{
   CONFIG: Record<string, string>
 }
 
-
-const VALIDATOR_URL = (global as config)?.CONFIG?.external_validator_url ?? 'http://localhost:4567';
+const VALIDATOR_URL = (global as config)?.CONFIG?.externalValidatorUrl ?? 'http://localhost:4567';
 
 const validatorFetch = async (
   method: string,

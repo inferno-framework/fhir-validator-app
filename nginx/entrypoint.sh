@@ -1,7 +1,7 @@
 #!/bin/sh
 
-export validator_base_path
-
-envsubst '${validator_base_path}' <  /nginx.conf.template > /etc/nginx/conf.d/default.conf
+envsubst '${VALIDATOR_BASE_PATH}' <  /nginx.conf.template > /etc/nginx/conf.d/default.conf
+sh ./create_config.sh
+cp config.js /validator
 
 exec "$@"
