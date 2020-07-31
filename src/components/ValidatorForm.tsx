@@ -100,11 +100,7 @@ const ProfileFormInputItem = withContext(
   FormInputItem as ComponentType<WithContextProps<[FormState, Dispatch<FormAction>]>>
 ) as ComponentType<Omit<FormInputItemProps<FormState, 'profile'>, 'context'>>;
 
-interface ValidatorProps {
-  readonly basePath?: string;
-}
-
-export function ValidatorForm({ basePath = '' }: ValidatorProps): ReactElement {
+export function ValidatorForm(): ReactElement {
   const history = useHistory<AppState>();
   const [formState, dispatch] = useReducer(formReducer, history.location.state || initialFormState);
 
@@ -151,7 +147,7 @@ export function ValidatorForm({ basePath = '' }: ValidatorProps): ReactElement {
     try {
       const results = await validateWith(profileUrls, resourceBlob);
       history.replace(history.location.pathname, formState);
-      history.push(basePath + RESULTS_PATH, { ...formState, results });
+      history.push(RESULTS_PATH, { ...formState, results });
     } catch (error) {
       return handleError(`Failed to validate resource: ${error?.message}`);
     }

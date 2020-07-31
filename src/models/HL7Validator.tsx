@@ -1,6 +1,6 @@
 import { JSONResource, parseResource, isJsonResource, isXmlResource } from './Resource';
 
-const VALIDATOR_URL = process.env.VALIDATOR_URL ?? 'http://localhost:8080/';
+const { VALIDATOR_URL = 'http://localhost:8080' } = process.env;
 
 const validatorFetch = async (
   method: string,
