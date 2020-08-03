@@ -3,6 +3,7 @@ import { Router } from 'react-router-dom';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { render, RenderResult } from '@testing-library/react';
 import { JSONResource } from 'models/Resource';
+import { LoadIgResponse } from 'models/HL7Validator';
 
 type RenderOptions = {
   route?: string;
@@ -25,7 +26,7 @@ type MockGlobal = NodeJS.Global & { fetch: jest.Mock<MockResponse, [string]> };
 type MockResponse = {
   ok: boolean;
   statusText?: string;
-  json?: () => Promise<string[] | Record<string, string> | JSONResource<'OperationOutcome'>>;
+  json?: Response['json'];
 };
 
 export const mockFetch = (): void => {
@@ -40,27 +41,39 @@ export const mockFetch = (): void => {
         });
     } else if (/\/profiles/.exec(path)) {
       return response;
-    } else if ((match = /\/igs\/(?<id>.+)/.exec(path))) {
+    } else if ((match = /\/igs\/(?<id>\S+)(\?version=(?<version>\S*))?/.exec(path))) {
       switch (match.groups?.id) {
         case 'hl7.fhir.r4.core': {
-          response.json = (): Promise<string[]> =>
-            Promise.resolve([
-              'http://hl7.org/fhir/StructureDefinition/Patient',
-              'http://hl7.org/fhir/StructureDefinition/MedicationRequest',
-            ]);
+          response.json = (): Promise<LoadIgResponse> =>
+            Promise.resolve({
+              id: 'hl7.fhir.r4.core',
+              version: '4.0.1',
+              profiles: [
+                'http://hl7.org/fhir/StructureDefinition/Patient',
+                'http://hl7.org/fhir/StructureDefinition/MedicationRequest',
+              ],
+            });
+
           break;
         }
         case 'hl7.fhir.us.core': {
-          response.json = (): Promise<string[]> =>
-            Promise.resolve([
-              'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient',
-              'http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest',
-            ]);
+          response.json = (): Promise<LoadIgResponse> =>
+            Promise.resolve({
+              id: 'hl7.fhir.us.core',
+              version: '3.1.0',
+              profiles: [
+                'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient',
+                'http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest',
+              ],
+            });
+
           break;
         }
-        default:
-          response.json = (): Promise<string[]> => Promise.resolve([]);
+        default: {
+          response.ok = false;
+          response.statusText = '500 Internal Server Error';
           break;
+        }
       }
     } else if (path.endsWith('/igs')) {
       response.json = (): Promise<Record<string, string>> =>
