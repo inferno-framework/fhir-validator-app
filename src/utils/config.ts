@@ -1,5 +1,5 @@
 interface Config extends NodeJS.Global {
-  CONFIG: Record<string, string>;
+  CONFIG?: { [key in string]?: string };
 }
 
-export default (key: string): string | undefined => (global as Config)?.CONFIG?.[key];
+export default (key: string): string | undefined => (global as Config).CONFIG?.[key];
