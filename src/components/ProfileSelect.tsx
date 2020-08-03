@@ -1,29 +1,30 @@
-import React, { useContext } from 'react';
-import Select from 'react-select';
+import React, { useContext, ReactElement } from 'react';
+import Select, { ValueType, ActionMeta } from 'react-select';
 
-import { SelectOption } from '../models/SelectOption';
+import { SelectOption } from 'models/SelectOption';
 import { FormContext } from './ValidatorForm';
 
 export interface ProfileSelectProps {
   readonly options?: SelectOption[];
 }
 
-export function ProfileSelect({ options }: ProfileSelectProps) {
+export function ProfileSelect({ options }: ProfileSelectProps): ReactElement {
   const [formState, dispatch] = useContext(FormContext);
-  const ig = formState['implementation_guide']?.value;
-  const value = formState['profile_select'];
-  const handleChange = (value: SelectOption) => dispatch({ name: 'profile_select', value });
+  const ig = formState.implementationGuide?.value;
+  const value = formState.profileSelect;
+  const handleChange = (value: ValueType<SelectOption>, _action: ActionMeta<SelectOption>): void =>
+    dispatch({ name: 'profileSelect', value });
 
   return (
     <div>
-      <label htmlFor="profile_select">Select a profile:</label>
+      <label htmlFor="profile-select">Select a profile:</label>
       <Select
         isClearable
         isDisabled={!ig}
         isLoading={!!ig && !options}
         options={options}
-        name="profile_select"
-        id="profile_select"
+        name="profile-select"
+        id="profile-select"
         value={value}
         onChange={handleChange}
       />

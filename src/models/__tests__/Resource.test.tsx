@@ -14,22 +14,40 @@ const input0 = { resourceType: 'Patient' };
 const input1 = { resourceType: 'StructureDefinition' };
 const input2 = { resourceType: 'StructureDefinition', url: 'http://thebomb.com' };
 const input3 = { resourceType: 'OperationOutcome' };
-const input4 = { resourceType: 'OperationOutcome', issue: [] as any[] };
+const input4 = { resourceType: 'OperationOutcome', issue: [] as R.Issue[] };
 const input5 = { resourceType: 'OperationOutcome', url: 'http://website.com' };
 
-const input10 = parser.parseFromString('<Patient xmlns="http://hl7.org/fhir"></Patient>', 'text/xml');
-const input11 = parser.parseFromString('<StructureDefinition xmlns="http://hl7.org/fhir"></StructureDefinition>', 'text/xml');
-const input12 = parser.parseFromString('<StructureDefinition xmlns="http://hl7.org/fhir"><url value="http://thebomb.com"/></StructureDefinition>', 'text/xml');
-const input13 = parser.parseFromString('<OperationOutcome xmlns="http://hl7.org/fhir"></OperationOutcome>', 'text/xml');
-const input14 = parser.parseFromString(`
+const input10 = parser.parseFromString(
+  '<Patient xmlns="http://hl7.org/fhir"></Patient>',
+  'text/xml'
+);
+const input11 = parser.parseFromString(
+  '<StructureDefinition xmlns="http://hl7.org/fhir"></StructureDefinition>',
+  'text/xml'
+);
+const input12 = parser.parseFromString(
+  '<StructureDefinition xmlns="http://hl7.org/fhir"><url value="http://thebomb.com"/></StructureDefinition>',
+  'text/xml'
+);
+const input13 = parser.parseFromString(
+  '<OperationOutcome xmlns="http://hl7.org/fhir"></OperationOutcome>',
+  'text/xml'
+);
+const input14 = parser.parseFromString(
+  `
   <OperationOutcome xmlns="http://hl7.org/fhir">
     <issue>
       <severity value="error"/>
       <code value="code-invalid"/>
     </issue>
   </OperationOutcome>
-`, 'text/xml');
-const input15 = parser.parseFromString('<OperationOutcome xmlns="http://hl7.org/fhir"><url value="http://website.com"/></OperationOutcome>', 'text/xml');
+`,
+  'text/xml'
+);
+const input15 = parser.parseFromString(
+  '<OperationOutcome xmlns="http://hl7.org/fhir"><url value="http://website.com"/></OperationOutcome>',
+  'text/xml'
+);
 
 describe('isJsonResource', () => {
   it('correctly determines if the input is a JSONResource', () => {
@@ -191,19 +209,27 @@ describe('parseResource', () => {
 
     expect(() => R.parseResource('>')).toThrow(invalidJsonXml);
     expect(() => R.parseResource('</NoStartTag>')).toThrow(invalidJsonXml);
-    expect(() => R.parseResource('<MisplacedAttribute></MisplacedAttribute xmlns="hello">')).toThrow(invalidJsonXml);
+    expect(() =>
+      R.parseResource('<MisplacedAttribute></MisplacedAttribute xmlns="hello">')
+    ).toThrow(invalidJsonXml);
     expect(() => R.parseResource('<ValidXML></ValidXML>')).not.toThrow(invalidJsonXml);
-    expect(() => R.parseResource('<Observation xmlns="http://hl7.org/fhir"></Observation>')).not.toThrow(invalidJsonXml);
+    expect(() =>
+      R.parseResource('<Observation xmlns="http://hl7.org/fhir"></Observation>')
+    ).not.toThrow(invalidJsonXml);
   });
 
   it('detects missing/incorrect properties for FHIR resources', () => {
     const missingResourceType = /missing.*resourceType/i;
     expect(() => R.parseResource('{ "validJson": true }')).toThrow(missingResourceType);
-    expect(() => R.parseResource('{ "resourceType": "Patient", "validJson": true }')).not.toThrow(missingResourceType);
+    expect(() => R.parseResource('{ "resourceType": "Patient", "validJson": true }')).not.toThrow(
+      missingResourceType
+    );
 
     const missingXmlns = /missing.*xmlns/i;
     expect(() => R.parseResource('<Patient></Patient>')).toThrow(missingXmlns);
     expect(() => R.parseResource('<Patient xmlns="foo"></Patient>')).toThrow(missingXmlns);
-    expect(() => R.parseResource('<Patient xmlns="http://hl7.org/fhir"></Patient>')).not.toThrow(missingXmlns);
+    expect(() => R.parseResource('<Patient xmlns="http://hl7.org/fhir"></Patient>')).not.toThrow(
+      missingXmlns
+    );
   });
 });

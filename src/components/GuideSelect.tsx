@@ -1,28 +1,32 @@
-import React, { useContext } from 'react';
-import Select from 'react-select';
+import React, { useContext, ReactElement } from 'react';
+import Select, { ValueType, ActionMeta } from 'react-select';
 
-import { SelectOption } from '../models/SelectOption';
+import { SelectOption } from 'models/SelectOption';
 import { FormContext } from './ValidatorForm';
 
 export interface GuideSelectProps {
   readonly igs?: string[];
 }
 
-export function GuideSelect({ igs }: GuideSelectProps) {
+export function GuideSelect({ igs }: GuideSelectProps): ReactElement {
   const [formState, dispatch] = useContext(FormContext);
-  const value = formState['implementation_guide'];
-  const handleChange = (value: SelectOption) => dispatch({ name: 'implementation_guide', value });
-  const options = igs?.map(ig => new SelectOption(ig, ig));
+  const value = formState.implementationGuide;
+  const empty: (SelectOption | null | undefined)[] = [];
+  const handleChange = (value: ValueType<SelectOption>, _action: ActionMeta<SelectOption>): void =>
+    dispatch({ name: 'implementationGuide', value: empty.concat(value)[0] });
+  const options = igs?.map((ig) => new SelectOption(ig, ig));
 
   return (
     <div>
-      <label htmlFor="implementation_guide">Pick an Implementation Guide to validate against:</label>
+      <label htmlFor="implementation-guide">
+        Pick an Implementation Guide to validate against:
+      </label>
       <Select
         isClearable
         isLoading={!options}
         options={options}
-        name="implementation_guide"
-        id="implementation_guide"
+        name="implementation-guide"
+        id="implementation-guide"
         value={value}
         onChange={handleChange}
       />

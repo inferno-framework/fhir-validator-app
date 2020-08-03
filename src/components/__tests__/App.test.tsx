@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, waitFor, screen } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { renderWithRouter, mockFetch } from '../test-utils';
 import { App } from '../App';
 
@@ -9,7 +9,7 @@ describe('<App />', () => {
   it('renders without crashing', async () => {
     renderWithRouter(<App />);
     // fix act(...) warning: https://kentcdodds.com/blog/write-fewer-longer-tests#appendix
-    await waitFor(() => {});
+    await waitFor(() => void 0);
   });
 
   it('redirects users who manually navigate to the results page back to the home page', async () => {
@@ -21,7 +21,7 @@ describe('<App />', () => {
 
   it('clears form state after an unmount', async () => {
     const { getByLabelText: getBefore, unmount, history } = renderWithRouter(<App />);
-    const  textField = getBefore(/paste.*resource/i);
+    const textField = getBefore(/paste.*resource/i);
 
     expect(textField).toHaveValue('');
     fireEvent.change(textField, { target: { value: 'foobar' } });

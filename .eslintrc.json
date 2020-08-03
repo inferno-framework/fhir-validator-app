@@ -1,0 +1,31 @@
+{
+  "plugins": [
+    "@typescript-eslint",
+    "only-error"
+  ],
+  "extends": [
+    "react-app",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:prettier/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.json",
+    "sourceType": "module"
+  },
+  "rules": {
+    "@typescript-eslint/brace-style": "error",
+    "@typescript-eslint/func-call-spacing": "error",
+    "@typescript-eslint/no-require-imports": "error",
+    "@typescript-eslint/no-unnecessary-qualifier": "error",
+    "@typescript-eslint/semi": "error",
+    "brace-style": "off",
+    "func-call-spacing": "off",
+    "max-len": ["warn", { "code": 100, "ignoreStrings": true }],
+    "semi": "off",
+    "no-nested-ternary": "error"
+  }
+}

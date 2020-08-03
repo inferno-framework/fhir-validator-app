@@ -1,6 +1,6 @@
 import React from 'react';
 import selectEvent from 'react-select-event';
-import { fireEvent, waitFor, screen } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { renderWithRouter, mockFetch } from '../test-utils';
 import { ValidatorForm } from '../ValidatorForm';
 
@@ -10,14 +10,13 @@ describe('<ValidatorForm />', () => {
   it('renders without crashing', async () => {
     renderWithRouter(<ValidatorForm basePath="" />);
     // fix act(...) warning: https://kentcdodds.com/blog/write-fewer-longer-tests#appendix
-    await waitFor(() => {});
+    await waitFor(() => void 0);
   });
 
   it('handles optional arguments without crashing', async () => {
     renderWithRouter(<ValidatorForm basePath="" />);
     renderWithRouter(<ValidatorForm />);
-    renderWithRouter(<ValidatorForm />);
-    await waitFor(() => {});
+    await waitFor(() => void 0);
   });
 
   it('displays the name of the file that was uploaded', async () => {
@@ -25,7 +24,7 @@ describe('<ValidatorForm />', () => {
 
     const fileInput = getByLabelText(/upload.*resource/i);
     const file = new File([], 'foobar.txt', {});
-    file.text = async () => '';
+    file.text = (): Promise<string> => Promise.resolve('');
     fireEvent.change(fileInput, { target: { files: [file] } });
 
     await waitFor(() => expect(queryByLabelText(/foobar\.txt/)).toBeTruthy());
@@ -40,7 +39,7 @@ describe('<ValidatorForm />', () => {
     expect(textField).toBeEnabled();
 
     const file = new File([], 'foobar.txt', {});
-    file.text = async () => '';
+    file.text = (): Promise<string> => Promise.resolve('');
     fireEvent.change(fileInput, { target: { files: [file] } });
 
     await waitFor(() => expect(textField).toBeDisabled());
@@ -60,13 +59,15 @@ describe('<ValidatorForm />', () => {
     fireEvent.change(textField, { target: { value: `{ 'singleQuotes': true }` } });
     expect(queryByText(/invalid.*JSON/i)).toBeTruthy();
 
-    fireEvent.change(textField, { target: { value: `{ "validJson": true, "resourceTypePresent": false }` } });
+    fireEvent.change(textField, {
+      target: { value: `{ "validJson": true, "resourceTypePresent": false }` },
+    });
     expect(queryByText(/missing.*resourceType/i)).toBeTruthy();
 
     fireEvent.change(textField, { target: { value: `{ "resourceType": "Patient" }` } });
     expect(queryByText(/invalid.*JSON/i)).toBeFalsy();
     expect(queryByText(/missing.*resourceType/i)).toBeFalsy();
-    await waitFor(() => {});
+    await waitFor(() => void 0);
   });
 
   it('can detect valid/invalid XML and report missing xmlns', async () => {
@@ -80,7 +81,9 @@ describe('<ValidatorForm />', () => {
     fireEvent.change(textField, { target: { value: `<NoEndTag>` } });
     expect(queryByText(/invalid.*XML/i)).toBeTruthy();
 
-    fireEvent.change(textField, { target: { value: `<MisplacedAttribute></MisplacedAttribute here="not good">` } });
+    fireEvent.change(textField, {
+      target: { value: `<MisplacedAttribute></MisplacedAttribute here="not good">` },
+    });
     expect(queryByText(/invalid.*XML/i)).toBeTruthy();
 
     fireEvent.change(textField, { target: { value: `<ValidXML></ValidXML>` } });
@@ -89,10 +92,12 @@ describe('<ValidatorForm />', () => {
     fireEvent.change(textField, { target: { value: `<IncorrectNS xmlns="wrong"></IncorrectNS>` } });
     expect(queryByText(/missing.*xmlns/i)).toBeTruthy();
 
-    fireEvent.change(textField, { target: { value: `<MedicationRequest xmlns="http://hl7.org/fhir"></MedicationRequest>` } });
+    fireEvent.change(textField, {
+      target: { value: `<MedicationRequest xmlns="http://hl7.org/fhir"></MedicationRequest>` },
+    });
     expect(queryByText(/invalid.*XML/i)).toBeFalsy();
     expect(queryByText(/missing.*xmlns/i)).toBeFalsy();
-    await waitFor(() => {});
+    await waitFor(() => void 0);
   });
 
   it('enables the submit button iff the resource pasted/uploaded is valid JSON/XML', async () => {
@@ -110,7 +115,9 @@ describe('<ValidatorForm />', () => {
     fireEvent.change(textField, { target: { value: '' } });
     expect(submitButton).toBeDisabled();
 
-    fireEvent.change(textField, { target: { value: `<MedicationRequest xmlns="http://hl7.org/fhir"></MedicationRequest>` } });
+    fireEvent.change(textField, {
+      target: { value: `<MedicationRequest xmlns="http://hl7.org/fhir"></MedicationRequest>` },
+    });
     expect(submitButton).toBeEnabled();
 
     fireEvent.change(textField, { target: { value: `{ 'singleQuotes': true }` } });
@@ -120,20 +127,20 @@ describe('<ValidatorForm />', () => {
     expect(submitButton).toBeDisabled();
 
     const invalidFile = new File([], 'invalid.txt', {});
-    invalidFile.text = async () => '';
+    invalidFile.text = (): Promise<string> => Promise.resolve('');
     fireEvent.change(fileInput, { target: { files: [invalidFile] } });
     expect(submitButton).toBeDisabled();
     await waitFor(() => expect(submitButton).toBeDisabled());
 
     const validFile = new File(['{"resourceType":"Patient"}'], 'valid.txt', {});
-    validFile.text = async () => '{"resourceType":"Patient"}';
+    validFile.text = (): Promise<string> => Promise.resolve('{"resourceType":"Patient"}');
     fireEvent.change(fileInput, { target: { files: [validFile] } });
     expect(submitButton).toBeDisabled();
     await waitFor(() => expect(submitButton).toBeEnabled());
 
     fireEvent.click(getByText(/remove/i));
     expect(submitButton).toBeDisabled();
-    await waitFor(() => {});
+    await waitFor(() => void 0);
   });
 
   it('clears the profile select field if the implementation guide is changed', async () => {
@@ -143,19 +150,19 @@ describe('<ValidatorForm />', () => {
     const profileSelect = getByLabelText(/select.*profile/i);
 
     await selectEvent.select(igSelect, /r4\.core/);
-    expect(getByRole('form')).toHaveFormValues({ profile_select: '' });
+    expect(getByRole('form')).toHaveFormValues({ 'profile-select': '' });
 
     await selectEvent.select(profileSelect, /Patient$/);
     expect(getByRole('form')).toHaveFormValues({
-      profile_select: 'http://hl7.org/fhir/StructureDefinition/Patient',
+      'profile-select': 'http://hl7.org/fhir/StructureDefinition/Patient',
     });
 
     await selectEvent.select(igSelect, /us\.core/);
-    expect(getByRole('form')).toHaveFormValues({ profile_select: '' });
+    expect(getByRole('form')).toHaveFormValues({ 'profile-select': '' });
 
     await selectEvent.select(profileSelect, /us-core-patient$/);
     expect(getByRole('form')).toHaveFormValues({
-      profile_select: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient',
+      'profile-select': 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient',
     });
   });
 });

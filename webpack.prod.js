@@ -3,22 +3,20 @@ const common = require('./webpack.common.js');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = merge(common, {
-  mode: "production",
+  mode: 'production',
 
   // Enable sourcemaps for debugging webpack's output.
-  devtool: "source-map",
+  devtool: 'source-map',
 
-  plugins: [
-    new CleanWebpackPlugin(),
-  ],
+  plugins: [new CleanWebpackPlugin()],
 
   optimization: {
     removeAvailableModules: true,
     removeEmptyChunks: true,
-    usedExports: true
+    usedExports: true,
   },
 
   output: {
-    filename: '[name].[contenthash].js'
-  }
+    filename: '[name].[contenthash].js',
+  },
 });
