@@ -93,9 +93,11 @@ export const addProfile = async (profileBlob: string): Promise<string> => {
 export const getIgs = (): Promise<Record<string, string>> =>
   validatorFetch('GET', 'igs').then(parseJson);
 
+export type LoadIgResponse = { id: string; version: string; profiles: string[] };
+
 // This function takes a package ID of an IG from packages.fhir.org and loads
 // the IG into the external validator
-export const loadIg = (id: string): Promise<string[]> =>
+export const loadIg = (id: string): Promise<LoadIgResponse> =>
   validatorFetch('PUT', `igs/${id}`).then(parseJson);
 
 // This function retrieves a mapping from package ID of an IG to a list of

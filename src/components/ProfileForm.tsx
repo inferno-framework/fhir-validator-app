@@ -33,7 +33,7 @@ export function ProfileForm(): ReactElement {
     let aborted = false;
     if (ig && !options) {
       loadIg(ig).then(
-        (urls) => !aborted && setProfiles((profiles) => ({ ...profiles, [ig]: urls }))
+        ({ profiles: urls }) => !aborted && setProfiles((profiles) => ({ ...profiles, [ig]: urls }))
       );
     }
     return (): void => void (aborted = true);
