@@ -3,11 +3,9 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './components/App';
 
-const BASE_PATH = new URL(document.baseURI).pathname;
-
 ReactDOM.render(
   <StrictMode>
-    <BrowserRouter basename={BASE_PATH}>
+    <BrowserRouter basename={window.location.pathname}>
       <App />
     </BrowserRouter>
   </StrictMode>,
