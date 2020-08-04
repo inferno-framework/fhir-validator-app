@@ -25,10 +25,10 @@ const issuesBySeverity = (issues: OIssue[], severity: string): Issue[] =>
       return new Issue(issueLine(iss), issueText);
     });
 
-export function Results({ basePath = '' }): ReactElement {
+export function Results(): ReactElement {
   const history = useHistory<AppState>();
   if (!history.location.state?.results) {
-    return <Redirect to={basePath + '/'} />;
+    return <Redirect to="/" />;
   }
 
   const {

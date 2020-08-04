@@ -1,6 +1,7 @@
 import { JSONResource, parseResource, isJsonResource, isXmlResource } from './Resource';
+import config from 'utils/config';
 
-const VALIDATOR_URL = process.env.VALIDATOR_URL ?? 'http://localhost:8080/';
+const VALIDATOR_URL = config('externalValidatorUrl') ?? 'http://localhost:4567';
 
 const validatorFetch = async (
   method: string,

@@ -4,12 +4,15 @@ services:
     build:
       context: .
     depends_on:
-      - fhir_validator_wrapper
+      - fhir_validator_service
     environment:
-      external_validator_url: http://fhir_validator_wrapper:4567
+      EXTERNAL_VALIDATOR_URL: http://localhost:4567
+      VALIDATOR_BASE_PATH: /validator
     ports:
-      - "4567:4567"
-  fhir_validator_wrapper:
-    image: infernocommunity/fhir-validator-wrapper:latest
+      - "80:80"
+  fhir_validator_service:
+    image: infernocommunity/fhir-validator-service:latest
     volumes:
       - ./igs:/home/igs/package
+    ports:
+      - "4567:4567"

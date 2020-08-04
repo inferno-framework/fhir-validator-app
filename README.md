@@ -13,7 +13,7 @@ From the root directory of `fhir-validator-app`:
 From the root directory of `fhir-validator-app`:
 * Run the Typescript compilation engine: `npm start`
   * Note: this will auto-recompile whenever you save a change to one of the Typescript files, and will trigger a page refresh if you have the app open in development
-* Run the validator wrapper: `docker run -p 8080:80 infernocommunity/fhir-validator-wrapper:latest`
+* Run the validator wrapper: docker run -p 8080:4567 infernocommunity/fhir-validator-service:latest
 * Navigate to the app in your browser of choice at http://localhost:4567
 
 ## Running the FHIR Validator App in Docker

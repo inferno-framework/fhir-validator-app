@@ -8,14 +8,8 @@ beforeAll(mockFetch);
 
 describe('<ValidatorForm />', () => {
   it('renders without crashing', async () => {
-    renderWithRouter(<ValidatorForm basePath="" />);
-    // fix act(...) warning: https://kentcdodds.com/blog/write-fewer-longer-tests#appendix
-    await waitFor(() => void 0);
-  });
-
-  it('handles optional arguments without crashing', async () => {
-    renderWithRouter(<ValidatorForm basePath="" />);
     renderWithRouter(<ValidatorForm />);
+    // fix act(...) warning: https://kentcdodds.com/blog/write-fewer-longer-tests#appendix
     await waitFor(() => void 0);
   });
 
