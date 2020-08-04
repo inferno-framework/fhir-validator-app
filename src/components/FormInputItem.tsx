@@ -56,24 +56,26 @@ export const reducer = (state: State, action: Action): State => {
   }
 };
 
-export interface FormInputItemProps<S extends Record<N, State>, N extends keyof S> {
-  readonly name: N;
+export interface FormInputItemProps {
+  readonly name: string;
+  readonly state: State;
+  readonly dispatch: Dispatch<Action>;
   readonly textLabel: string;
   readonly fileLabel: string;
   readonly validator?: (input: string) => string;
-  readonly context: [S, Dispatch<{ name: N } & Action>];
 }
 
-export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
+export function FormInputItem({
   name,
+  state,
+  dispatch,
   textLabel,
   fileLabel,
-  context: [formState, dispatch],
   validator,
-}: FormInputItemProps<S, N>): ReactElement {
+}: FormInputItemProps): ReactElement {
   const changeText = useCallback(
-    (text: string): void => dispatch({ name, type: 'CHANGE_TEXT', text, validator }),
-    [dispatch, name, validator]
+    (text: string): void => dispatch({ type: 'CHANGE_TEXT', text, validator }),
+    [dispatch, validator]
   );
   const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>): void =>
     changeText(e.target.value);
@@ -82,16 +84,15 @@ export function FormInputItem<S extends Record<N, State>, N extends keyof S>({
     const file = e.target.files?.[0];
     e.target.value = ''; // allow file to be re-uploaded
     if (file) {
-      dispatch({ name, type: 'UPLOAD_FILE', file });
+      dispatch({ type: 'UPLOAD_FILE', file });
     }
   };
 
-  const handleRemoveFile = (): void => dispatch({ name, type: 'REMOVE_FILE' });
+  const handleRemoveFile = (): void => dispatch({ type: 'REMOVE_FILE' });
 
   const textFieldName = `${name}_field`;
   const fileInputName = `${name}_file`;
 
-  const state = formState[name] as State;
   const textFieldClass = state.mode === 'text' ? state.error && 'is-invalid' : 'disabled';
   const fileInputClass = state.mode === 'file' ? state.error && 'is-invalid' : '';
 

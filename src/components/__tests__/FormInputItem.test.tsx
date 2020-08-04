@@ -13,15 +13,19 @@ const testReducer = ({ hello }: TestState, action: Action): TestState => ({
   hello: reducer(hello, action),
 });
 
-const TestFormInputItem = (): ReactElement => (
-  <FormInputItem
-    name="hello"
-    textLabel="foo"
-    fileLabel="bar"
-    validator={testValidator}
-    context={useReducer(testReducer, { hello: initialState })}
-  />
-);
+const TestFormInputItem = (): ReactElement => {
+  const [state, dispatch] = useReducer(testReducer, { hello: initialState });
+  return (
+    <FormInputItem
+      name="hello"
+      state={state['hello']}
+      dispatch={dispatch}
+      textLabel="foo"
+      fileLabel="bar"
+      validator={testValidator}
+    />
+  );
+};
 
 describe('<FormInputItem />', () => {
   it('renders without crashing', () => {
