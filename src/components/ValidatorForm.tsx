@@ -87,6 +87,7 @@ export function ValidatorForm(): ReactElement {
   const history = useHistory<AppState>();
   const [formState, dispatch] = useReducer(formReducer, history.location.state || initialFormState);
 
+  // Delete history state on page refresh
   useEffect(() => {
     const deleteHistoryState = (): void => history.replace(history.location.pathname);
     window.addEventListener('beforeunload', deleteHistoryState);
