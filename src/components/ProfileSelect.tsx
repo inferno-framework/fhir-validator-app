@@ -1,5 +1,5 @@
 import React, { useContext, ReactElement } from 'react';
-import Select, { ValueType, ActionMeta } from 'react-select';
+import Select, { ValueType } from 'react-select';
 
 import { SelectOption } from 'models/SelectOption';
 import { FormContext } from './ValidatorForm';
@@ -12,7 +12,7 @@ export function ProfileSelect({ options }: ProfileSelectProps): ReactElement {
   const [formState, dispatch] = useContext(FormContext);
   const ig = formState.implementationGuide?.value;
   const value = formState.profileSelect;
-  const handleChange = (value: ValueType<SelectOption>, _action: ActionMeta<SelectOption>): void =>
+  const handleChange = (value: ValueType<SelectOption>): void =>
     dispatch({ name: 'profileSelect', value });
 
   return (
