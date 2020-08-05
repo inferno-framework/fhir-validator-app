@@ -23,7 +23,7 @@ export function App(): ReactElement {
           FHIR Validator
         </a>
       </nav>
-      <div className="container">
+      <div className="container py-5">
         <Switch>
           <Route exact path="/">
             <h1>FHIR Validator</h1>

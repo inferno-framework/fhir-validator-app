@@ -1,4 +1,4 @@
-import React, { useContext, ReactElement } from 'react';
+import React, { useContext, useState, ReactElement } from 'react';
 
 import { FormContext } from './ValidatorForm';
 import { ProfileForm } from './ProfileForm';
@@ -7,10 +7,11 @@ import { resourceValidator } from 'models/Resource';
 
 export function AdvancedOptionsCard(): ReactElement {
   const [formState, dispatch] = useContext(FormContext);
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <div className="accordion" id="advanced-options">
-      <div className="card">
+      <div className="card" style={{ overflow: expanded ? 'unset' : 'hidden' }}>
         <button
           className="card-header btn btn-link text-left"
           id="advanced-header"
@@ -19,6 +20,7 @@ export function AdvancedOptionsCard(): ReactElement {
           data-target="#advanced-body"
           aria-expanded="false"
           aria-controls="advanced-body"
+          onClick={(): void => setExpanded((expanded) => !expanded)}
         >
           Advanced Options
         </button>
