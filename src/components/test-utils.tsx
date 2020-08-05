@@ -3,7 +3,7 @@ import { Router } from 'react-router-dom';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { render, RenderResult } from '@testing-library/react';
 import { JSONResource } from 'models/Resource';
-import { LoadIgResponse } from 'models/HL7Validator';
+import { IgResponse } from 'models/HL7Validator';
 
 type RenderOptions = {
   route?: string;
@@ -45,7 +45,7 @@ export const mockFetch = (): void => {
     } else if ((match = /\/igs\/(?<id>\S+)(\?version=(?<version>\S*))?$/.exec(path))) {
       switch (match.groups?.id) {
         case 'hl7.fhir.r4.core': {
-          response.json = (): Promise<LoadIgResponse> =>
+          response.json = (): Promise<IgResponse> =>
             Promise.resolve({
               id: 'hl7.fhir.r4.core',
               version: '4.0.1',
@@ -58,7 +58,7 @@ export const mockFetch = (): void => {
           break;
         }
         case 'hl7.fhir.us.core': {
-          response.json = (): Promise<LoadIgResponse> =>
+          response.json = (): Promise<IgResponse> =>
             Promise.resolve({
               id: 'hl7.fhir.us.core',
               version: '3.1.0',
