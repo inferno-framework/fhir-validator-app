@@ -30,24 +30,66 @@ export function AdvancedOptionsCard(): ReactElement {
           data-parent="#advanced-options"
         >
           <div className="card-body">
+            <ul className="nav nav-tabs" id="profile-options" role="tablist">
+              <li className="nav-item">
+                <a
+                  className="nav-link active"
+                  id="ig-profile-tab"
+                  data-toggle="tab"
+                  href="#ig-profile"
+                  role="tab"
+                  aria-controls="ig-profile"
+                  aria-selected="true"
+                >
+                  Load profile from IG
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  className="nav-link"
+                  id="standalone-profile-tab"
+                  data-toggle="tab"
+                  href="#standalone-profile"
+                  role="tab"
+                  aria-controls="standalone-profile"
+                  aria-selected="false"
+                >
+                  Load standalone profile
+                </a>
+              </li>
+            </ul>
+            <br />
             <p>
               By default, the FHIR Validator validates your resources using the profile URLs found
               in the "meta.profile" field of your resource (or the Base FHIR profiles if no profile
               URLs are present). However, you may choose to use existing profiles from other
               Implementation Guides or use your own profile to validate your resources.
             </p>
-            <br />
-            <div className="form-group">
-              <ProfileForm />
+            <div className="tab-content" id="profile-options-content">
+              <div
+                className="tab-pane fade show active"
+                id="ig-profile"
+                role="tabpanel"
+                aria-labelledby="ig-profile-tab"
+              >
+                <ProfileForm />
+              </div>
+              <div
+                className="tab-pane fade"
+                id="standalone-profile"
+                role="tabpanel"
+                aria-labelledby="standalone-profile-tab"
+              >
+                <FormInputItem
+                  name="profile"
+                  state={formState['profile']}
+                  dispatch={(action: Action): void => dispatch({ name: 'profile', ...action })}
+                  textLabel="If you have your own profile, you can paste it here:"
+                  fileLabel="Or upload your profile in a file:"
+                  validator={(input: string): string => input && resourceValidator(input)}
+                />
+              </div>
             </div>
-            <FormInputItem
-              name="profile"
-              state={formState['profile']}
-              dispatch={(action: Action): void => dispatch({ name: 'profile', ...action })}
-              textLabel="Or if you have your own profile, you can paste it here:"
-              fileLabel="Or upload your profile in a file:"
-              validator={(input: string): string => input && resourceValidator(input)}
-            />
           </div>
         </div>
       </div>
