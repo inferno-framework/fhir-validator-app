@@ -25,12 +25,22 @@
         box-shadow: none;
       }
 
+      .custom-file-input.is-valid:focus~.custom-file-label {
+        box-shadow: none;
+      }
+
       .custom-file-input.is-invalid:focus~.custom-file-label {
         box-shadow: none;
       }
 
       .custom-file-input:focus~.custom-file-label {
         box-shadow: none;
+      }
+
+      .input-group.is-valid:focus-within {
+        border-color: #28a745;
+        border-radius: 0.25rem;
+        box-shadow: 0 0 0 0.2rem rgba(40,167,69,.25);
       }
 
       .input-group.is-invalid:focus-within {
@@ -43,6 +53,10 @@
         border-color: #80bdff;
         border-radius: 0.25rem;
         box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+      }
+
+      .input-group.is-valid .btn {
+        border-color: #28a745;
       }
 
       .input-group.is-invalid .btn {
