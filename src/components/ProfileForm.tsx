@@ -20,18 +20,25 @@ export function ProfileForm(): ReactElement {
       ? undefined
       : profiles[ig]?.map((profile) => new SelectOption(profile, profile));
 
+  // 1. GET /igs when component first mounts
+  // 2. Default to hl7.fhir.r4.core if implementationGuide was not set on mount
   useEffect(() => {
     let aborted = false;
-    getIgs().then((igs) => {
-      if (!aborted) {
-        setIgs(Object.keys(igs).sort());
-        const value = new SelectOption('hl7.fhir.r4.core', 'hl7.fhir.r4.core');
-        dispatch({ name: 'implementationGuide', value });
-      }
-    });
+    if (!igs) {
+      getIgs().then((igs) => {
+        if (!aborted) {
+          setIgs(Object.keys(igs).sort());
+          if (!ig) {
+            const value = new SelectOption('hl7.fhir.r4.core', 'hl7.fhir.r4.core');
+            dispatch({ name: 'implementationGuide', value });
+          }
+        }
+      });
+    }
     return (): void => void (aborted = true);
-  }, [dispatch]);
+  }, [dispatch, igs, ig]);
 
+  // When implementationGuide changes, load IG and cache returned profile URLs (if needed)
   useEffect(() => {
     let aborted = false;
     if (ig && !options) {
