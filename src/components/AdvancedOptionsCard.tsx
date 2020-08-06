@@ -42,6 +42,7 @@ export function AdvancedOptionsCard(): ReactElement {
                   role="tab"
                   aria-controls="ig-profile"
                   aria-selected="true"
+                  onClick={(): void => dispatch({ name: 'SET_TAB', value: 'ig' })}
                 >
                   Load profile from IG
                 </a>
@@ -55,6 +56,7 @@ export function AdvancedOptionsCard(): ReactElement {
                   role="tab"
                   aria-controls="standalone-profile"
                   aria-selected="false"
+                  onClick={(): void => dispatch({ name: 'SET_TAB', value: 'standalone' })}
                 >
                   Load standalone profile
                 </a>

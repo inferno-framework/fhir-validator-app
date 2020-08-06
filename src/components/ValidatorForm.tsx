@@ -36,6 +36,7 @@ export interface FormState {
   implementationGuide: ValueType<SelectOption>;
   profileSelect: ValuesType<SelectOption>;
   error: string;
+  tab: 'ig' | 'standalone';
 }
 
 type FormAction =
@@ -43,6 +44,7 @@ type FormAction =
   | { name: 'implementationGuide'; value: FormState['implementationGuide'] }
   | { name: 'profileSelect'; value: FormState['profileSelect'] }
   | { name: 'SET_ERROR'; error: FormState['error'] }
+  | { name: 'SET_TAB'; value: FormState['tab'] }
   | { name: 'RESET' };
 
 const initialFormState: FormState = {
@@ -51,6 +53,7 @@ const initialFormState: FormState = {
   implementationGuide: null,
   profileSelect: null,
   error: '',
+  tab: 'ig',
 };
 
 const formReducer = (state: FormState, action: FormAction): FormState => {
@@ -70,6 +73,9 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
       break;
     case 'SET_ERROR':
       newState.error = action.error;
+      break;
+    case 'SET_TAB':
+      newState.tab = action.value;
       break;
     case 'RESET':
       newState = initialFormState;
@@ -99,9 +105,11 @@ export function ValidatorForm(): ReactElement {
     profile: { text: profileBlob, error: profileError },
     profileSelect,
     error,
+    tab,
   } = formState;
 
-  const disableSubmit = !resourceBlob || !!resourceError || !!profileError;
+  const disableSubmit =
+    !resourceBlob || !!resourceError || (tab === 'standalone' && !!profileError);
 
   const handleError = (error: string): void => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
