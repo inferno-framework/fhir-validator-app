@@ -4,6 +4,7 @@ import { ValidatorForm, FormState } from './ValidatorForm';
 import { Results, RESULTS_PATH } from './Results';
 import { ValidationResult } from 'models/HL7Validator';
 import config from 'utils/config';
+import appVersion from 'version';
 
 export type AppState = FormState & { results?: ValidationResult };
 
@@ -26,6 +27,18 @@ export function App(): ReactElement {
           </Route>
         </Switch>
       </div>
+      <nav className="navbar fixed-bottom navbar-light bg-light">
+        <a className="navbar-link" href="https://github.com/inferno-community/fhir-validator-app">
+          Open Source
+        </a>
+        <a
+          className="navbar-link"
+          href="https://github.com/inferno-community/fhir-validator-app/issues"
+        >
+          Issues
+        </a>
+        <div className="navbar-text">Version {appVersion}</div>
+      </nav>
     </>
   );
 }
