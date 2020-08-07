@@ -104,3 +104,6 @@ export const loadIg = (id: string): Promise<LoadIgResponse> =>
 // canonical URLs of profiles belonging to the IG
 export const getProfilesByIg = (): Promise<Record<string, string[]>> =>
   validatorFetch('GET', 'profiles-by-ig').then(parseJson);
+
+export const getVersion = (): Promise<string> =>
+  validatorFetch('GET', 'version').then((response) => response.text());
