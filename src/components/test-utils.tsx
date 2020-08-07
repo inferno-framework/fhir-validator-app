@@ -27,6 +27,7 @@ type MockResponse = {
   ok: boolean;
   statusText?: string;
   json?: Response['json'];
+  text?: Response['text'];
 };
 
 export const mockFetch = (): void => {
@@ -41,7 +42,7 @@ export const mockFetch = (): void => {
         });
     } else if (/\/profiles/.exec(path)) {
       return response;
-    } else if ((match = /\/igs\/(?<id>\S+)(\?version=(?<version>\S*))?/.exec(path))) {
+    } else if ((match = /\/igs\/(?<id>\S+)(\?version=(?<version>\S*))?$/.exec(path))) {
       switch (match.groups?.id) {
         case 'hl7.fhir.r4.core': {
           response.json = (): Promise<LoadIgResponse> =>
@@ -81,6 +82,8 @@ export const mockFetch = (): void => {
           'hl7.fhir.r4.core': 'http://packages2.fhir.org/packages/hl7.fhir.r4.core/4.0.1',
           'hl7.fhir.us.core': 'http://packages2.fhir.org/packages/hl7.fhir.us.core/3.1.0',
         });
+    } else if (path.endsWith('/version')) {
+      response.text = (): Promise<string> => Promise.resolve('5.0.11-SNAPSHOT');
     } else {
       response.ok = false;
       response.statusText = '404 Not Found';
