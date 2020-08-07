@@ -35,12 +35,19 @@ export function App(): ReactElement {
         </Switch>
       </div>
       <nav className="navbar fixed-bottom navbar-light bg-light">
-        <a className="navbar-link" href="https://github.com/inferno-community/fhir-validator-app">
+        <a
+          className="navbar-link"
+          href="https://github.com/inferno-community/fhir-validator-app"
+          target="_blank"
+          rel="noreferrer"
+        >
           Open Source
         </a>
         <a
           className="navbar-link"
           href="https://github.com/inferno-community/fhir-validator-app/issues"
+          target="_blank"
+          rel="noreferrer"
         >
           Issues
         </a>
