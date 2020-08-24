@@ -68,6 +68,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "blob-polyfill": "^4.0.20200601",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
