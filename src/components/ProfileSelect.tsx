@@ -26,6 +26,9 @@ export function ProfileSelect({ options }: ProfileSelectProps): ReactElement {
         name="profile-select"
         id="profile-select"
         value={value}
+        styles={{
+          menu: provided => ({ ...provided, zIndex: 9999 })
+        }}
         onChange={handleChange}
       />
     </div>
