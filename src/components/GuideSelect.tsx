@@ -29,7 +29,7 @@ export function GuideSelect({ igs }: GuideSelectProps): ReactElement {
         id="implementation-guide"
         value={value}
         styles={{
-          menu: provided => ({ ...provided, zIndex: 9999 })
+          menu: provided => ({ ...provided, zIndex: 9999 }),
         }}
         onChange={handleChange}
       />
