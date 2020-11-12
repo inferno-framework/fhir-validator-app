@@ -1,4 +1,4 @@
-import React, { useContext, ReactElement } from 'react';
+import React, { useContext, ReactElement, CSSProperties } from 'react';
 import Select, { ValueType } from 'react-select';
 
 import { SelectOption } from 'models/SelectOption';
@@ -29,7 +29,7 @@ export function GuideSelect({ igs }: GuideSelectProps): ReactElement {
         id="implementation-guide"
         value={value}
         styles={{
-          menu: provided => ({ ...provided, zIndex: 9999 }),
+          menu: (provided): CSSProperties => ({ ...provided, zIndex: 9999 }),
         }}
         onChange={handleChange}
       />
