@@ -1,4 +1,4 @@
-import React, { useContext, ReactElement, CSSProperties } from 'react';
+import React, { useContext, ReactElement } from 'react';
 import Select, { ValueType } from 'react-select';
 
 import { SelectOption } from 'models/SelectOption';
@@ -26,9 +26,6 @@ export function ProfileSelect({ options }: ProfileSelectProps): ReactElement {
         name="profile-select"
         id="profile-select"
         value={value}
-        styles={{
-          menu: (provided): CSSProperties => ({ ...provided, zIndex: 9999 }),
-        }}
         onChange={handleChange}
       />
     </div>

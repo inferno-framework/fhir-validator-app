@@ -34,7 +34,7 @@ export function App(): ReactElement {
           </Route>
         </Switch>
       </div>
-      <nav className="navbar fixed-bottom navbar-light bg-light">
+      <nav className="navbar fixed-bottom navbar-light bg-light" style={{ zIndex: 'auto' }}>
         <a
           className="navbar-link"
           href="https://github.com/inferno-community/fhir-validator-app"
