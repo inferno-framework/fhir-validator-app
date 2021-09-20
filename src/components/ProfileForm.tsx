@@ -22,12 +22,31 @@ export function ProfileForm(): ReactElement {
 
   // 1. GET /igs when component first mounts
   // 2. Default to hl7.fhir.r4.core if implementationGuide was not set on mount
+  /* 
+    If the igs state is not set, getIgs
+    If that doesn't cause an abort, then use the IGs setter and reorder igs alphabetically
+    If that doesn't cause an abort, but no Igs are actually returned/given to settr, then
+    set a selectoption of type <string, string> and pass that as value to dispatch, which does .... 
+
+  */ 
   useEffect(() => {
     let aborted = false;
     if (!igs) {
       getIgs().then((igs) => {
+        /* Okay, so right now the Igs keys are just the title, but the value has the version 
+          appended to the end of the URL in like a  /4.0.0 form. 
+          Now, check what format the keys needs to be sent the validator in i.e. what needs
+          to be pulled off the URL and then how should it be appended to the key. */
         if (!aborted) {
-          setIgs(Object.keys(igs).sort());
+          let igs_keys = Object.keys(igs)
+
+          igs_keys.forEach((id, index, igs_keys) => {
+            let version = igs[id].match(/\d+\.\d+\.\d+/g);
+            igs_keys[index] = (version ? (id + '#' + version) : id);
+          });
+
+          setIgs(igs_keys)
+
           if (!ig) {
             const value = new SelectOption('hl7.fhir.r4.core', 'hl7.fhir.r4.core');
             dispatch({ name: 'implementationGuide', value });
