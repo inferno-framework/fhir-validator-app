@@ -27,14 +27,14 @@ export function ProfileForm(): ReactElement {
     if (!igs) {
       getIgs().then((igs) => {
         if (!aborted) {
-          let igs_keys = Object.keys(igs)
+          const igsKeys = Object.keys(igs);
 
-          igs_keys.forEach((id, index, igs_keys) => {
-            let version = igs[id].match(/\d+\.\d+\.\d+/g);
-            igs_keys[index] = (version ? (id + '#' + version) : id);
+          igsKeys.forEach((id, index, igsKeys) => {
+            const version = igs[id].match(/\d+\.\d+\.\d+/g);
+            igsKeys[index] = version ? id + '#' + version : id;
           });
 
-          setIgs(igs_keys.sort())
+          setIgs(igsKeys.sort());
 
           if (!ig) {
             const value = new SelectOption('hl7.fhir.r4.core', 'hl7.fhir.r4.core');
