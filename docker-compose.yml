@@ -6,13 +6,13 @@ services:
     depends_on:
       - fhir_validator_service
     environment:
-      EXTERNAL_VALIDATOR_URL: http://localhost:4567
+      EXTERNAL_VALIDATOR_URL: http://localhost:${FHIR_VALIDATOR_SERVICE_PORT-4567}
       VALIDATOR_BASE_PATH: /validator
     ports:
-      - "80:80"
+      - "${FHIR_VALIDATOR_APP_PORT-80}:80"
   fhir_validator_service:
     image: infernocommunity/fhir-validator-service:latest
     volumes:
       - ./igs:/home/igs/package
     ports:
-      - "4567:4567"
+      - "${FHIR_VALIDATOR_SERVICE_PORT-4567}:4567"
