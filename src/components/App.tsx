@@ -11,7 +11,8 @@ import { TRACKING_ID } from 'utils/ga';
 export type AppState = FormState & { results?: ValidationResult };
 
 export function App(): ReactElement {
-  const [validatorVersion, setVersion] = useState('');
+  const [wrapperVersion, setWrapperVersion] = useState('');
+  const [hl7ValidatorVersion, setHl7ValidatorVersion] = useState('');
 
   if (window.location.hostname === 'inferno.healthit.gov') {
     ReactGA.initialize(TRACKING_ID);
@@ -20,7 +21,12 @@ export function App(): ReactElement {
 
   useEffect(() => {
     let aborted = false;
-    void getVersion().then((version) => !aborted && setVersion(version));
+    getVersion().then((version) => {
+      if (!aborted) {
+        setWrapperVersion(version['inferno-framework/fhir-validator-wrapper']);
+        setHl7ValidatorVersion(version['org.hl7.fhir.validation']);
+      }
+    });
     return (): void => void (aborted = true);
   }, []);
 
@@ -84,7 +90,9 @@ export function App(): ReactElement {
             <div className="modal-body">
               Inferno Resource Validator App Version: {appVersion}
               <br />
-              FHIR Validation Service Version: {validatorVersion}
+              FHIR Validation Wrapper Version: {wrapperVersion}
+              <br />
+              HL7® Validator Version: {hl7ValidatorVersion}
             </div>
           </div>
         </div>
