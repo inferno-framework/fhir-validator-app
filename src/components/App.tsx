@@ -20,13 +20,13 @@ export function App(): ReactElement {
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <a className="navbar-brand" href={config('validatorBasePath') ?? '/'}>
-          FHIR Validator
+          Inferno Resource Validator
         </a>
       </nav>
       <div className="container py-5">
         <Switch>
           <Route exact path="/">
-            <h1>FHIR Validator</h1>
+            <h1>Inferno Resource Validator</h1>
             <ValidatorForm />
           </Route>
           <Route path={RESULTS_PATH}>
@@ -37,7 +37,7 @@ export function App(): ReactElement {
       <nav className="navbar fixed-bottom navbar-light bg-light" style={{ zIndex: 'auto' }}>
         <a
           className="navbar-link"
-          href="https://github.com/inferno-community/fhir-validator-app"
+          href="https://github.com/inferno-framework/fhir-validator-app"
           target="_blank"
           rel="noreferrer"
         >
@@ -45,7 +45,7 @@ export function App(): ReactElement {
         </a>
         <a
           className="navbar-link"
-          href="https://github.com/inferno-community/fhir-validator-app/issues"
+          href="https://github.com/inferno-framework/fhir-validator-app/issues"
           target="_blank"
           rel="noreferrer"
         >
@@ -74,7 +74,7 @@ export function App(): ReactElement {
               </button>
             </div>
             <div className="modal-body">
-              FHIR Validator App Version: {appVersion}
+              Inferno Resource Validator App Version: {appVersion}
               <br />
               FHIR Validation Service Version: {validatorVersion}
             </div>
