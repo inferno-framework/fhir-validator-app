@@ -16,7 +16,7 @@ export function ResourceCard(): ReactElement {
           name="resource"
           state={formState['resource']}
           dispatch={(action: Action): void => dispatch({ name: 'resource', ...action })}
-          textLabel="Paste your FHIR resource here:"
+          textLabel="Paste your HL7® FHIR® resource here:"
           fileLabel="Or upload a resource in a file:"
           validator={resourceValidator}
         />
