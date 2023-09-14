@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { ValueType as ValuesType, OptionTypeBase } from 'react-select';
+import ReactGA from 'react-ga4';
 
 import { validateWith, addProfile } from 'models/HL7Validator';
 import { SelectOption } from 'models/SelectOption';
@@ -22,6 +23,7 @@ import {
 } from './FormInputItem';
 import { AppState } from './App';
 import { RESULTS_PATH } from './Results';
+import { TRACKING_ID } from 'utils/ga';
 
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
@@ -140,8 +142,18 @@ export function ValidatorForm(): ReactElement {
       const results = await validateWith(profileUrls, resourceBlob);
       history.replace(history.location.pathname, formState);
       history.push(RESULTS_PATH, { ...formState, results });
+      sendValidateClick();
     } catch (error) {
       return handleError(`Failed to validate resource: ${error?.message}`);
+    }
+  };
+
+  const sendValidateClick = (): void => {
+    if (window.location.hostname === 'inferno.healthit.gov') {
+      ReactGA.event({
+        category: 'form_submit',
+        action: 'Validate',
+      });
     }
   };
 
