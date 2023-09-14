@@ -23,7 +23,6 @@ import {
 } from './FormInputItem';
 import { AppState } from './App';
 import { RESULTS_PATH } from './Results';
-import { TRACKING_ID } from 'utils/ga';
 
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
