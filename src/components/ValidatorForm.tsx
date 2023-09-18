@@ -27,7 +27,7 @@ import { RESULTS_PATH } from './Results';
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
 type ValueType<OptionType extends OptionTypeBase> = Exclude<
-  ValuesType<OptionType>,
+  ValuesType<OptionType, false>,
   ReadonlyArray<OptionType>
 >;
 
@@ -35,7 +35,7 @@ export interface FormState {
   resource: FormInputItemState;
   profile: FormInputItemState;
   implementationGuide: ValueType<SelectOption>;
-  profileSelect: ValuesType<SelectOption>;
+  profileSelect: ValuesType<SelectOption, false>;
   error: string;
   tab: 'ig' | 'standalone';
 }
@@ -65,7 +65,7 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
       newState[action.name] = formInputItemReducer(state[action.name], action);
       break;
     case 'implementationGuide':
-      newState[action.name] = action.value;
+      newState[action.name] = action.value || null;
       // keep profileSelect value in sync with the selected implementationGuide
       newState.profileSelect = null;
       break;

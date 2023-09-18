@@ -60,7 +60,7 @@ export function Results(): ReactElement {
           <>
             following StructureDefinitions:
             <ul>
-              {profileUrls.map((profileUrl, i) => (
+              {profileUrls.map((profileUrl: string, i: number) => (
                 <li key={i}>
                   <code>{profileUrl}</code>
                 </li>

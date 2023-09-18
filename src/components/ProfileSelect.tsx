@@ -12,7 +12,7 @@ export function ProfileSelect({ options }: ProfileSelectProps): ReactElement {
   const [formState, dispatch] = useContext(FormContext);
   const ig = formState.implementationGuide?.value;
   const value = formState.profileSelect;
-  const handleChange = (value: ValueType<SelectOption>): void =>
+  const handleChange = (value: ValueType<SelectOption, false>): void =>
     dispatch({ name: 'profileSelect', value });
 
   return (
