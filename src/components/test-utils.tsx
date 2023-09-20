@@ -31,7 +31,7 @@ type MockResponse = {
 };
 
 export const mockFetch = (): void => {
-  (global as MockGlobal).fetch = jest.fn((path: string) => {
+  (global as unknown as MockGlobal).fetch = jest.fn((path: string) => {
     const response: MockResponse = { ok: true };
     let match: RegExpMatchArray | null;
     if (/\/validate(\?.*)?$/.exec(path)) {
