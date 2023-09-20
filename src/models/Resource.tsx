@@ -112,7 +112,7 @@ export function parseResource(input: string): JSONResource | XMLResource {
 export function resourceValidator(input: string): string {
   try {
     return parseResource(input) && '';
-  } catch (error) {
+  } catch (error: any) {
     return error.message;
   }
 }

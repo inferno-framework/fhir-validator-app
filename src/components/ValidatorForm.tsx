@@ -133,7 +133,7 @@ export function ValidatorForm(): ReactElement {
         const profileUrl = await addProfile(profileBlob);
         profileUrls.push(profileUrl);
       }
-    } catch (error) {
+    } catch (error: any) {
       return handleError(`Failed to upload profile: ${error?.message}`);
     }
 
@@ -142,7 +142,7 @@ export function ValidatorForm(): ReactElement {
       history.replace(history.location.pathname, formState);
       history.push(RESULTS_PATH, { ...formState, results });
       sendValidateClick();
-    } catch (error) {
+    } catch (error: any) {
       return handleError(`Failed to validate resource: ${error?.message}`);
     }
   };
