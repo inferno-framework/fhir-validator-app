@@ -20,7 +20,7 @@ export function App(): ReactElement {
 
   useEffect(() => {
     let aborted = false;
-    getVersion().then((version) => !aborted && setVersion(version));
+    void getVersion().then((version) => !aborted && setVersion(version));
     return (): void => void (aborted = true);
   }, []);
 

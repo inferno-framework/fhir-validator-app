@@ -105,7 +105,7 @@ export function FormInputItem({
       state.file
         .text()
         .then(changeText)
-        .catch((error) => error?.message ?? 'There was an error reading the uploaded file');
+        .catch((error: Error) => error?.message ?? 'There was an error reading the uploaded file');
     }
   }, [state, changeText]);
 

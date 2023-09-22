@@ -133,8 +133,10 @@ export function ValidatorForm(): ReactElement {
         const profileUrl = await addProfile(profileBlob);
         profileUrls.push(profileUrl);
       }
-    } catch (error: any) {
-      return handleError(`Failed to upload profile: ${error?.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return handleError(`Failed to upload profile: ${error?.message}`);
+      }
     }
 
     try {
@@ -142,8 +144,10 @@ export function ValidatorForm(): ReactElement {
       history.replace(history.location.pathname, formState);
       history.push(RESULTS_PATH, { ...formState, results });
       sendValidateClick();
-    } catch (error: any) {
-      return handleError(`Failed to validate resource: ${error?.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return handleError(`Failed to validate resource: ${error?.message}`);
+      }
     }
   };
 
@@ -164,6 +168,7 @@ export function ValidatorForm(): ReactElement {
           onClose={(): void => dispatch({ name: 'SET_ERROR', error: '' })}
         />
       )}
+      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
       <form aria-label="validator form" onSubmit={handleSubmit}>
         <ResourceCard />
         <br />

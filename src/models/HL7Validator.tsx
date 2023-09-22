@@ -12,15 +12,15 @@ const validatorFetch = async (
     ...init,
     method,
   });
-  if (!response.ok) {
-    throw new Error(response.statusText);
+  if (!response?.ok) {
+    throw new Error(response?.statusText);
   }
   return response;
 };
 
 const parseJson = async (response: Response): ReturnType<Body['json']> => {
   try {
-    return await response.json();
+    return (await response.json()) as ReturnType<Body['json']>;
   } catch (e) {
     throw new Error('The response from the server could not be parsed.');
   }
@@ -50,10 +50,12 @@ export const validateWith = async (
   }
 
   const profile = [...new Set(profileUrls)].join(',');
-  const outcome = await validatorFetch('POST', `validate?${new URLSearchParams({ profile })}`, {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const searchParams = new URLSearchParams({ profile }).toString();
+  const outcome = (await validatorFetch('POST', `validate?${searchParams}`, {
     headers: { 'Content-Type': `application/fhir+${contentType}` },
     body: resourceBlob,
-  }).then(parseJson);
+  }).then(parseJson)) as Promise<ValidationResult>;
 
   if (!isJsonResource(outcome, 'OperationOutcome')) {
     throw new Error('The response from the server was not an OperationOutcome.');
@@ -91,14 +93,14 @@ export const addProfile = async (profileBlob: string): Promise<string> => {
 };
 
 export const getIgs = (): Promise<Record<string, string>> =>
-  validatorFetch('GET', 'igs').then(parseJson);
+  validatorFetch('GET', 'igs').then(parseJson) as Promise<Record<string, string>>;
 
 export type IgResponse = { id: string; version: string; profiles: string[] };
 
 // This function takes a package ID of an IG from packages.fhir.org and loads
 // the IG into the external validator
 export const loadIg = (id: string): Promise<IgResponse> =>
-  validatorFetch('PUT', `igs/${id}`).then(parseJson);
+  validatorFetch('PUT', `igs/${id}`).then(parseJson) as Promise<IgResponse>;
 
 // This function takes an IG package.tgz file and loads the IG into the
 // external validator
@@ -106,12 +108,12 @@ export const loadPackage = async (file: File): Promise<IgResponse> =>
   validatorFetch('POST', 'igs', {
     body: await file.arrayBuffer(),
     headers: { 'Content-Encoding': 'gzip' },
-  }).then(parseJson);
+  }).then(parseJson) as Promise<IgResponse>;
 
 // This function retrieves a mapping from package ID of an IG to a list of
 // canonical URLs of profiles belonging to the IG
 export const getProfilesByIg = (): Promise<Record<string, string[]>> =>
-  validatorFetch('GET', 'profiles-by-ig').then(parseJson);
+  validatorFetch('GET', 'profiles-by-ig').then(parseJson) as Promise<Record<string, string[]>>;
 
 export const getVersion = (): Promise<string> =>
   validatorFetch('GET', 'version').then((response) => response.text());

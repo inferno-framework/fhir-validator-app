@@ -22,8 +22,8 @@ interface HighlightProps {
 }
 
 // 'Resource' describes the shape of props.
-// State is never set so we use the '{}' type.
-export class Resource extends Component<ResourceProps, {}> {
+// State is never set so we use the 'Record<string, never>' type.
+export class Resource extends Component<ResourceProps, Record<string, never>> {
   render(): ReactElement {
     const { resource, contentType, errors, warnings, information } = this.props;
     const errorLines = errors.map((e) => e.line);
@@ -32,7 +32,7 @@ export class Resource extends Component<ResourceProps, {}> {
     return (
       <SyntaxHighlighter
         language={contentType}
-        style={docco}
+        style={docco as object}
         showLineNumbers
         wrapLines
         lineProps={(lineNumber: number): HighlightProps =>
