@@ -27,6 +27,7 @@ export function ProfileSelect({ options }: ProfileSelectProps): ReactElement {
         id="profile-select"
         value={value}
         onChange={handleChange}
+        aria-label="select profile"
       />
     </div>
   );

@@ -69,6 +69,7 @@
   },
   "dependencies": {
     "blob-polyfill": "^4.0.20200601",
+    "jest-environment-jsdom": "^29.7.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-ga4": "^2.1.0",

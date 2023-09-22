@@ -29,6 +29,7 @@ export function GuideSelect({ igs }: GuideSelectProps): ReactElement {
         id="implementation-guide"
         value={value}
         onChange={handleChange}
+        aria-label="implementation guide"
       />
     </div>
   );
