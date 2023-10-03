@@ -20,7 +20,9 @@ describe('<App />', () => {
   it.todo('shows a 404 page if the user visits an invalid route');
 
   it('clears form state after an unmount', async () => {
-    const { getByLabelText: getBefore, unmount, history } = renderWithRouter(<App />);
+    const app = renderWithRouter(<App />);
+    const { getByLabelText: getBefore, unmount, history } = app;
+
     const textField = getBefore(/paste.*resource/i);
 
     expect(textField).toHaveValue('');
@@ -28,7 +30,8 @@ describe('<App />', () => {
     expect(textField).toHaveValue('foobar');
 
     // Clears form state after an unmount
-    expect(unmount()).toBe(true);
+    unmount();
+    expect(textField).not.toBeInTheDocument();
     const { getByLabelText: getAfter } = renderWithRouter(<App />, { history });
     await waitFor(() => expect(getAfter(/paste.*resource/i)).toHaveValue(''));
   });

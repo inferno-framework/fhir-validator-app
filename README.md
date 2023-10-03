@@ -4,7 +4,7 @@ Profile.
 
 ## Running the FHIR Validator App in development
 ### Requirements:
-* Node `12` with `npm` installed
+* Node `16` with `npm` installed
 * Docker (to run the FHIR validator wrapper)
 
 ### Setup

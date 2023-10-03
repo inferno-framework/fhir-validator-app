@@ -1,18 +1,26 @@
 import React, { useState, useEffect, ReactElement } from 'react';
 import { Switch, Route } from 'react-router-dom';
+import ReactGA from 'react-ga4';
 import { ValidatorForm, FormState } from './ValidatorForm';
 import { Results, RESULTS_PATH } from './Results';
 import { getVersion, ValidationResult } from 'models/HL7Validator';
 import config from 'utils/config';
 import appVersion from 'version';
+import { TRACKING_ID } from 'utils/ga';
 
 export type AppState = FormState & { results?: ValidationResult };
 
 export function App(): ReactElement {
   const [validatorVersion, setVersion] = useState('');
+
+  if (window.location.hostname === 'inferno.healthit.gov') {
+    ReactGA.initialize(TRACKING_ID);
+    ReactGA.send({ hitType: 'pageview', page: window.location.href, title: 'Inferno Validator' });
+  }
+
   useEffect(() => {
     let aborted = false;
-    getVersion().then((version) => !aborted && setVersion(version));
+    void getVersion().then((version) => !aborted && setVersion(version));
     return (): void => void (aborted = true);
   }, []);
 

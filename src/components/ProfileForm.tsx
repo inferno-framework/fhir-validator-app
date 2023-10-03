@@ -25,7 +25,7 @@ export function ProfileForm(): ReactElement {
   useEffect(() => {
     let aborted = false;
     if (!igs) {
-      getIgs().then((igs) => {
+      void getIgs().then((igs) => {
         if (!aborted) {
           setIgs(Object.keys(igs).sort());
           if (!ig) {
@@ -42,7 +42,7 @@ export function ProfileForm(): ReactElement {
   useEffect(() => {
     let aborted = false;
     if (ig && !options) {
-      loadIg(ig).then(
+      void loadIg(ig).then(
         ({ profiles: urls }) => !aborted && setProfiles((profiles) => ({ ...profiles, [ig]: urls }))
       );
     }

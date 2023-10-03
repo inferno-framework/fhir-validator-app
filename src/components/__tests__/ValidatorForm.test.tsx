@@ -3,6 +3,7 @@ import selectEvent from 'react-select-event';
 import { fireEvent, waitFor } from '@testing-library/react';
 import { renderWithRouter, mockFetch } from '../test-utils';
 import { ValidatorForm } from '../ValidatorForm';
+import { act } from 'react-dom/test-utils';
 
 beforeAll(mockFetch);
 
@@ -143,18 +144,18 @@ describe('<ValidatorForm />', () => {
     const igSelect = getByLabelText(/implementation guide/i);
     const profileSelect = getByLabelText(/select.*profile/i);
 
-    await selectEvent.select(igSelect, /r4\.core/);
+    await act(() => selectEvent.select(igSelect, /r4\.core/));
     expect(getByRole('form')).toHaveFormValues({ 'profile-select': '' });
 
-    await selectEvent.select(profileSelect, /Patient$/);
+    await act(() => selectEvent.select(profileSelect, /Patient$/));
     expect(getByRole('form')).toHaveFormValues({
       'profile-select': 'http://hl7.org/fhir/StructureDefinition/Patient',
     });
 
-    await selectEvent.select(igSelect, /us\.core/);
+    await act(() => selectEvent.select(igSelect, /us\.core/));
     expect(getByRole('form')).toHaveFormValues({ 'profile-select': '' });
 
-    await selectEvent.select(profileSelect, /us-core-patient$/);
+    await act(() => selectEvent.select(profileSelect, /us-core-patient$/));
     expect(getByRole('form')).toHaveFormValues({
       'profile-select': 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient',
     });

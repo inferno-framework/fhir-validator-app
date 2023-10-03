@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { ValueType as ValuesType, OptionTypeBase } from 'react-select';
+import ReactGA from 'react-ga4';
 
 import { validateWith, addProfile } from 'models/HL7Validator';
 import { SelectOption } from 'models/SelectOption';
@@ -26,7 +27,7 @@ import { RESULTS_PATH } from './Results';
 type KeysWithValue<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
 type ValueType<OptionType extends OptionTypeBase> = Exclude<
-  ValuesType<OptionType>,
+  ValuesType<OptionType, false>,
   ReadonlyArray<OptionType>
 >;
 
@@ -34,7 +35,7 @@ export interface FormState {
   resource: FormInputItemState;
   profile: FormInputItemState;
   implementationGuide: ValueType<SelectOption>;
-  profileSelect: ValuesType<SelectOption>;
+  profileSelect: ValuesType<SelectOption, false>;
   error: string;
   tab: 'ig' | 'standalone';
 }
@@ -64,7 +65,7 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
       newState[action.name] = formInputItemReducer(state[action.name], action);
       break;
     case 'implementationGuide':
-      newState[action.name] = action.value;
+      newState[action.name] = action.value || null;
       // keep profileSelect value in sync with the selected implementationGuide
       newState.profileSelect = null;
       break;
@@ -132,16 +133,30 @@ export function ValidatorForm(): ReactElement {
         const profileUrl = await addProfile(profileBlob);
         profileUrls.push(profileUrl);
       }
-    } catch (error) {
-      return handleError(`Failed to upload profile: ${error?.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return handleError(`Failed to upload profile: ${error?.message}`);
+      }
     }
 
     try {
       const results = await validateWith(profileUrls, resourceBlob);
       history.replace(history.location.pathname, formState);
       history.push(RESULTS_PATH, { ...formState, results });
-    } catch (error) {
-      return handleError(`Failed to validate resource: ${error?.message}`);
+      sendValidateClick();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return handleError(`Failed to validate resource: ${error?.message}`);
+      }
+    }
+  };
+
+  const sendValidateClick = (): void => {
+    if (window.location.hostname === 'inferno.healthit.gov') {
+      ReactGA.event({
+        category: 'form_submit',
+        action: 'Validate',
+      });
     }
   };
 
@@ -153,6 +168,7 @@ export function ValidatorForm(): ReactElement {
           onClose={(): void => dispatch({ name: 'SET_ERROR', error: '' })}
         />
       )}
+      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
       <form aria-label="validator form" onSubmit={handleSubmit}>
         <ResourceCard />
         <br />

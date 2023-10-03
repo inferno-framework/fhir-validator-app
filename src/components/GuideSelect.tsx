@@ -12,7 +12,7 @@ export function GuideSelect({ igs }: GuideSelectProps): ReactElement {
   const [formState, dispatch] = useContext(FormContext);
   const value = formState.implementationGuide;
   const empty: (SelectOption | null | undefined)[] = [];
-  const handleChange = (value: ValueType<SelectOption>): void =>
+  const handleChange = (value: ValueType<SelectOption, false>): void =>
     dispatch({ name: 'implementationGuide', value: empty.concat(value)[0] });
   const options = igs?.map((ig) => new SelectOption(ig, ig));
 
@@ -29,6 +29,7 @@ export function GuideSelect({ igs }: GuideSelectProps): ReactElement {
         id="implementation-guide"
         value={value}
         onChange={handleChange}
+        aria-label="implementation guide"
       />
     </div>
   );

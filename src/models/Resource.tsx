@@ -1,8 +1,9 @@
 export type JSONResource<T extends string = string> = {
   resourceType: T;
-} & (T extends 'StructureDefinition' ? { url: string } : {}) &
-  (T extends 'OperationOutcome' ? { issue: Issue[] } : {});
+} & (T extends 'StructureDefinition' ? { url: string } : object) &
+  (T extends 'OperationOutcome' ? { issue: Issue[] } : object);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type XMLResource<_T extends string = string> = Document;
 
 export type Element = { id?: string; extension?: Extension[] };
@@ -89,7 +90,7 @@ export function isXmlResource<T extends string = string>(
 export function parseResource(input: string): JSONResource | XMLResource {
   let parsedJson;
   try {
-    parsedJson = JSON.parse(input);
+    parsedJson = JSON.parse(input) as JSON;
   } catch (e) {
     // input was invalid JSON, so try parsing input as XML
     const parser = new DOMParser();
@@ -112,7 +113,10 @@ export function parseResource(input: string): JSONResource | XMLResource {
 export function resourceValidator(input: string): string {
   try {
     return parseResource(input) && '';
-  } catch (error) {
-    return error.message;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    return 'Unknown Error';
   }
 }
