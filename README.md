@@ -26,8 +26,8 @@ From the root directory of `fhir-validator-app`:
 
 ## Running the FHIR Validator App using Docker Compose
 From the root directory of `fhir-validator-app`:
-* Build the image, using `docker-compose build`
-* Run the compose file, using `docker-compose up`. This will run both the standalone validator app, as well as the [fhir-validator-wrapper](https://github.com/inferno-community/fhir-validator-wrapper) Docker container required to do external validation.
+* Build the image, using `docker compose build`
+* Run the compose file, using `docker compose up`. This will run both the standalone validator app, as well as the [fhir-validator-wrapper](https://github.com/inferno-community/fhir-validator-wrapper) Docker container required to do external validation.
 
 ## Contact Us
 The Inferno development team can be reached by email at
