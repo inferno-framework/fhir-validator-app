@@ -115,5 +115,5 @@ export const loadPackage = async (file: File): Promise<IgResponse> =>
 export const getProfilesByIg = (): Promise<Record<string, string[]>> =>
   validatorFetch('GET', 'profiles-by-ig').then(parseJson) as Promise<Record<string, string[]>>;
 
-export const getVersion = (): Promise<string> =>
-  validatorFetch('GET', 'version').then((response) => response.text());
+export const getVersion = (): Promise<Record<string, string>> =>
+  validatorFetch('GET', 'version').then(parseJson) as Promise<Record<string, string>>;

@@ -83,7 +83,11 @@ export const mockFetch = (): void => {
           'hl7.fhir.us.core': 'http://packages2.fhir.org/packages/hl7.fhir.us.core/3.1.0',
         });
     } else if (path.endsWith('/version')) {
-      response.text = (): Promise<string> => Promise.resolve('5.0.11-SNAPSHOT');
+      response.json = (): Promise<Record<string, string>> =>
+        Promise.resolve({
+          'org.hl7.fhir.validation': '5.6.93',
+          'inferno-framework/fhir-validator-wrapper': '2.2.1',
+        });
     } else {
       response.ok = false;
       response.statusText = '404 Not Found';
