@@ -21,7 +21,7 @@ export function App(): ReactElement {
 
   useEffect(() => {
     let aborted = false;
-    getVersion().then((version) => {
+    void getVersion().then((version) => {
       if (!aborted) {
         setWrapperVersion(version['inferno-framework/fhir-validator-wrapper']);
         setHl7ValidatorVersion(version['org.hl7.fhir.validation']);

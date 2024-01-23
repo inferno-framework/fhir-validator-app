@@ -116,4 +116,4 @@ export const getProfilesByIg = (): Promise<Record<string, string[]>> =>
   validatorFetch('GET', 'profiles-by-ig').then(parseJson) as Promise<Record<string, string[]>>;
 
 export const getVersion = (): Promise<Record<string, string>> =>
-  validatorFetch('GET', 'version').then(parseJson);
+  validatorFetch('GET', 'version').then(parseJson) as Promise<Record<string, string>>;
