@@ -4,3 +4,4 @@ umls.zip
 .DS_Store
 node_modules/
 public/js/dist/
+.env

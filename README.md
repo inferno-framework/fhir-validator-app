@@ -29,6 +29,18 @@ From the root directory of `fhir-validator-app`:
 * Build the image, using `docker compose build`
 * Run the compose file, using `docker compose up`. This will run both the standalone validator app, as well as the [fhir-validator-wrapper](https://github.com/inferno-community/fhir-validator-wrapper) Docker container required to do external validation.
 
+To avoid conflicts the published container ports can be customized using a `.env` file in root directory of `fhir-validator-app`, for example:
+
+```
+# default 80
+FHIR_VALIDATOR_APP_PORT=8888
+
+# default 4567
+FHIR_VALIDATOR_SERVICE_PORT=9999
+```
+
+
+
 ## Contact Us
 The Inferno development team can be reached by email at
 inferno@groups.mitre.org.  Inferno also has a dedicated [HL7 FHIR chat
