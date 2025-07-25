@@ -30,8 +30,7 @@ From the root directory of `fhir-validator-app`:
 * Run the compose file, using `docker compose up`. This will run both the standalone validator app, as well as the [fhir-validator-wrapper](https://github.com/inferno-community/fhir-validator-wrapper) Docker container required to do external validation.
 
 ## Contact Us
-The Inferno development team can be reached by email at
-inferno@groups.mitre.org.  Inferno also has a dedicated [HL7 FHIR chat
+You may contact the team on the [Inferno HL7 FHIR chat
 channel](https://chat.fhir.org/#narrow/stream/153-inferno).
 
 ## License
